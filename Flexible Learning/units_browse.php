@@ -56,7 +56,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
   ->format(function($units) use ($gibbon) {
       $return = null;
       $background = ($units['color']) ? "background-color: ".$units['color'] : '';
-      $return .= "<a class='h-full block text-black no-underline' href='".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_browse_details.php&flexibleLearningUnitID=".$units['flexibleLearningUnitID']."&name=$name'><div title='".str_replace("'", "&#39;", $units['blurb'])."' class='h-full text-center pb-8' style='".$background."'>";
+      $return .= "<a class='h-full block text-black no-underline' href='".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=".$units['flexibleLearningUnitID']."&name=$name'><div title='".str_replace("'", "&#39;", $units['blurb'])."' class='h-full text-center pb-8' style='".$background."'>";
       $return .= ($units['logo'] != '') ? "<img class='pt-10 pb-2' style='max-width: 65px' src='".$gibbon->session->get('absoluteURL').'/'.$units['logo']."'/><br/>":"<img class='pt-10 pb-2' style='max-width: 65px' src='".$gibbon->session->get('absoluteURL').'/themes/'.$gibbon->session->get('gibbonThemeName')."/img/anonymous_240_square.jpg'/><br/>";
       $return .= "<span class='font-bold underline'>".$units['name']."</span><br/>";
       $return .= "<span class='text-sm italic'>".$units['category']."</span><br/>";

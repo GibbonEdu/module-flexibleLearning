@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+v0.1.03
+-------
+Added sidebar to unit details
+Improved unit block typography
+
 v0.1.02
 -------
 Fixed manifest.php issues

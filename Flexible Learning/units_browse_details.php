@@ -10,7 +10,7 @@ use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
 
-if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse.php') == false) {
+if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php') == false) {
     // Access denied
     $page->addError(__('You do not have access to this action.'));
 } else {

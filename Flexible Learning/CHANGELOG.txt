@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v0.1.02
+-------
+Fixed manifest.php issues
+
 v0.1.01
 -------
 Fixed installer error

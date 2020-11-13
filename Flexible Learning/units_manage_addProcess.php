@@ -42,7 +42,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
             $name = $_POST['name'] ?? '' ;
             $flexibleLearningCategoryID = $_POST['flexibleLearningCategoryID'] ?? '' ;
             $blurb = $_POST['blurb'] ?? '' ;
-            $license = $_POST['license'] ?? ``;
+            $license = $_POST['license'] ?? '';
             $active = $_POST['active'] ?? '' ;
             $major1 = $_POST['major1'] ?? '' ;
             $major2 = $_POST['major2'] ?? '' ;
@@ -71,7 +71,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
                     if (empty($attachment)) {
                         $partialFail = true;
                     }
-                
+
                 }
 
                 // Write to database

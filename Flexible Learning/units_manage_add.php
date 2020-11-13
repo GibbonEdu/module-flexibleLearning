@@ -127,11 +127,10 @@ require_once __DIR__ . '/moduleFunctions.php';
         // UNIT OUTLINE
         $form->addRow()->addHeading(__m('Unit Outline'))->append(__m('The contents of this field are viewable to all users, SO AVOID CONFIDENTIAL OR SENSITIVE DATA!'));
 
-        $unitOutline = getSettingByScope($connection2, 'Free Learning', 'unitOutlineTemplate');
         $row = $form->addRow();
             $column = $row->addColumn();
             $column->addLabel('outline', __('Unit Outline'));
-            $column->addEditor('outline', $guid)->setRows(30)->showMedia()->setValue($unitOutline);
+            $column->addEditor('outline', $guid)->setRows(30)->showMedia();
 
 
         // SMART BLOCKS

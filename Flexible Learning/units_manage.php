@@ -70,7 +70,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
         $units = $unitGateway->queryAllUnits($criteria);
 
-
         $form = BulkActionForm::create('bulkAction', $_SESSION[$guid]['absoluteURL'].'/modules/Flexible Learning/units_manageProcessBulk.php');
 
         $bulkActions = ['Export' => __('Export')];

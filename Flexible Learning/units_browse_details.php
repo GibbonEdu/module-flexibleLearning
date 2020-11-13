@@ -88,30 +88,30 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
           return implode(', ', array_filter($minors));
       });
 
-      echo $table->render([$values]);
+  echo $table->render([$values]);
 
-      // SMART BLOCKS
+  // SMART BLOCKS
 
-      $dataBlocks = ['flexibleLearningUnitID' => $flexibleLearningUnitID];
-      $sqlBlocks = 'SELECT * FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=:flexibleLearningUnitID ORDER BY sequenceNumber';
+  $dataBlocks = ['flexibleLearningUnitID' => $flexibleLearningUnitID];
+  $sqlBlocks = 'SELECT * FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=:flexibleLearningUnitID ORDER BY sequenceNumber';
 
-      $blocks = $pdo->select($sqlBlocks, $dataBlocks)->fetchAll();
+  $blocks = $pdo->select($sqlBlocks, $dataBlocks)->fetchAll();
 
-      if (empty($blocks)) {
-          echo Format::alert(__('There are no records to display.'));
-      } else {
-          $templateView = $container->get(View::class);
-          $resourceContents = '';
+  if (empty($blocks)) {
+      echo Format::alert(__('There are no records to display.'));
+  } else {
+      $templateView = $container->get(View::class);
+      $resourceContents = '';
 
-          $blockCount = 0;
-          foreach ($blocks as $block) {
-              echo $templateView->fetchFromTemplate('unitBlock.twig.html', $block + [
-                  'roleCategory' => $roleCategory,
-                  'gibbonPersonID' => $gibbon->session->get('username') ?? '',
-                  'blockCount' => $blockCount
-              ]);
-              $resourceContents .= $block['contents'];
-              $blockCount++;
-          }
+      $blockCount = 0;
+      foreach ($blocks as $block) {
+          echo $templateView->fetchFromTemplate('unitBlock.twig.html', $block + [
+              'roleCategory' => $roleCategory,
+              'gibbonPersonID' => $gibbon->session->get('username') ?? '',
+              'blockCount' => $blockCount
+          ]);
+          $resourceContents .= $block['contents'];
+          $blockCount++;
       }
+  }
 }

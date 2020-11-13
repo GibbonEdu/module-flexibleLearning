@@ -25,7 +25,7 @@ $description = 'View, create and manage Flexible Learning units.';
 $entryURL    = "units_browse.php";
 $type        = "Additional";
 $category    = 'Learn';
-$version     = '0.1.00';
+$version     = '0.1.01';
 $author      = 'Harry Merrett';
 $url         = '';
 
@@ -70,7 +70,7 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningCategory` (
   `description` text,
   `sequenceNumber` int(2) DEFAULT NULL,
   `active` enum('Y','N') DEFAULT 'Y',
-  PRIMARY KEY (`fleixbleLearningCategoryID`)
+  PRIMARY KEY (`flexibleLearningCategoryID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
 // Add gibbonSettings entries

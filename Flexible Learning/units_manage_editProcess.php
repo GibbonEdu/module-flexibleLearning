@@ -19,7 +19,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 require_once '../../gibbon.php';
 
-
 use Gibbon\Services\Format;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 
@@ -36,6 +35,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 } else {
     // Proceed!
     $unitGateway = $container->get(UnitGateway::class);
+
 
     $data = [
         'name'          => $_POST['name'] ?? '',
@@ -56,6 +56,21 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         header("Location: {$URL}");
         exit;
     }
+
+    // Validate the database relationships exist
+    if ($highestAction == 'Manage Units_all') {
+      $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
+    }
+    else {
+      $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
+    }
+
+    if (empty($values)) {
+        $URL .= '&return=error2';
+        header("Location: {$URL}");
+        exit;
+    }
+
     //Move attached file, if there is one
     $attachment = null;
     if (!empty($_FILES['file']['tmp_name'])) {
@@ -75,6 +90,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     else {
       $data['logo']=$_POST['logo'];
     }
+
     // Create the record
     $flexibleLearningUnitID = $unitGateway->update($flexibleLearningUnitID, $data);
 

@@ -68,7 +68,12 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         echo $form->getOutput();
 
 
-        $units = $unitGateway->queryAllUnits($criteria);
+          if ($highestAction == 'Manage Units_all') {
+            $units = $unitGateway->queryAllUnits($criteria);
+          }
+          else {
+            $units = $unitGateway->queryAllUnits($criteria, $gibbon->session->get('gibbonPersonID'));
+          }
 
         $form = BulkActionForm::create('bulkAction', $_SESSION[$guid]['absoluteURL'].'/modules/Flexible Learning/units_manageProcessBulk.php');
 

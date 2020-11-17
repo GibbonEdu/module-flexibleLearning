@@ -35,7 +35,7 @@ class UnitGateway extends QueryableGateway
      * @param QueryCriteria $criteria
      * @return DataSet
      */
-    public function queryAllUnits(QueryCriteria $criteria)
+    public function queryAllUnits(QueryCriteria $criteria, $gibbonPersonID = null)
     {
         $query = $this
             ->newQuery()
@@ -43,10 +43,15 @@ class UnitGateway extends QueryableGateway
             ->cols(['flexibleLearningUnit.*', 'flexibleLearningCategory.color', 'flexibleLearningCategory.name AS category'])
             ->innerJoin('flexibleLearningCategory', 'flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID');
 
+          if (!is_null($gibbonPersonID)) {
+            $query->where('gibbonPersonIDCreator=:gibbonPersonID')
+              ->bindValue('gibbonPersonID', $gibbonPersonID);
+          }
+
         return $this->runQuery($query, $criteria);
     }
 
-    public function getUnitByID($flexibleLearningUnitID)
+    public function getUnitByID($flexibleLearningUnitID, $gibbonPersonID = null)
     {
         $query = $this
             ->newSelect()
@@ -55,6 +60,11 @@ class UnitGateway extends QueryableGateway
             ->innerJoin('flexibleLearningCategory', 'flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID')
             ->where('flexibleLearningUnitID=:flexibleLearningUnitID')
             ->bindValue('flexibleLearningUnitID', $flexibleLearningUnitID);
+
+            if (!is_null($gibbonPersonID)) {
+              $query->where('gibbonPersonIDCreator=:gibbonPersonID')
+                ->bindValue('gibbonPersonID', $gibbonPersonID);
+            }
 
         return $this->runSelect($query)->fetch();
     }

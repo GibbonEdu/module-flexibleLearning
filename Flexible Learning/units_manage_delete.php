@@ -32,7 +32,12 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         return;
     }
 
-    $values = $container->get(UnitGateway::class)->getByID($flexibleLearningUnitID);
+    if ($highestAction == 'Manage Units_all') {
+      $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
+    }
+    else {
+      $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
+    }
 
     if (empty($values)) {
         $page->addError(__('The specified record cannot be found.'));

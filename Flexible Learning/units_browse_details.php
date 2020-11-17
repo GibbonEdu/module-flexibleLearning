@@ -32,6 +32,13 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
       ->add(__m('Browse Units'), 'units_browse.php')
       ->add(__m('Unit Details'));
 
+  //Edit links
+    if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php') == true) {
+      echo "<div class='linkTop'>";
+        echo "<a href='".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_manage_edit.php&flexibleLearningUnitID=$flexibleLearningUnitID&name=$name'>".__('Edit')."<img style='margin: 0 0 -4px 3px' title='".__('Edit')."' src='./themes/".$gibbon->session->get('gibbonThemeName')."/img/config.png'/></a>";
+      echo '</div>';
+  }
+
   //Data TABLE
   $table = DataTable::createDetails('unitDetails');
 

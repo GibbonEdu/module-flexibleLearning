@@ -38,6 +38,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
         //Proceed!
         $urlParams = compact('name');
+        $unitGateway = $container->get(UnitGateway::class);
 
         $page->breadcrumbs
              ->add(__m('Manage Units'), 'units_manage.php', $urlParams)
@@ -52,7 +53,13 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
             return;
         }
 
-        $values = $container->get(UnitGateway::class)->getByID($flexibleLearningUnitID);
+
+        if ($highestAction == 'Manage Units_all') {
+          $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
+        }
+        else {
+          $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
+        }
 
         if (empty($values)) {
             $page->addError(__('The specified record cannot be found.'));
@@ -64,6 +71,12 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
             echo "<a href='".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_manage.php&name=$name'>".__($guid, 'Back to Search Results').'</a>';
             echo '</div>';
         }
+
+        if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
+            echo "<div class='linkTop'>";
+            echo "<a href='".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=$flexibleLearningUnitID&name=$name'>".__($guid, 'View')."<img style='margin: 0 0 -4px 3px' title='".__($guid, 'View')."' src='./themes/".$gibbon->session->get('gibbonThemeName')."/img/plus.png'/></a>";
+            echo '</div>';
+          }
 
         $form = Form::create('action', $gibbon->session->get('absoluteURL').'/modules/'.$gibbon->session->get('module')."/units_manage_editProcess.php?&name=$name");
         $form->setFactory(FlexibleLearningFormFactory::create($pdo));

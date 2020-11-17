@@ -78,19 +78,39 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningCategory` (
 
 // Action rows
 $actionRows[] = [
-    'name'                      => 'Manage Units', // The name of the action (appears to user in the right hand side module menu)
-    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'name'                      => 'Manage Units_all', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '1',// If it is a grouped action, the precedence controls which is highest action in group
     'category'                  => 'Units', // Optional: subgroups for the right hand side module menu
-    'description'               => 'test', // Text description
+    'description'               => 'Allows a user to manage all units within the system.', // Text description
     'URLList'                   => 'units_manage.php,units_manage_add.php,units_manage_edit.php,units_manage_delete.php', // List of pages included in this action
     'entryURL'                  => 'units_manage.php', // The landing action for the page.
     'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
     'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
     'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'N', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'Y', // Should this action be available to user roles in the Other category?
+];
+
+$actionRows[] = [
+    'name'                      => 'Manage Units_my', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Units', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows a user to manage their own units.', // Text description
+    'URLList'                   => 'units_manage.php,units_manage_add.php,units_manage_edit.php,units_manage_delete.php', // List of pages included in this action
+    'entryURL'                  => 'units_manage.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'N', // Default permission for built in role Admin
     'defaultPermissionTeacher'  => 'Y', // Default permission for built in role Teacher
     'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
     'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
-    'defaultPermissionSupport'  => 'Y', // Default permission for built in role Support
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
     'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
     'categoryPermissionStudent' => 'Y', // Should this action be available to user roles in the Student category?
     'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?

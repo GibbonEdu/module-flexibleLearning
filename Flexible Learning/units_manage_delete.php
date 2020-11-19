@@ -25,25 +25,32 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     $page->addError(__('You do not have access to this action.'));
 } else {
     // Proceed!
-    $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
+    $highestAction = getHighestGroupedAction($guid, $_GET['q'], $connection2);
+    if ($highestAction == false) {
+        $page->addError(__('The highest grouped action cannot be determined.'));
+    } else {
+      $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
 
-    if (empty($flexibleLearningUnitID)) {
-        $page->addError(__('You have not specified one or more required parameters.'));
-        return;
-    }
+      $unitGateway = $container->get(UnitGateway::class);
 
-    if ($highestAction == 'Manage Units_all') {
-      $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
-    }
-    else {
-      $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
-    }
+      if (empty($flexibleLearningUnitID)) {
+          $page->addError(__('You have not specified one or more required parameters.'));
+          return;
+      }
 
-    if (empty($values)) {
-        $page->addError(__('The specified record cannot be found.'));
-        return;
-    }
+      if ($highestAction == 'Manage Units_all') {
+        $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
+      }
+      else {
+        $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
+      }
 
-    $form = DeleteForm::createForm($gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_manage_deleteProcess.php');
-    echo $form->getOutput();
+      if (empty($values)) {
+          $page->addError(__('The specified record cannot be found.'));
+          return;
+      }
+
+      $form = DeleteForm::createForm($gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_manage_deleteProcess.php');
+      echo $form->getOutput();
+    }
 }

@@ -22,8 +22,6 @@ require_once '../../gibbon.php';
 use Gibbon\Services\Format;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 
-require_once '../../gibbon.php';
-
 $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
 
 $URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_manage_edit.php&flexibleLearningUnitID='.$flexibleLearningUnitID;
@@ -33,6 +31,12 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     header("Location: {$URL}");
     exit;
 } else {
+  $highestAction = getHighestGroupedAction($guid, $_POST['address'], $connection2);
+  if ($highestAction == false) {
+      //Fail 0
+      $URL .= "&return=error0$params";
+      header("Location: {$URL}");
+  } else {
     // Proceed!
     $unitGateway = $container->get(UnitGateway::class);
 
@@ -92,10 +96,14 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     }
 
     // Create the record
-    $flexibleLearningUnitID = $unitGateway->update($flexibleLearningUnitID, $data);
+    if (!$unitGateway->update($flexibleLearningUnitID, $data)) {
+        $URL .= '&return=error2';
+        header("Location: {$URL}");
+        exit;
+    }
 
     //Update blocks
-    $order = $_POST['order'] ?? '';
+    $order = $_POST['order'] ?? [];
     $sequenceNumber = 0;
     $dataRemove = array();
     $whereRemove = '';
@@ -166,4 +174,5 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         : "&return=success0&editID=$flexibleLearningUnitID";
 
     header("Location: {$URL}");
+  }
 }

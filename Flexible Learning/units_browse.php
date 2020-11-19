@@ -53,7 +53,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
   $table->addColumn('unit')
   ->addClass('h-full')
-  ->format(function($units) use ($gibbon) {
+  ->format(function($units) use ($gibbon, $name) {
       $return = null;
       $background = ($units['color']) ? "background-color: ".$units['color'] : '';
       $return .= "<a class='h-full block text-black no-underline' href='".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=".$units['flexibleLearningUnitID']."&name=$name'><div title='".str_replace("'", "&#39;", $units['blurb'])."' class='h-full text-center pb-8' style='".$background."'>";

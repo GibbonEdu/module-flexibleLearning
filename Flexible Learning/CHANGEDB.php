@@ -35,3 +35,10 @@ INSERT INTO gibbonAction SET gibbonModuleID=(SELECT gibbonModuleID FROM gibbonMo
 INSERT INTO `gibbonPermission` (`permissionID` ,`gibbonRoleID` ,`gibbonActionID`) VALUES (NULL , '2', (SELECT gibbonActionID FROM gibbonAction JOIN gibbonModule ON (gibbonAction.gibbonModuleID=gibbonModule.gibbonModuleID) WHERE gibbonModule.name='Flexible Learning' AND gibbonAction.name='Manage Units_my'));end
 
 ";
+
+// v0.1.05
+$count++;
+$sql[$count][0] = "0.1.05";
+$sql[$count][1] = "
+UPDATE gibbonAction SET URLList='categories_manage.php,categories_manage_add.php,categories_manage_edit.php,categories_manage_editOrderAjax.php,categories_manage_delete.php' WHERE gibbonModuleID=(SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning') AND name='Manage Categories';end
+";

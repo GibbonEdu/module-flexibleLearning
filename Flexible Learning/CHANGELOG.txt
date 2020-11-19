@@ -1,5 +1,16 @@
 CHANGELOG
 =========
+v0.1.05
+-------
+Fixed category deletion access bug
+Cleaned up code structure
+Various bug fixes
+
+v0.1.04
+-------
+Added grouped actions for Manage Units
+Added View and Edit links to unit editor and viewer
+
 v0.1.03
 -------
 Added sidebar to unit details

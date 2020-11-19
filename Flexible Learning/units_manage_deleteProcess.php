@@ -34,27 +34,35 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     header("Location: {$URL}");
     exit;
 } else {
-    // Proceed!
-    $unitGateway = $container->get(UnitGateway::class);
-    // Validate the database relationships exist
-    if ($highestAction == 'Manage Units_all') {
-      $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
+  $highestAction = getHighestGroupedAction($guid, $_POST['address'], $connection2);
+  if ($highestAction == false) {
+      //Fail 0
+      $URL .= "&return=error0$params";
+      header("Location: {$URL}");
+  } else {
+      // Proceed!
+      $unitGateway = $container->get(UnitGateway::class);
+
+      // Validate the database relationships exist
+      if ($highestAction == 'Manage Units_all') {
+        $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
+      }
+      else {
+        $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
+      }
+
+      if (empty($values)) {
+          $URL .= '&return=error2';
+          header("Location: {$URL}");
+          exit;
+      }
+
+      $deleted = $unitGateway->delete($flexibleLearningUnitID);
+
+      $URL .= !$deleted
+          ? '&return=error2'
+          : '&return=success0';
+
+      header("Location: {$URL}");
     }
-    else {
-      $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
-    }
-
-    if (empty($values)) {
-        $URL .= '&return=error2';
-        header("Location: {$URL}");
-        exit;
-    }
-
-    $deleted = $unitGateway->delete($flexibleLearningUnitID);
-
-    $URL .= !$deleted
-        ? '&return=error2'
-        : '&return=success0';
-
-    header("Location: {$URL}");
 }

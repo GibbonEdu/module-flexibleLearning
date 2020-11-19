@@ -42,3 +42,8 @@ $sql[$count][0] = "0.1.05";
 $sql[$count][1] = "
 UPDATE gibbonAction SET URLList='categories_manage.php,categories_manage_add.php,categories_manage_edit.php,categories_manage_editOrderAjax.php,categories_manage_delete.php' WHERE gibbonModuleID=(SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning') AND name='Manage Categories';end
 ";
+
+// v0.1.06
+$count++;
+$sql[$count][0] = "0.1.06";
+$sql[$count][1] = "";

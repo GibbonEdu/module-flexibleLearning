@@ -82,17 +82,28 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
           }
       });
   $table->addColumn('category', __('Category'));
+  $table->addColumn('author', __('Author'))
+    ->format(function ($person) {
+      return Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true);
+    });
   $table->addColumn('majors', __('Majors'))
     ->sortable(['major1', 'major2'])
       ->format(function ($unit) {
           $majors = [$unit['major1'], $unit['major2']];
           return implode(', ', array_filter($majors));
         });
+
   $table->addColumn('minors', __('Minors'))
     ->sortable(['minor1', 'minor2'])
         ->format(function ($unit) {
-          $minors = [$unit['minor1'],$unit['minor2']];
-          return implode(', ', array_filter($minors));
+          if ($unit['minor1'] != null or $unit['minor2'] != null ) {
+            $minors = [$unit['minor1'], $unit['minor2']];
+            return implode(', ', array_filter($minors));
+          }
+          else {
+            return "N/A";
+          }
+
       });
 
   echo $table->render([$values]);

@@ -131,6 +131,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
           $options[]=$option['minor1'];
           $options[]=$option['minor2'];
         }
+        $options = array_unique($options);
         $form->addRow()->addHeading(__m('Majors and Minors'));
         $row = $form->addRow();
             $row->addLabel('major1', __('Major 1'));

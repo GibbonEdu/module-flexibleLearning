@@ -47,8 +47,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
   $table=DataTable::create('FlexibleLearning');
   $table->setRenderer($gridRenderer);
   $table->setTitle(__('Units'));
-  $table->addMetaData('gridClass', 'rounded-sm border py-2');
-  $table->addMetaData('gridItemClass', 'w-1/2 sm:w-1/4 md:w-1/5 my-2 text-center');
+  $table->addMetaData('gridClass', 'rounded-sm border');
+  $table->addMetaData('gridItemClass', 'w-1/2 sm:w-1/4 md:w-1/5 text-center');
 
 
   $table->addColumn('unit')

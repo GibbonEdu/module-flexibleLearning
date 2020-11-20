@@ -47,3 +47,8 @@ UPDATE gibbonAction SET URLList='categories_manage.php,categories_manage_add.php
 $count++;
 $sql[$count][0] = "0.1.06";
 $sql[$count][1] = "";
+
+// v0.1.07
+$count++;
+$sql[$count][0] = "0.1.07";
+$sql[$count][1] = "";

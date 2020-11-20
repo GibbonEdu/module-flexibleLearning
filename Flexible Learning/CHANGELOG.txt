@@ -2,6 +2,11 @@ CHANGELOG
 =========
 v0.1.06
 -------
+Removed vertical spacing on unit grid
+Fixed duplicate listings in Majors/Minors autofill
+
+v0.1.06
+-------
 Added basic authorship functionality
 Minors column now shows "N/A" if no minors are specified
 

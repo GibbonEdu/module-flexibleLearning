@@ -40,7 +40,7 @@ class UnitGateway extends QueryableGateway
         $query = $this
             ->newQuery()
             ->from($this->getTableName())
-            ->cols(['flexibleLearningUnit.*', 'flexibleLearningCategory.color', 'flexibleLearningCategory.name AS category', 'gibbonPerson.preferredName', 'gibbonPerson.surname'])
+            ->cols(['flexibleLearningUnit.*', 'flexibleLearningCategory.color', 'flexibleLearningCategory.name AS category', 'gibbonPerson.preferredName', 'gibbonPerson.surname', 'gibbonPerson.status'])
             ->innerJoin('flexibleLearningCategory', 'flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID')
             ->innerJoin('gibbonPerson', 'gibbonPerson.gibbonPersonID=flexibleLearningUnit.gibbonPersonIDCreator');
 
@@ -57,7 +57,7 @@ class UnitGateway extends QueryableGateway
         $query = $this
             ->newSelect()
             ->from($this->getTableName())
-            ->cols(['flexibleLearningUnit.*', 'flexibleLearningCategory.color', 'flexibleLearningCategory.name AS category','gibbonPerson.preferredName', 'gibbonPerson.surname'])
+            ->cols(['flexibleLearningUnit.*', 'flexibleLearningCategory.color', 'flexibleLearningCategory.name AS category','gibbonPerson.preferredName', 'gibbonPerson.surname', 'gibbonPerson.status'])
             ->innerJoin('flexibleLearningCategory', 'flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID')
             ->innerJoin('gibbonPerson', 'gibbonPerson.gibbonPersonID=flexibleLearningUnit.gibbonPersonIDCreator')
             ->where('flexibleLearningUnitID=:flexibleLearningUnitID')

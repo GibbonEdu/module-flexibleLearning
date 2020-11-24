@@ -19,7 +19,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
   $unitGateway = $container->get(UnitGateway::class);
   $criteria = $unitGateway->newQueryCriteria(true)
       ->searchBy($unitGateway->getSearchableColumns(), $name)
-      ->sortBy('name')
+      ->sortBy('sequenceNumber','name')
       ->filterBy('showInactive', 'Y')
       ->fromPOST();
 
@@ -48,7 +48,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
   $table->setRenderer($gridRenderer);
   $table->setTitle(__('Units'));
   $table->addMetaData('gridClass', 'rounded-sm border');
-  $table->addMetaData('gridItemClass', 'w-1/2 sm:w-1/4 md:w-1/5 text-center');
+  $table->addMetaData('gridItemClass', 'w-1/3 sm:w-1/4 md:w-1/6 text-center');
 
 
   $table->addColumn('unit')

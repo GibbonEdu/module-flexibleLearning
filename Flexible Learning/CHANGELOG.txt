@@ -1,6 +1,12 @@
 CHANGELOG
 =========
-v0.1.06
+v0.1.08
+-------
+Added link to author profile in unit viewer
+Set default ordering in unit grid to go by sequence number of categories first
+Grid now displays six units per row
+
+v0.1.07
 -------
 Removed vertical spacing on unit grid
 Fixed duplicate listings in Majors/Minors autofill

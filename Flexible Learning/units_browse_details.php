@@ -82,10 +82,14 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
           }
       });
   $table->addColumn('category', __('Category'));
-  $table->addColumn('author', __('Author'))
-    ->format(function ($person) {
-      return Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true);
-    });
+    $table->addColumn('author', __('Author'))
+      ->format(function ($person) use ($guid, $connection2, $gibbon) {
+        if ($person['status'] == 'Full' && isActionAccessible($guid, $connection2, '/modules/Staff/staff_view_details.php')) {
+          return "<a href=".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Staff/staff_view_details.php&gibbonPersonID=".$person['gibbonPersonIDCreator'].">".Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true)."</a>";
+        } else {
+          return Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true);
+        }
+      });
   $table->addColumn('majors', __('Majors'))
     ->sortable(['major1', 'major2'])
       ->format(function ($unit) {

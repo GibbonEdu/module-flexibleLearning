@@ -40,59 +40,50 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
 
     $roleCategory = getRoleCategory($gibbon->session->get('gibbonRoleIDCurrent'), $connection2);
+    $unitGateway = $container->get(UnitGateway::class);
+    $unitBlockGateway = $container->get(UnitBlockGateway::class);
 
-    $values = $container->get(UnitGateway::class)->getUnitByID($flexibleLearningUnitID);
-
+    $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
     if (empty($values)) {
         $page->addError(__('The specified record cannot be found.'));
         return;
     }
 
-    // Breadcrumbs
+    if (isset($_GET['return'])) {
+        returnProcess($guid, $_GET['return'], null, null);
+    }
+
     $page->breadcrumbs
         ->add(__m('Browse Units'), 'units_browse.php')
         ->add(__m('Unit Details'));
 
-    // Edit links
-    if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php') == true) {
-        echo "<div class='linkTop'>";
-        echo "<a href='" . $gibbon->session->get('absoluteURL') . "/index.php?q=/modules/Flexible Learning/units_manage_edit.php&flexibleLearningUnitID=$flexibleLearningUnitID&name=$name'>" . __('Edit') . "<img style='margin: 0 0 -4px 3px' title='" . __('Edit') . "' src='./themes/" . $gibbon->session->get('gibbonThemeName') . "/img/config.png'/></a>";
-        echo '</div>';
-    }
-
     // DATA TABLE
     $table = DataTable::createDetails('unitDetails');
     $table->addMetaData('gridClass', 'grid-cols-1 md:grid-cols-3 mb-6');
+
+    if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
+        $table->addHeaderAction('edit', __('Edit'))
+            ->setURL('/modules/Flexible Learning/units_manage_edit.php')
+            ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
+            ->addParam('name', $name)
+            ->displayLabel();
+    }
+
     $table->addColumn('name', '')->addClass('text-lg font-bold');
     $table->addColumn('time', __m('Time'))
-        ->format(function ($values) use ($connection2, $flexibleLearningUnitID) {
-            $output = '';
-            $timing = null;
-            $blocks = getBlocksArray($connection2, $flexibleLearningUnitID);
-            if ($blocks != false) {
-                foreach ($blocks as $block) {
-                    if ($block[0] == $values['flexibleLearningUnitID']) {
-                        if (is_numeric($block[2])) {
-                            $timing += $block[2];
-                        }
-                    }
-                }
-            }
-            if (is_null($timing)) {
-                $output = __('N/A');
-            } else {
-                $minutes = intval($timing);
-                $relativeTime = __n('{count} min', '{count} mins', $minutes);
-                if ($minutes > 60) {
-                    $hours = round($minutes / 60, 1);
-                    $relativeTime = Format::tooltip(__n('{count} hr', '{count} ' . __m('hrs'), ceil($minutes / 60), ['count' => $hours]), $relativeTime);
-                }
-
-                $output = !empty($timing) ? $relativeTime : Format::small(__('N/A'));
+        ->format(function ($values) {
+            $minutes = intval($values['length']);
+            $relativeTime = __n('{count} min', '{count} mins', $minutes);
+            if ($minutes > 60) {
+                $hours = round($minutes / 60, 1);
+                $relativeTime = Format::tooltip(__n('{count} hr', '{count} '.__m('hrs'), ceil($minutes / 60), ['count' => $hours]), $relativeTime);
             }
 
-            return $output;
+            return !empty($values['length'])
+                ? $relativeTime
+                : Format::small(__('N/A'));
         });
+
     $table->addColumn('logo', '')
         ->addClass('row-span-3 text-right')
         ->format(function ($values) use ($gibbon) {
@@ -102,7 +93,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
                 return "<img style='margin: 5px; height: 125px; width: 125px' class='user' src='" . $values['logo'] . "'/><br/>";
             }
         });
+
     $table->addColumn('category', __('Category'));
+
     $table->addColumn('author', __('Author'))
         ->format(function ($person) use ($guid, $connection2, $gibbon) {
             if ($person['status'] == 'Full' && isActionAccessible($guid, $connection2, '/modules/Staff/staff_view_details.php')) {
@@ -111,6 +104,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
                 return Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true);
             }
         });
+
     $table->addColumn('majors', __('Majors'))
         ->sortable(['major1', 'major2'])
         ->format(function ($unit) {
@@ -132,7 +126,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     echo $table->render([$values]);
 
     // SMART BLOCKS
-    $unitBlockGateway = $container->get(UnitBlockGateway::class);
     $blocks = $unitBlockGateway->selectBlocksByUnit($flexibleLearningUnitID)->fetchAll();
 
     if (empty($blocks)) {
@@ -162,49 +155,46 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $feedbackOnMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOnMessage');
     $feedbackOffMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOffMessage');
 
-    if ($expectFeedback == 'Y') {
-        echo Format::alert(__m($feedbackOnMessage), 'message');
-    } else {
-        echo Format::alert(__m($feedbackOffMessage), 'warning');
-    }
-
+    echo Format::alert($expectFeedback == 'Y' ? __m($feedbackOnMessage) : __m($feedbackOffMessage), 'message');
+    
     if (!empty($submission)) {
-        // ALREADY SUBMITTED
         echo Format::alert(__m('Nice work! You have already submitted evidence for this unit.'), 'success');
-    } else {
-        // SUBMIT EVIDENCE
-        $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_submitProcess.php');
-
-        $form->addHiddenValue('address', $gibbon->session->get('address'));
-        $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
-
-        $form->addRow()->addHeading(__('Submit your Evidence'));
-
-        $row = $form->addRow();
-            $row->addLabel('comment', __('Comment'))->description(__m('Leave a brief reflective comment on this unit<br/>and what you learned.'));
-            $row->addTextArea('comment')->setRows(4)->required();
-
-        $types = ['Link' => __('Link'), 'File' => __('File')];
-        $row = $form->addRow();
-            $row->addLabel('evidenceType', __('Type'));
-            $row->addRadio('evidenceType')->fromArray($types)->inline()->required()->checked('Link');
-
-        // File
-        $form->toggleVisibilityByClass('evidenceFile')->onRadio('type')->when('File');
-        $row = $form->addRow()->addClass('evidenceFile');
-            $row->addLabel('file', __('Submit File'));
-            $row->addFileUpload('file')->accepts($container->get(FileUploader::class)->getFileExtensions())->required();
-
-        // Link
-        $form->toggleVisibilityByClass('evidenceLink')->onRadio('type')->when('Link');
-        $row = $form->addRow()->addClass('evidenceLink');
-            $row->addLabel('link', __('Submit Link'));
-            $row->addURL('link')->maxLength(255)->required();
-
-        $row = $form->addRow();
-            $row->addFooter();
-            $row->addSubmit();
-
-        echo $form->getOutput();    
+        return;
     }
+
+    // SUBMIT EVIDENCE
+    $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_submitProcess.php');
+
+    $form->addHiddenValue('address', $gibbon->session->get('address'));
+    $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
+
+    $form->addRow()->addHeading(__('Submit your Evidence'));
+
+    $row = $form->addRow();
+        $row->addLabel('comment', __('Comment'))->description(__m('Leave a brief reflective comment on this unit<br/>and what you learned.'));
+        $row->addTextArea('comment')->setRows(4)->required();
+
+    $types = ['Link' => __('Link'), 'File' => __('File')];
+    $row = $form->addRow();
+        $row->addLabel('evidenceType', __('Type'));
+        $row->addRadio('evidenceType')->fromArray($types)->inline()->required()->checked('Link');
+
+    // File
+    $form->toggleVisibilityByClass('evidenceFile')->onRadio('evidenceType')->when('File');
+    $row = $form->addRow()->addClass('evidenceFile');
+        $row->addLabel('file', __('Submit File'));
+        $row->addFileUpload('file')->accepts($container->get(FileUploader::class)->getFileExtensions())->required();
+
+    // Link
+    $form->toggleVisibilityByClass('evidenceLink')->onRadio('evidenceType')->when('Link');
+    $row = $form->addRow()->addClass('evidenceLink');
+        $row->addLabel('link', __('Submit Link'));
+        $row->addURL('link')->maxLength(255)->required();
+
+    $row = $form->addRow();
+        $row->addFooter();
+        $row->addSubmit();
+
+    echo $form->getOutput();    
+    
 }

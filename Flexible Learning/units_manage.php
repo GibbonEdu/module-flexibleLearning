@@ -34,112 +34,108 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     $highestAction = getHighestGroupedAction($guid, $_GET['q'], $connection2);
     if ($highestAction == false) {
         $page->addError(__('The highest grouped action cannot be determined.'));
-    } else {
-        $page->breadcrumbs->add(__m('Manage Units'));
+        return;
+    }
 
-        if (isset($_GET['return'])) {
-            returnProcess($guid, $_GET['return'], null, null);
-        }
+    $page->breadcrumbs->add(__m('Manage Units'));
 
-        $name = $_GET['name'] ?? '';
+    if (isset($_GET['return'])) {
+        returnProcess($guid, $_GET['return'], null, null);
+    }
 
-        // QUERY
-        $unitGateway = $container->get(UnitGateway::class);
-        $criteria = $unitGateway->newQueryCriteria(true)
-            ->searchBy($unitGateway->getSearchableColumns(), $name)
-            ->sortBy('name')
-            ->filterBy('showInactive', 'Y')
-            ->fromPOST();
+    $name = $_GET['name'] ?? '';
 
-        // FORM
-        $form = Form::create('filter', $gibbon->session->get('absoluteURL').'/index.php', 'get');
-        $form->setTitle(__('Filter'));
+    // QUERY
+    $unitGateway = $container->get(UnitGateway::class);
+    $criteria = $unitGateway->newQueryCriteria(true)
+        ->searchBy($unitGateway->getSearchableColumns(), $name)
+        ->sortBy('name')
+        ->fromPOST();
 
-        $form->setClass('noIntBorder fullWidth');
-        $form->addHiddenValue('q', '/modules/Flexible Learning/units_manage.php');
+    // FORM
+    $form = Form::create('filter', $gibbon->session->get('absoluteURL').'/index.php', 'get');
+    $form->setTitle(__('Filter'));
 
-        $row = $form->addRow();
-            $row->addLabel('name', __('Name'));
-            $row->addTextField('name')->setValue($criteria->getSearchText());
+    $form->setClass('noIntBorder fullWidth');
+    $form->addHiddenValue('q', '/modules/Flexible Learning/units_manage.php');
 
-        $row = $form->addRow();
-            $row->addSearchSubmit($gibbon->session, __('Clear Filters'));
+    $row = $form->addRow();
+        $row->addLabel('name', __('Name'));
+        $row->addTextField('name')->setValue($criteria->getSearchText());
 
-        echo $form->getOutput();
+    $row = $form->addRow();
+        $row->addSearchSubmit($gibbon->session, __('Clear Filters'));
 
+    echo $form->getOutput();
 
-          if ($highestAction == 'Manage Units_all') {
-            $units = $unitGateway->queryAllUnits($criteria);
-          }
-          else {
-            $units = $unitGateway->queryAllUnits($criteria, $gibbon->session->get('gibbonPersonID'));
-          }
+    $units = $highestAction == 'Manage Units_all'
+        ? $unitGateway->queryAllUnits($criteria)
+        : $unitGateway->queryAllUnits($criteria, $gibbon->session->get('gibbonPersonID'));
 
-        $form = BulkActionForm::create('bulkAction', $_SESSION[$guid]['absoluteURL'].'/modules/Flexible Learning/units_manageProcessBulk.php');
+    // BULK ACTION FORM
+    $form = BulkActionForm::create('bulkAction', $_SESSION[$guid]['absoluteURL'].'/modules/Flexible Learning/units_manageProcessBulk.php');
 
-        $bulkActions = ['Export' => __('Export')];
-        $col = $form->createBulkActionColumn($bulkActions);
-            $col->addSubmit(__('Go'));
+    $bulkActions = ['Export' => __('Export')];
+    $col = $form->createBulkActionColumn($bulkActions);
+        $col->addSubmit(__('Go'));
 
-        // DATA TABLE
-        $table = $form->addRow()->addDataTable('units', $criteria)->withData($units);
-        $table->setTitle(__('View'));
+    // DATA TABLE
+    $table = $form->addRow()->addDataTable('units', $criteria)->withData($units);
+    $table->setTitle(__('View'));
 
-        $table->addHeaderAction('add', __('Add'))
-            ->addParam('name', $name)
-            ->setURL('/modules/Flexible Learning/units_manage_add.php')
-            ->displayLabel();
+    $table->addHeaderAction('add', __('Add'))
+        ->addParam('name', $name)
+        ->setURL('/modules/Flexible Learning/units_manage_add.php')
+        ->displayLabel();
 
-        $table->modifyRows(function ($unit, $row) {
-            if ($unit['active'] != 'Y') $row->addClass('error');
-            return $row;
+    $table->modifyRows(function ($unit, $row) {
+        if ($unit['active'] != 'Y') $row->addClass('error');
+        return $row;
+    });
+
+    $table->addMetaData('bulkActions', $col);
+
+    $table->addMetaData('filterOptions', [
+        'active:Y'        => __('Active').': '.__('Yes'),
+        'active:N'        => __('Active').': '.__('No')
+    ]);
+
+    $table->addColumn('name', __('Name'));
+
+    $table->addColumn('majors', __('Major'))
+        ->sortable(['major1', 'major2'])
+        ->format(function ($unit) {
+            $majors = [$unit['major1'], $unit['major2']];
+            return implode(', ', array_filter($majors));
+            });
+    $table->addColumn('minors', __('Minor'))
+        ->sortable(['minor1', 'minor2'])
+            ->format(function ($unit) {
+            $minors = [$unit['minor1'],$unit['minor2']];
+            return implode(', ', array_filter($minors));
+        });
+    $table->addColumn('active', __('Active'))->format(Format::using('yesNo', 'active'));
+
+    // ACTIONS
+    $canBrowseUnits = isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse.php');
+    $table->addActionColumn()
+        ->addParam('name', $name)
+        ->addParam('flexibleLearningUnitID')
+        ->format(function ($unit, $actions) use ($canBrowseUnits) {
+            if ($canBrowseUnits) {
+                $actions->addAction('view', __('View'))
+                    ->addParam('sidebar', 'true')
+                    ->addParam('showInactive', 'Y')
+                    ->setURL('/modules/Flexible Learning/units_browse_details.php');
+            }
+
+            $actions->addAction('edit', __('Edit'))
+                    ->setURL('/modules/Flexible Learning/units_manage_edit.php');
+
+            $actions->addAction('delete', __('Delete'))
+                    ->setURL('/modules/Flexible Learning/units_manage_delete.php');
         });
 
-        $table->addMetaData('bulkActions', $col);
-
-        $table->addMetaData('filterOptions', [
-            'showInactive:Y'  => __('Show Inactive'),
-            'active:Y'        => __('Active').': '.__('Yes'),
-            'active:N'        => __('Active').': '.__('No')
-        ]);
-
-        $table->addColumn('name', __('Name'));
-
-
-        $table->addColumn('majors', __('Major'))
-          ->sortable(['major1', 'major2'])
-            ->format(function ($unit) {
-                $majors = [$unit['major1'], $unit['major2']];
-                return implode(', ', array_filter($majors));
-              });
-        $table->addColumn('minors', __('Minor'))
-          ->sortable(['minor1', 'minor2'])
-              ->format(function ($unit) {
-                $minors = [$unit['minor1'],$unit['minor2']];
-                return implode(', ', array_filter($minors));
-            });
-        $table->addColumn('active', __('Active'))->format(Format::using('yesNo', 'active'));
-
-        // ACTIONS
-        $canBrowseUnits = isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse.php');
-        $table->addActionColumn()
-            ->addParam('name', $name)
-            ->addParam('flexibleLearningUnitID')
-            ->format(function ($unit, $actions) use ($canBrowseUnits) {
-                if ($canBrowseUnits) {
-                    $actions->addAction('view', __('View'))
-                        ->addParam('sidebar', 'true')
-                        ->addParam('showInactive', 'Y')
-                        ->setURL('/modules/Flexible Learning/units_browse_details.php');
-                }
-
-                $actions->addAction('edit', __('Edit'))
-                        ->setURL('/modules/Flexible Learning/units_manage_edit.php');
-
-                $actions->addAction('delete', __('Delete'))
-                        ->setURL('/modules/Flexible Learning/units_manage_delete.php');
-            });
-
-        echo $form->getOutput();
-    }
+    echo $form->getOutput();
+    
 }

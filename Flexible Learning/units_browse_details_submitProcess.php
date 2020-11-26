@@ -19,13 +19,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 require_once '../../gibbon.php';
 
+use Gibbon\FileUploader;
 use Gibbon\Services\Format;
+use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 
 $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&flexibleLearningUnitID='.$flexibleLearningUnitID;
+$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID;
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php') == false) {
     $URL .= '&return=error0';
@@ -36,12 +38,14 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $unitGateway = $container->get(UnitGateway::class);
     $unitSubmissionGateway = $container->get(UnitSubmissionGateway::class);
 
+    $expectFeedback =  $container->get(SettingGateway::class)->getSettingByScope('Flexible Learning', 'expectFeedback');
+
     $data = [
         'flexibleLearningUnitID' => $flexibleLearningUnitID,
         'gibbonPersonID'         => $gibbon->session->get('gibbonPersonID'),
         'gibbonSchoolYearID'     => $gibbon->session->get('gibbonSchoolYearID'),
         'evidenceType'           => $_POST['evidenceType'] ?? '',
-        'status'                 => 'Complete',
+        'status'                 => $expectFeedback == 'Y' ? 'Pending' : 'Complete',
     ];
 
     // Validate the required values are present
@@ -62,6 +66,31 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     // Validate the values are unique
     if (!$unitSubmissionGateway->unique($data, ['gibbonPersonID', 'flexibleLearningUnitID'])) {
         $URL .= '&return=error7';
+        header("Location: {$URL}");
+        exit;
+    }
+
+    // Check we have a file to upload
+    if ($data['evidenceType'] == 'File' && empty($_FILES['file']['tmp_name'])) {
+        $URL .= '&return=error1';
+        header("Location: {$URL}");
+        exit;
+    }
+
+    //Move attached file, if there is one
+    if ($data['evidenceType'] == 'File') {
+        $fileUploader = new FileUploader($pdo, $gibbon->session);
+        $file = $_FILES['file'] ?? null;
+
+        // Upload the file, return the /uploads relative path
+        $data['evidenceLocation'] = $fileUploader->uploadFromPost($file, $name);
+    } elseif ($data['evidenceType'] == 'Link') {
+        $data['evidenceLocation'] = $_POST['link'] ?? '';
+    }
+
+    // Check that the file upload/link is present
+    if (empty($data['evidenceLocation'])) {
+        $URL .= '&return=error2';
         header("Location: {$URL}");
         exit;
     }

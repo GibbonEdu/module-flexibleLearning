@@ -44,12 +44,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
       $unitGateway = $container->get(UnitGateway::class);
 
       // Validate the database relationships exist
-      if ($highestAction == 'Manage Units_all') {
-        $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
-      }
-      else {
-        $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
-      }
+      $values = $highestAction == 'Manage Units_all'
+        ? $unitGateway->getUnitByID($flexibleLearningUnitID)
+        : $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
 
       if (empty($values)) {
           $URL .= '&return=error2';

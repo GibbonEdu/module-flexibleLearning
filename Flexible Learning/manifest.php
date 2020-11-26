@@ -79,6 +79,20 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningMajor` (
   PRIMARY KEY (`flexibleLearningMajorID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
+$moduleTables[] = "CREATE TABLE `flexibleLearningUnitSubmission` ( 
+    `flexibleLearningUnitSubmissionID` INT(12) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
+    `flexibleLearningUnitID` INT(10) UNSIGNED ZEROFILL NOT NULL, 
+    `gibbonPersonID` INT(10) UNSIGNED ZEROFILL NOT NULL, 
+    `gibbonSchoolYearID` INT(3) UNSIGNED ZEROFILL NOT NULL, 
+    `status` ENUM('Pending','Complete') NOT NULL DEFAULT 'Complete', 
+    `evidenceType` ENUM('File','Link') NULL DEFAULT 'Link', 
+    `evidenceLocation` TEXT NULL, 
+    `timestampSubmitted` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+    `timestampFeedback` TIMESTAMP NULL, 
+    `gibbonPersonIDFeedback` INT(10) NULL, 
+    PRIMARY KEY (`flexibleLearningUnitSubmissionID`)
+) ENGINE = InnoDB DEFAULT CHARSET=utf8;";
+
 // Add gibbonSettings entries
 $gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'expectFeedback', 'Expect Feedback', 'When enabled, students can expect to receive feedback on their submissions.', 'N');";
 $gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'feedbackOnMessage', 'Feedback Message', 'A message to display to participants when they can expect to receive feedback.', '');";

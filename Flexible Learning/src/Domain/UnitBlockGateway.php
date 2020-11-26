@@ -34,7 +34,7 @@ class UnitBlockGateway extends QueryableGateway
     public function selectBlocksByUnit($flexibleLearningUnitID)
     {
         $data = ['flexibleLearningUnitID' => $flexibleLearningUnitID];
-        $sql = 'SELECT * FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=:flexibleLearningUnitID ORDER BY sequenceNumber';
+        $sql = "SELECT * FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=:flexibleLearningUnitID ORDER BY sequenceNumber";
 
         return $this->db()->select($sql, $data);
     }

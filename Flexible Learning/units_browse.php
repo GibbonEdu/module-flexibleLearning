@@ -17,7 +17,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
   $name = $_GET['name'] ?? '';
 
   $unitGateway = $container->get(UnitGateway::class);
-  $criteria = $unitGateway->newQueryCriteria(true)
+  $criteria = $unitGateway->newQueryCriteria()
       ->searchBy($unitGateway->getSearchableColumns(), $name)
       ->sortBy('sequenceNumber','name')
       ->filterBy('showInactive', 'Y')

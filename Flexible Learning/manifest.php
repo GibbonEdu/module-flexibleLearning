@@ -25,7 +25,7 @@ $description = 'View, create and manage Flexible Learning units.';
 $entryURL    = "units_browse.php";
 $type        = "Additional";
 $category    = 'Learn';
-$version     = '0.1.07';
+$version     = '0.2.00';
 $author      = 'Harry Merrett';
 $url         = '';
 
@@ -42,8 +42,8 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningUnit` (
   `outline` text NOT NULL,
   `flexibleLearningCategoryID` int(11) unsigned zerofill DEFAULT NULL,
   `license` varchar(50) DEFAULT NULL,
-  `major1` varchar(30) DEFAULT NULL,
-  `major2` varchar(30) DEFAULT NULL,
+  `flexibleLearningMajorID1` int(8) unsigned zerofill DEFAULT NULL,
+  `flexibleLearningMajorID2` int(8) unsigned zerofill DEFAULT NULL,
   `minor1` varchar(30) DEFAULT NULL,
   `minor2` varchar(30) DEFAULT NULL,
   `gibbonPersonIDCreator` int(10) unsigned zerofill NOT NULL,
@@ -73,6 +73,12 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningCategory` (
   PRIMARY KEY (`flexibleLearningCategoryID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
+$moduleTables[] = "CREATE TABLE `flexibleLearningMajor` (
+  `flexibleLearningMajorID` int(11) unsigned zerofill NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`flexibleLearningMajorID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
 // Add gibbonSettings entries
 // /$gibbonSetting[] = "";
 
@@ -80,7 +86,7 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningCategory` (
 $actionRows[] = [
     'name'                      => 'Manage Units_all', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '1',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => 'Units', // Optional: subgroups for the right hand side module menu
+    'category'                  => 'Manage', // Optional: subgroups for the right hand side module menu
     'description'               => 'Allows a user to manage all units within the system.', // Text description
     'URLList'                   => 'units_manage.php,units_manage_add.php,units_manage_edit.php,units_manage_delete.php', // List of pages included in this action
     'entryURL'                  => 'units_manage.php', // The landing action for the page.
@@ -100,7 +106,7 @@ $actionRows[] = [
 $actionRows[] = [
     'name'                      => 'Manage Units_my', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => 'Units', // Optional: subgroups for the right hand side module menu
+    'category'                  => 'Manage', // Optional: subgroups for the right hand side module menu
     'description'               => 'Allows a user to manage their own units.', // Text description
     'URLList'                   => 'units_manage.php,units_manage_add.php,units_manage_edit.php,units_manage_delete.php', // List of pages included in this action
     'entryURL'                  => 'units_manage.php', // The landing action for the page.
@@ -120,8 +126,8 @@ $actionRows[] = [
 $actionRows[] = [
     'name'                      => 'Manage Categories', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => 'Units', // Optional: subgroups for the right hand side module menu
-    'description'               => 'test', // Text description
+    'category'                  => 'Manage', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows a user to manage unit categories.', // Text description
     'URLList'                   => 'categories_manage.php,categories_manage_add.php,categories_manage_edit.php,categories_manage_editOrderAjax.php,categories_manage_delete.php', // List of pages included in this action
     'entryURL'                  => 'categories_manage.php', // The landing action for the page.
     'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
@@ -141,7 +147,7 @@ $actionRows[] = [
     'name'                      => 'Browse Units', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
     'category'                  => 'Units', // Optional: subgroups for the right hand side module menu
-    'description'               => 'test', // Text description
+    'description'               => 'Browse the selection of Flexible Learning units in a grid.', // Text description
     'URLList'                   => 'units_browse.php,units_browse_details.php', // List of pages included in this action
     'entryURL'                  => 'units_browse.php', // The landing action for the page.
     'entrySidebar'              => 'N', // Whether or not there's a sidebar on entry to the action
@@ -151,6 +157,26 @@ $actionRows[] = [
     'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
     'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
     'defaultPermissionSupport'  => 'Y', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'Y', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'Y', // Should this action be available to user roles in the Other category?
+];
+
+$actionRows[] = [
+    'name'                      => 'Manage Majors', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Manage', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows the user to manage unit majors.', // Text description
+    'URLList'                   => 'majors_manage.php,majors_manage_add.php,majors_manage_edit.php,majors_manage_delete.php', // List of pages included in this action
+    'entryURL'                  => 'majors_manage.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'N', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
     'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
     'categoryPermissionStudent' => 'Y', // Should this action be available to user roles in the Student category?
     'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?

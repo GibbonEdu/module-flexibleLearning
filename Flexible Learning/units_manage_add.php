@@ -95,7 +95,7 @@ require_once __DIR__ . '/moduleFunctions.php';
         $row->addYesNo('active')->required();
 
     //MAJORS AND MINORS
-    $sql = "SELECT major1, major2, minor1, minor2 FROM flexibleLearningUnit WHERE active='Y'";
+    $sql = "(SELECT minor1, minor2, NULL AS major1, NULL AS major2 FROM flexibleLearningUnit WHERE active='Y') UNION (SELECT name AS major1, name AS major2, NULL as minor1, NULL as minor2 FROM flexibleLearningMajor)";
     $result = $pdo->executeQuery(array(), $sql);
     $options = array();
     while ($option=$result->fetch()){
@@ -105,13 +105,14 @@ require_once __DIR__ . '/moduleFunctions.php';
       $options[]=$option['minor2'];
     }
     $options = array_unique($options);
-    $form->addRow()->addHeading(__m('Majors and Minors'));
+
+    $sql = "SELECT flexibleLearningMajorID AS value, name FROM flexibleLearningMajor ORDER BY name";
     $row = $form->addRow();
-        $row->addLabel('major1', __('Major 1'));
-        $row->addTextField('major1')->autocomplete($options)->required();
+        $row->addLabel('flexibleLearningMajorID1', __('Major 1'));
+        $row->addSelect('flexibleLearningMajorID1')->fromQuery($pdo, $sql, [])->required()->placeholder();
     $row = $form->addRow();
-        $row->addLabel('major2', __('Major 2'));
-        $row->addTextField('major2')->autocomplete($options);
+        $row->addLabel('flexibleLearningMajorID2',__('Major 2'));
+        $row->addSelect('flexibleLearningMajorID2')->fromQuery($pdo, $sql, [])->placeholder();
     $row = $form->addRow();
         $row->addLabel('minor1', __('Minor 1'));
         $row->addTextField('minor1')->autocomplete($options);

@@ -38,8 +38,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $blurb = $_POST['blurb'] ?? '' ;
         $license = $_POST['license'] ?? '';
         $active = $_POST['active'] ?? '' ;
-        $major1 = $_POST['major1'] ?? '' ;
-        $major2 = $_POST['major2'] ?? '' ;
+        $flexibleLearningMajorID1 = (!empty($_POST['flexibleLearningMajorID1'])) ? $_POST['flexibleLearningMajorID1'] : null ;
+        $flexibleLearningMajorID2 = (!empty($_POST['flexibleLearningMajorID2'])) ? $_POST['flexibleLearningMajorID2'] : null ;
         $minor1 = $_POST['minor1'] ?? '' ;
         $minor2 = $_POST['minor2'] ?? '' ;
         $outline = $_POST['outline'] ?? '' ;
@@ -69,8 +69,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
             }
 
             // Write to database
-            $data = array('name' => $name, 'flexibleLearningCategoryID' => $flexibleLearningCategoryID, 'logo' => $attachment, 'blurb' => $blurb, 'license' => $license, 'active' => $active, 'outline' => $outline, 'major1' => $major1, 'major2' => $major2, 'minor1' => $minor1, 'minor2' => $minor2, 'gibbonPersonIDCreator' => $gibbon->session->get('gibbonPersonID'), 'timestamp' => date('Y-m-d H:i:s'));
-            $sql = 'INSERT INTO flexibleLearningUnit SET name=:name, flexibleLearningCategoryID=:flexibleLearningCategoryID, logo=:logo, blurb=:blurb, license=:license, active=:active, outline=:outline, major1=:major1, major2=:major2, minor1=:minor1, minor2=:minor2, gibbonPersonIDCreator=:gibbonPersonIDCreator, timestamp=:timestamp';
+            $data = array('name' => $name, 'flexibleLearningCategoryID' => $flexibleLearningCategoryID, 'logo' => $attachment, 'blurb' => $blurb, 'license' => $license, 'active' => $active, 'outline' => $outline, 'flexibleLearningMajorID1' => $flexibleLearningMajorID1, 'flexibleLearningMajorID2' => $flexibleLearningMajorID2, 'minor1' => $minor1, 'minor2' => $minor2, 'gibbonPersonIDCreator' => $gibbon->session->get('gibbonPersonID'), 'timestamp' => date('Y-m-d H:i:s'));
+            $sql = 'INSERT INTO flexibleLearningUnit SET name=:name, flexibleLearningCategoryID=:flexibleLearningCategoryID, logo=:logo, blurb=:blurb, license=:license, active=:active, outline=:outline, flexibleLearningMajorID1=:flexibleLearningMajorID1, flexibleLearningMajorID2=:flexibleLearningMajorID2, minor1=:minor1, minor2=:minor2, gibbonPersonIDCreator=:gibbonPersonIDCreator, timestamp=:timestamp';
             $inserted = $pdo->insert($sql, $data);
 
             if (empty($inserted)) {

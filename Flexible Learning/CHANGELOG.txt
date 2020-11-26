@@ -1,5 +1,13 @@
 CHANGELOG
 =========
+v0.2.00
+-------
+Removed pagination from unit viewer
+Updated action descriptions to replace placeholder text
+Added Manage Majors action
+Moved Manage Categories and Manage Majors into their own subsection, Additional
+Major selection is now a drop-down menu of preset majors
+
 v0.1.08
 -------
 Added link to author profile in unit viewer

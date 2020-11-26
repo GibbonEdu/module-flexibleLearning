@@ -46,8 +46,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         'flexibleLearningCategoryID'         => $_POST['flexibleLearningCategoryID'] ?? '',
         'blurb'         => $_POST['blurb'] ?? '',
         'license'         => $_POST['license'] ?? '',
-        'major1'         => $_POST['major1'] ?? '',
-        'major2'         => $_POST['major2'] ?? '',
+        'flexibleLearningMajorID1' => (!empty($_POST['flexibleLearningMajorID1'])) ? $_POST['flexibleLearningMajorID1'] : null ,
+        'flexibleLearningMajorID2' => (!empty($_POST['flexibleLearningMajorID2'])) ? $_POST['flexibleLearningMajorID2'] : null ,
         'minor1'         => $_POST['minor1'] ?? '',
         'minor2'         => $_POST['minor2'] ?? '',
         'active'        => $_POST['active'] ?? '',
@@ -55,7 +55,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     ];
 
     // Validate the required values are present
-    if (empty($data['name']) || empty($data['flexibleLearningCategoryID']) || empty($data['blurb']) || empty($data['active']) || empty($data['major1'])) {
+    if (empty($data['name']) || empty($data['flexibleLearningCategoryID']) || empty($data['blurb']) || empty($data['active']) || empty($data['flexibleLearningMajorID1'])) {
         $URL .= '&return=error1';
         header("Location: {$URL}");
         exit;

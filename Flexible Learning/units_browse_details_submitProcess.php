@@ -22,6 +22,7 @@ require_once '../../gibbon.php';
 use Gibbon\FileUploader;
 use Gibbon\Services\Format;
 use Gibbon\Domain\System\SettingGateway;
+use Gibbon\Domain\System\DiscussionGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 
@@ -40,6 +41,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     $expectFeedback =  $container->get(SettingGateway::class)->getSettingByScope('Flexible Learning', 'expectFeedback');
 
+    $comment = $_POST['comment'] ?? '';
     $data = [
         'flexibleLearningUnitID' => $flexibleLearningUnitID,
         'gibbonPersonID'         => $gibbon->session->get('gibbonPersonID'),
@@ -49,7 +51,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     ];
 
     // Validate the required values are present
-    if (empty($data['flexibleLearningUnitID']) || empty($data['gibbonPersonID']) || empty($data['gibbonSchoolYearID']) || empty($data['evidenceType'])) {
+    if (empty($data['flexibleLearningUnitID']) || empty($data['gibbonPersonID']) || empty($data['gibbonSchoolYearID']) || empty($data['evidenceType']) || empty($comment)) {
         $URL .= '&return=error1';
         header("Location: {$URL}");
         exit;
@@ -96,9 +98,23 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     }
 
     // Create the record
-    $inserted = $unitSubmissionGateway->insert($data);
+    $flexibleLearningUnitSubmissionID = $unitSubmissionGateway->insert($data);
 
-    $URL .= !$inserted
+    // Insert discussion records
+    $discussionGateway = $container->get(DiscussionGateway::class);          
+    $discussionGateway->insert([
+        'foreignTable'       => 'flexibleLearningUnitSubmission',
+        'foreignTableID'     => $flexibleLearningUnitSubmissionID,
+        'gibbonModuleID'     => getModuleIDFromName($connection2, 'Flexible Learning'),
+        'gibbonPersonID'     => $data['gibbonPersonID'],
+        'comment'            => $comment,
+        'type'               => 'Submitted',
+        'tag'                => 'pending',
+        'attachmentType'     => $data['evidenceType'],
+        'attachmentLocation' => $data['evidenceLocation'],
+    ]);
+
+    $URL .= !$flexibleLearningUnitSubmissionID
         ? "&return=error2"
         : "&return=success0";
 

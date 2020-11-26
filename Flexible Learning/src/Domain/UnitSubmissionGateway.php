@@ -31,4 +31,19 @@ class UnitSubmissionGateway extends QueryableGateway
     private static $primaryKey = 'flexibleLearningUnitSubmissionID';
     private static $searchableColumns = [''];
 
+    public function selectUnitSubmissionDiscussion($flexibleLearningUnitSubmissionID)
+    {
+        $query = $this
+            ->newSelect()
+            ->cols(['gibbonDiscussion.comment', 'gibbonDiscussion.type', 'gibbonDiscussion.tag', 'gibbonDiscussion.attachmentType', 'gibbonDiscussion.attachmentLocation', 'gibbonPerson.gibbonPersonID', 'gibbonPerson.title', 'gibbonPerson.surname', 'gibbonPerson.preferredName', 'gibbonPerson.image_240', 'gibbonPerson.username', 'gibbonPerson.email', 'gibbonRole.category', 'gibbonDiscussion.timestamp'])
+            ->from('gibbonDiscussion')
+            ->innerJoin('gibbonPerson', 'gibbonDiscussion.gibbonPersonID=gibbonPerson.gibbonPersonID')
+            ->innerJoin('gibbonRole', 'gibbonRole.gibbonRoleID=gibbonPerson.gibbonRoleIDPrimary')
+            ->where('gibbonDiscussion.foreignTable = :foreignTable')
+            ->bindValue('foreignTable', 'flexibleLearningUnitSubmission')
+            ->where('gibbonDiscussion.foreignTableID = :foreignTableID')
+            ->bindValue('foreignTableID', $flexibleLearningUnitSubmissionID);
+
+        return $this->runSelect($query);
+    }
 }

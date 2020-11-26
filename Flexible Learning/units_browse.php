@@ -1,5 +1,6 @@
 <?php
 
+use Gibbon\View\View;
 use Gibbon\Forms\Form;
 use Gibbon\Services\Format;
 use Gibbon\Tables\DataTable;
@@ -39,6 +40,28 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $row->addSearchSubmit($gibbon->session, __('Clear Filters'));
 
     echo $form->getOutput();
+
+    $templateView = new View($container->get('twig'));
+    $gridRenderer = new GridView($container->get('twig'));
+    $defaultImage = $gibbon->session->get('absoluteURL').'/themes/'.$gibbon->session->get('gibbonThemeName').'/img/anonymous_125.jpg';
+    $viewUnitURL = "./index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true";
+
+    $table = $container->get(DataTable::class)->setRenderer($gridRenderer);
+    $table->setTitle(__('Units'));
+
+    $table->addMetaData('gridClass', 'flex items-stretch -mx-1');
+    $table->addMetaData('gridItemClass', 'foo');
+
+    $table->addColumn('logo')
+        ->setClass('h-full pb-2')
+        ->format(function ($unit) use (&$templateView, &$defaultImage, &$viewUnitURL) {
+            return $templateView->fetchFromTemplate(
+                'unitCard.twig.html',
+                $unit + ['defaultImage' => $defaultImage, 'viewUnitURL' => $viewUnitURL, 'viewingAsUser' => 'Student']
+            );
+        });
+
+    echo $table->render($units);
 
     // TABLE
     $gridRenderer = $container->get(GridView::class);

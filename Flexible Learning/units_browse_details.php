@@ -24,6 +24,7 @@ use Gibbon\Services\Format;
 use Gibbon\Tables\DataTable;
 use Gibbon\Tables\View\GridView;
 use Gibbon\Domain\System\SettingGateway;
+use Gibbon\Domain\System\DiscussionGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
@@ -35,6 +36,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     // Access denied
     $page->addError(__('You do not have access to this action.'));
 } else {
+    $page->breadcrumbs
+        ->add(__m('Browse Units'), 'units_browse.php')
+        ->add(__m('Unit Details'));
 
     $name = $_GET['name'] ?? '';
     $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
@@ -42,6 +46,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $roleCategory = getRoleCategory($gibbon->session->get('gibbonRoleIDCurrent'), $connection2);
     $unitGateway = $container->get(UnitGateway::class);
     $unitBlockGateway = $container->get(UnitBlockGateway::class);
+    $submissionGateway = $container->get(UnitSubmissionGateway::class);
+    $settingGateway = $container->get(SettingGateway::class);
 
     $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
     if (empty($values)) {
@@ -53,13 +59,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         returnProcess($guid, $_GET['return'], null, null);
     }
 
-    $page->breadcrumbs
-        ->add(__m('Browse Units'), 'units_browse.php')
-        ->add(__m('Unit Details'));
-
-    // DATA TABLE
+    // DETAILS TABLE
     $table = DataTable::createDetails('unitDetails');
-    $table->addMetaData('gridClass', 'grid-cols-1 md:grid-cols-3 mb-6');
+    $table->addMetaData('gridClass', 'grid-cols-1 md:grid-cols-3 mb-4');
 
     if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
         $table->addHeaderAction('edit', __('Edit'))
@@ -125,6 +127,20 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     echo $table->render([$values]);
 
+    // DISCUSSION
+    $submission = $submissionGateway->selectBy(['gibbonPersonID' => $gibbon->session->get('gibbonPersonID'), 'flexibleLearningUnitID' => $flexibleLearningUnitID])->fetch();
+
+    if (!empty($submission)) {
+        echo Format::alert(__m('Nice work! You have submitted evidence for this unit.'), 'success');
+
+        $logs = $submissionGateway->selectUnitSubmissionDiscussion($submission['flexibleLearningUnitSubmissionID'])->fetchAll();
+        
+        echo $page->fetchFromTemplate('ui/discussion.twig.html', [
+            'title' => __('Comments'),
+            'discussion' => $logs
+        ]);
+    }
+
     // SMART BLOCKS
     $blocks = $unitBlockGateway->selectBlocksByUnit($flexibleLearningUnitID)->fetchAll();
 
@@ -146,21 +162,15 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         }
     }
 
-    $submissionGateway = $container->get(UnitSubmissionGateway::class);
-    $settingGateway = $container->get(SettingGateway::class);
-
-    $submission = $submissionGateway->selectBy(['gibbonPersonID' => $gibbon->session->get('gibbonPersonID'), 'flexibleLearningUnitID' => $flexibleLearningUnitID])->fetch();
+    if (!empty($submission)) {
+        return;
+    }
 
     $expectFeedback = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback');
     $feedbackOnMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOnMessage');
     $feedbackOffMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOffMessage');
 
     echo Format::alert($expectFeedback == 'Y' ? __m($feedbackOnMessage) : __m($feedbackOffMessage), 'message');
-    
-    if (!empty($submission)) {
-        echo Format::alert(__m('Nice work! You have already submitted evidence for this unit.'), 'success');
-        return;
-    }
 
     // SUBMIT EVIDENCE
     $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_submitProcess.php');

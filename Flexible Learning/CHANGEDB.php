@@ -63,7 +63,7 @@ $count++;
 $sql[$count][0] = "0.2.00";
 $sql[$count][1] = "
 CREATE TABLE `flexibleLearningMajor` (`flexibleLearningMajorID` int(11) unsigned zerofill NOT NULL AUTO_INCREMENT, `name` varchar(30) DEFAULT NULL, PRIMARY KEY (`flexibleLearningMajorID`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;end
-UPDATE gibbonAction SET category='Manage' WHERE gibbonModuleID=(SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning') AND (name='Manage Categories' OR name='Manage Units');end
+UPDATE gibbonAction SET category='Manage' WHERE gibbonModuleID=(SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning') AND (name='Manage Categories' OR name LIKE 'Manage Units%');end
 ALTER TABLE flexibleLearningUnit CHANGE major1 flexibleLearningMajorID1 int(8) unsigned zerofill DEFAULT NULL;end
 ALTER TABLE flexibleLearningUnit CHANGE major2 flexibleLearningMajorID2 int(8) unsigned zerofill DEFAULT NULL;end
 INSERT INTO gibbonAction SET gibbonModuleID=(SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning'), name='Manage Majors', precedence=0, category='Manage', description='Allows the user to manage unit majors', URLList='majors_manage.php,majors_manage_add.php,majors_manage_edit.php,majors_manage_delete.php', entryURL='majors_manage.php', entrySidebar='Y', menuShow='Y', defaultPermissionAdmin='Y', defaultPermissionTeacher='N', defaultPermissionStudent='N', defaultPermissionParent='N', defaultPermissionSupport='N', categoryPermissionStaff='Y', categoryPermissionStudent='Y', categoryPermissionParent='Y', categoryPermissionOther='Y';end

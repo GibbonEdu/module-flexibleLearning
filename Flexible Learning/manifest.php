@@ -25,7 +25,7 @@ $description = 'View, create and manage Flexible Learning units.';
 $entryURL    = "units_browse.php";
 $type        = "Additional";
 $category    = 'Learn';
-$version     = '0.2.00';
+$version     = '0.3.00';
 $author      = 'Harry Merrett';
 $url         = '';
 
@@ -80,7 +80,9 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningMajor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
 // Add gibbonSettings entries
-// /$gibbonSetting[] = "";
+$gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'expectFeedback', 'Expect Feedback', 'When enabled, students can expect to receive feedback on their submissions.', 'N');";
+$gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'feedbackOnMessage', 'Feedback Message', 'A message to display to participants when they can expect to receive feedback.', '');";
+$gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'feedbackOffMessage', 'No Feedback Message', 'A message to display to participants when they should not expect to receive feedback.', '');";
 
 // Action rows
 $actionRows[] = [
@@ -181,6 +183,26 @@ $actionRows[] = [
     'categoryPermissionStudent' => 'Y', // Should this action be available to user roles in the Student category?
     'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?
     'categoryPermissionOther'   => 'Y', // Should this action be available to user roles in the Other category?
+];
+
+$actionRows[] = [
+    'name'                      => 'Manage Settings', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Admin', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows a privileged user to manage Flexible Learning settings.', // Text description
+    'URLList'                   => 'settings_manage.php', // List of pages included in this action
+    'entryURL'                  => 'settings_manage.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'N', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
 ];
 
 // Hooks

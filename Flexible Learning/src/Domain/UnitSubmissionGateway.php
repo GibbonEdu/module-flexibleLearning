@@ -44,7 +44,6 @@ class UnitSubmissionGateway extends QueryableGateway
             ->innerJoin('flexibleLearningUnitSubmission', 'flexibleLearningUnitSubmission.flexibleLearningUnitID=flexibleLearningUnit.flexibleLearningUnitID')
             ->innerJoin('gibbonPerson', 'flexibleLearningUnitSubmission.gibbonPersonID=gibbonPerson.gibbonPersonID')
             ->innerJoin('gibbonRole', 'gibbonPerson.gibbonRoleIDPrimary=gibbonRole.gibbonRoleID')
-            ->where("flexibleLearningUnitSubmission.status='Pending'")
             ->where('flexibleLearningUnitSubmission.gibbonSchoolYearID=:gibbonSchoolYearID')
             ->bindValue('gibbonSchoolYearID', $gibbonSchoolYearID);
 
@@ -70,6 +69,11 @@ class UnitSubmissionGateway extends QueryableGateway
                 return $query
                     ->where('flexibleLearningUnitSubmission.gibbonPersonID=:gibbonPersonID ')
                     ->bindValue('gibbonPersonID', $gibbonPersonID);
+            },
+            'status' => function ($query, $status) {
+                return $query
+                    ->where('flexibleLearningUnitSubmission.status=:status')
+                    ->bindValue('status', ucfirst($status));
             },
         ]);
 

@@ -68,11 +68,12 @@ else {
     $unitGateway = $container->get(UnitGateway::class);
     $unitSubmissionGateway = $container->get(UnitSubmissionGateway::class);
 
-    $criteria = $unitSubmissionGateway->newQueryCriteria()
+    $criteria = $unitSubmissionGateway->newQueryCriteria(true)
         ->sortBy('timestampSubmitted')
         ->filterBy('flexibleLearningUnitID', $flexibleLearningUnitID)
         ->filterBy('gibbonPersonID', $gibbonPersonID)
         ->filterBy('myUnits', $myUnits == 'Y' ? $gibbon->session->get('gibbonPersonID') : '')
+        ->filterBy('status', $_POST['status'] ?? 'pending' )
         ->fromPOST();
 
     $submissions = $unitSubmissionGateway->queryPendingFeedback($criteria, $gibbon->session->get('gibbonSchoolYearID'));
@@ -82,9 +83,14 @@ else {
     $table->setTitle(__('View'));
 
     $table->modifyRows(function ($values, $row) {
-        $row->addClass('pending');
+        if ($values['status'] == 'Pending') $row->addClass('pending');
         return $row;
     });
+
+    $table->addMetaData('filterOptions', [
+        'status:complete' => __('Status').': '.__('Complete'),
+        'status:pending'  => __('Status').': '.__('Pending'),
+    ]);
 
     $table->addColumn('unit', __m('Unit'))
         ->format(function($values) {

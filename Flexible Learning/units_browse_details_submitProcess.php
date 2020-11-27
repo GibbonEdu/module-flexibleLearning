@@ -39,7 +39,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $unitGateway = $container->get(UnitGateway::class);
     $unitSubmissionGateway = $container->get(UnitSubmissionGateway::class);
 
-    $expectFeedback =  $container->get(SettingGateway::class)->getSettingByScope('Flexible Learning', 'expectFeedback');
+    $expectFeedback =  $container->get(SettingGateway::class)->getSettingByScope('Flexible Learning', 'expectFeedback') == 'Y';
 
     $comment = $_POST['comment'] ?? '';
     $data = [
@@ -47,7 +47,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         'gibbonPersonID'         => $gibbon->session->get('gibbonPersonID'),
         'gibbonSchoolYearID'     => $gibbon->session->get('gibbonSchoolYearID'),
         'evidenceType'           => $_POST['evidenceType'] ?? '',
-        'status'                 => $expectFeedback == 'Y' ? 'Pending' : 'Complete',
+        'status'                 => $expectFeedback ? 'Pending' : 'Complete',
     ];
 
     // Validate the required values are present

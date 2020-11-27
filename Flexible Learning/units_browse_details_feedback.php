@@ -47,7 +47,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $submissionGateway = $container->get(UnitSubmissionGateway::class);
 
     $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
-    if (empty($values)) {
+    $submission = $submissionGateway->getByID($flexibleLearningUnitSubmissionID);
+    if (empty($values) || empty($submission)) {
         $page->addError(__('The specified record cannot be found.'));
         return;
     }
@@ -138,7 +139,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         'discussion' => $logs
     ]);
 
-    $expectFeedback = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback');
+    $expectFeedback = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback') == 'Y' || $submission['status'] == 'Pending';
     $feedbackOnMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOnMessage');
     $feedbackOffMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOffMessage');
 
@@ -152,7 +153,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $form->addRow()->addHeading(__('Submit Feedback'));
 
     $col = $form->addRow()->addColumn();
-        $col->addContent(Format::alert(__m($expectFeedback == 'Y' ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback == 'Y' ? 'message' : 'warning').'</br>');
+        $col->addContent(Format::alert(__m($expectFeedback ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback ? 'message' : 'warning').'</br>');
         $col->addLabel('comment', __('Comment'));
         $col->addEditor('comment', $guid)->setRows(10)->showMedia()->required();
 

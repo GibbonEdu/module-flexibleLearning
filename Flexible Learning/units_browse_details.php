@@ -166,7 +166,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         return;
     }
 
-    $expectFeedback = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback');
+    $expectFeedback = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback') == 'Y';
     $feedbackOnMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOnMessage');
     $feedbackOffMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOffMessage');
 
@@ -178,7 +178,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $form->addRow()->addHeading(__('Submit your Evidence'));
 
     $row = $form->addRow();
-    $row->addContent(Format::alert(__m($expectFeedback == 'Y' ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback == 'Y' ? 'message' : 'warning'));
+    $row->addContent(Format::alert(__m($expectFeedback ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback ? 'message' : 'warning'));
 
     $row = $form->addRow();
         $row->addLabel('comment', __('Comment'))->description(__m('Leave a brief reflective comment on this unit<br/>and what you learned.'));

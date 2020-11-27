@@ -170,7 +170,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $feedbackOnMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOnMessage');
     $feedbackOffMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOffMessage');
 
-    echo Format::alert($expectFeedback == 'Y' ? __m($feedbackOnMessage) : __m($feedbackOffMessage), 'message');
+    echo Format::alert(__m($expectFeedback == 'Y' ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback == 'Y' ? 'message' : 'warning');
 
     // SUBMIT EVIDENCE
     $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_submitProcess.php');

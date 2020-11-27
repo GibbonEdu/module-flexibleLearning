@@ -1,0 +1,15 @@
+{#<!--
+Gibbon, Flexible & Open School System
+Copyright (C) 2010, Ross Parker
+
+This is a Gibbon template file, written in HTML and Twig syntax.
+For info about editing, see: https://twig.symfony.com/doc/2.x/
+-->#}
+
+<div class="flex justify-start items-center mt-4">
+    <span class="text-xs mr-2">{{ __('Legend') }} : </span>
+
+    {% for category in categories %}
+    <span class="tag mr-2 text-gray-800" style="background-color: {{ category.color }}">{{ category.name }}</span>
+    {% endfor %}
+</div>

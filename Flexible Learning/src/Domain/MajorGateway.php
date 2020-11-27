@@ -43,7 +43,13 @@ class MajorGateway extends QueryableGateway
             ->from($this->getTableName())
             ->cols(['flexibleLearningMajor.flexibleLearningMajorID', 'name']);
 
-
         return $this->runQuery($query, $criteria);
+    }
+
+    public function selectMajors()
+    {
+        $sql = "SELECT flexibleLearningMajorID as value, name FROM flexibleLearningMajor ORDER BY name";
+
+        return $this->db()->select($sql);
     }
 }

@@ -51,6 +51,14 @@ class UnitGateway extends QueryableGateway
               ->bindValue('gibbonPersonID', $gibbonPersonID);
           }
 
+          $criteria->addFilterRules([
+            'major' => function ($query, $major) {
+                return $query
+                    ->where('(flexibleLearningMajor1.flexibleLearningMajorID = :major OR flexibleLearningMajor2.flexibleLearningMajorID = :major)')
+                    ->bindValue('major', $major);
+            },
+        ]);
+
         return $this->runQuery($query, $criteria);
     }
 

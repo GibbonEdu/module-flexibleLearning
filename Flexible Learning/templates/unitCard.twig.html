@@ -6,31 +6,18 @@ This is a Gibbon template file, written in HTML and Twig syntax.
 For info about editing, see: https://twig.symfony.com/doc/2.x/
 -->#}
 
-<a href="{{ viewUnitURL }}&freeLearningUnitID={{ freeLearningUnitID }}"  class="relative h-full flex items-center flex-col px-4 py-3 rounded border border-transparent overflow-hidden mx-1 hover:shadow-lg {{ statusClass|default('bg-gray-100 hover:bg-white hover:border-gray-700 hover:text-gray-700') }}" title="{{ __('Difficulty') }}: {{ difficulty }}. {{ blurb }}" style="background-color: {{ color }} ">
+<a href="{{ viewUnitURL }}&flexibleLearningUnitID={{ flexibleLearningUnitID }}"  class="relative h-full flex justify-around items-center flex-col p-2 pt-3 rounded border border-transparent overflow-hidden mx-1 hover:shadow-lg {{ statusClass|default('bg-gray-100 hover:bg-white hover:border-gray-700 hover:text-gray-700') }}" title="Major: {{ major1 }}<br/>{{ blurb }}" style="background-color: {{ color }} ">
 
-    {% if active != "Y" %}
-        <span class="z-10 tag error block absolute right-0 mt-1 mr-1">
-            {{ __('Not Active') }}
-        </span>
-    {% elseif status %}
-        <span class="z-10 tag {{ statusClass }} block absolute right-0 mt-1 mr-1">
-            {{ '' }}
-        </span>
-    {% elseif prerequisitesMet == "N" %}
-        <span class="z-10 tag dull block absolute right-0 mt-1 mr-1" title="
-            {{ __('Prerequisites') }}: {% for prereq in prerequisites %}{{ prereq.name }} {{ not loop.last ? ', ' }}{% endfor %}">
-            {{ __('Not Met') }}
-        </span>
-    {% elseif prerequisitesMet == "Y" %}
+    {% if prerequisitesMet == "Y" %}
         <span class="z-10 tag success block absolute right-0 mt-1 mr-1">
             {{ __('Ok!') }}
         </span>
     {% endif %}
 
-    <div class="w-12 h-12 overflow-hidden bg-cover bg-no-repeat bg-center" style="background-image: url({{ logo|default(defaultImage) }});">
+    <div class="w-12 h-12 mx-4 overflow-hidden bg-cover bg-no-repeat bg-center" style="background-image: url({{ logo|default(defaultImage) }});">
     </div>
 
-    <div class="w-16 flex-1 flex justify-center items-center text-xxs text-center text-gray-800 font-bold pt-4 px-1">
+    <div class="w-20 flex-1 flex justify-center items-center text-xxs text-center text-gray-800 font-bold pt-4 px-1">
         {{ name }}
     </div>
 </a>

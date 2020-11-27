@@ -17,37 +17,34 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-use Gibbon\View\View;
 use Gibbon\Forms\Form;
-use Gibbon\FileUploader;
 use Gibbon\Services\Format;
 use Gibbon\Tables\DataTable;
-use Gibbon\Tables\View\GridView;
 use Gibbon\Domain\System\SettingGateway;
-use Gibbon\Domain\System\DiscussionGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
-use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 
-// Module includes
-require_once __DIR__ . '/moduleFunctions.php';
-
-if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php') == false) {
+if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details_feedback.php') == false) {
     // Access denied
     $page->addError(__('You do not have access to this action.'));
 } else {
-    $page->breadcrumbs
-        ->add(__m('Browse Units'), 'units_browse.php')
-        ->add(__m('Unit Details'));
+    // Proceed!
+    $page->breadcrumbs->add(__m('Work Pending Feedback'), 'report_workPendingFeedback.php')
+        ->add(__('Add Feedback'));
 
-    $name = $_GET['name'] ?? '';
-    $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
+    // Get action with highest precendence
+    $highestAction = getHighestGroupedAction($guid, $_GET['q'], $connection2);
+    if ($highestAction == false) {
+        $page->addError(__('The highest grouped action cannot be determined.'));
+        return;
+    }
 
-    $roleCategory = getRoleCategory($gibbon->session->get('gibbonRoleIDCurrent'), $connection2);
-    $unitGateway = $container->get(UnitGateway::class);
-    $unitBlockGateway = $container->get(UnitBlockGateway::class);
-    $submissionGateway = $container->get(UnitSubmissionGateway::class);
+    $flexibleLearningUnitSubmissionID = $_REQUEST['flexibleLearningUnitSubmissionID'];
+    $flexibleLearningUnitID = $_REQUEST['flexibleLearningUnitID'];
+
     $settingGateway = $container->get(SettingGateway::class);
+    $unitGateway = $container->get(UnitGateway::class);
+    $submissionGateway = $container->get(UnitSubmissionGateway::class);
 
     $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
     if (empty($values)) {
@@ -63,12 +60,18 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $table = DataTable::createDetails('unitDetails');
     $table->addMetaData('gridClass', 'grid-cols-1 md:grid-cols-3 mb-4');
 
+    $table->addHeaderAction('view', __('View'))
+        ->setURL('/modules/Flexible Learning/units_browse_details.php')
+        ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
+        ->addParam('sidebar', 'true')
+        ->displayLabel();
+
     if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
         $table->addHeaderAction('edit', __('Edit'))
             ->setURL('/modules/Flexible Learning/units_manage_edit.php')
             ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
-            ->addParam('name', $name)
-            ->displayLabel();
+            ->displayLabel()
+            ->prepend(' | ');
     }
 
     $table->addColumn('name', '')->addClass('text-lg font-bold');
@@ -128,83 +131,34 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     echo $table->render([$values]);
 
     // DISCUSSION
-    $submission = $submissionGateway->selectBy(['gibbonPersonID' => $gibbon->session->get('gibbonPersonID'), 'flexibleLearningUnitID' => $flexibleLearningUnitID])->fetch();
-
-    if (!empty($submission)) {
-        echo Format::alert(__m('Nice work! You have submitted evidence for this unit.'), 'success');
-
-        $logs = $submissionGateway->selectUnitSubmissionDiscussion($submission['flexibleLearningUnitSubmissionID'])->fetchAll();
-        
-        echo $page->fetchFromTemplate('ui/discussion.twig.html', [
-            'title' => __('Comments'),
-            'discussion' => $logs
-        ]);
-    }
-
-    // SMART BLOCKS
-    $blocks = $unitBlockGateway->selectBlocksByUnit($flexibleLearningUnitID)->fetchAll();
-
-    if (empty($blocks)) {
-        echo Format::alert(__('There are no records to display.'));
-    } else {
-        $templateView = $container->get(View::class);
-        $resourceContents = '';
-
-        $blockCount = 0;
-        foreach ($blocks as $block) {
-            echo $templateView->fetchFromTemplate('unitBlock.twig.html', $block + [
-                'roleCategory' => $roleCategory,
-                'gibbonPersonID' => $gibbon->session->get('username') ?? '',
-                'blockCount' => $blockCount
-            ]);
-            $resourceContents .= $block['contents'];
-            $blockCount++;
-        }
-    }
-
-    if (!empty($submission)) {
-        return;
-    }
+    $logs = $submissionGateway->selectUnitSubmissionDiscussion($flexibleLearningUnitSubmissionID)->fetchAll();
+    
+    echo $page->fetchFromTemplate('ui/discussion.twig.html', [
+        'title' => __('Comments'),
+        'discussion' => $logs
+    ]);
 
     $expectFeedback = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback');
     $feedbackOnMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOnMessage');
     $feedbackOffMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOffMessage');
 
-    // SUBMIT EVIDENCE
-    $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_submitProcess.php');
+    // FEEDBACK
+    $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_feedbackProcess.php');
+    $form->addClass('mt-8');
     $form->addHiddenValue('address', $gibbon->session->get('address'));
     $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
+    $form->addHiddenValue('flexibleLearningUnitSubmissionID', $flexibleLearningUnitSubmissionID);
 
-    $form->addRow()->addHeading(__('Submit your Evidence'));
+    $form->addRow()->addHeading(__('Submit Feedback'));
 
-    $row = $form->addRow();
-    $row->addContent(Format::alert(__m($expectFeedback == 'Y' ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback == 'Y' ? 'message' : 'warning'));
-
-    $row = $form->addRow();
-        $row->addLabel('comment', __('Comment'))->description(__m('Leave a brief reflective comment on this unit<br/>and what you learned.'));
-        $row->addTextArea('comment')->setRows(4)->required();
-
-    $types = ['Link' => __('Link'), 'File' => __('File')];
-    $row = $form->addRow();
-        $row->addLabel('evidenceType', __('Type'));
-        $row->addRadio('evidenceType')->fromArray($types)->inline()->required()->checked('Link');
-
-    // File
-    $form->toggleVisibilityByClass('evidenceFile')->onRadio('evidenceType')->when('File');
-    $row = $form->addRow()->addClass('evidenceFile');
-        $row->addLabel('file', __('Submit File'));
-        $row->addFileUpload('file')->accepts($container->get(FileUploader::class)->getFileExtensions())->required();
-
-    // Link
-    $form->toggleVisibilityByClass('evidenceLink')->onRadio('evidenceType')->when('Link');
-    $row = $form->addRow()->addClass('evidenceLink');
-        $row->addLabel('link', __('Submit Link'));
-        $row->addURL('link')->maxLength(255)->required();
+    $col = $form->addRow()->addColumn();
+        $col->addContent(Format::alert(__m($expectFeedback == 'Y' ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback == 'Y' ? 'message' : 'warning').'</br>');
+        $col->addLabel('comment', __('Comment'));
+        $col->addEditor('comment', $guid)->setRows(10)->showMedia()->required();
 
     $row = $form->addRow();
         $row->addFooter();
         $row->addSubmit();
 
-    echo $form->getOutput();    
-    
+    echo $form->getOutput();   
 }

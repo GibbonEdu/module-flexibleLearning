@@ -31,6 +31,51 @@ class UnitSubmissionGateway extends QueryableGateway
     private static $primaryKey = 'flexibleLearningUnitSubmissionID';
     private static $searchableColumns = [''];
 
+    /**
+     * @param QueryCriteria $criteria
+     * @return DataSet
+     */
+    public function queryPendingFeedback(QueryCriteria $criteria, $gibbonSchoolYearID, $gibbonPersonID = null)
+    {
+        $query = $this
+            ->newQuery()
+            ->cols(['flexibleLearningUnit.name AS unit', 'flexibleLearningUnit.flexibleLearningUnitID', 'gibbonPerson.gibbonPersonID', 'gibbonPerson.surname AS surname', 'gibbonPerson.preferredName AS preferredName', 'flexibleLearningUnitSubmission.*',  'gibbonRole.category'])
+            ->from('flexibleLearningUnit')
+            ->innerJoin('flexibleLearningUnitSubmission', 'flexibleLearningUnitSubmission.flexibleLearningUnitID=flexibleLearningUnit.flexibleLearningUnitID')
+            ->innerJoin('gibbonPerson', 'flexibleLearningUnitSubmission.gibbonPersonID=gibbonPerson.gibbonPersonID')
+            ->innerJoin('gibbonRole', 'gibbonPerson.gibbonRoleIDPrimary=gibbonRole.gibbonRoleID')
+            ->where("flexibleLearningUnitSubmission.status='Pending'")
+            ->where('flexibleLearningUnitSubmission.gibbonSchoolYearID=:gibbonSchoolYearID')
+            ->bindValue('gibbonSchoolYearID', $gibbonSchoolYearID);
+
+        if (!empty($gibbonPersonID)) {
+            $query->where('flexibleLearningUnitSubmission.gibbonPersonID=:gibbonPersonID')
+                ->bindValue('gibbonPersonID', $gibbonPersonID);
+        }
+
+        $criteria->addFilterRules([
+            'myUnits' => function ($query, $gibbonPersonIDCreator) {
+                if (empty($gibbonPersonIDCreator)) return $query;
+
+                return $query
+                    ->where('flexibleLearningUnit.gibbonPersonIDCreator=:gibbonPersonIDCreator')
+                    ->bindValue('gibbonPersonIDCreator', $gibbonPersonIDCreator);
+            },
+            'flexibleLearningUnitID' => function ($query, $flexibleLearningUnitID) {
+                return $query
+                    ->where('flexibleLearningUnit.flexibleLearningUnitID=:flexibleLearningUnitID ')
+                    ->bindValue('flexibleLearningUnitID', $flexibleLearningUnitID);
+            },
+            'gibbonPersonID' => function ($query, $gibbonPersonID) {
+                return $query
+                    ->where('flexibleLearningUnitSubmission.gibbonPersonID=:gibbonPersonID ')
+                    ->bindValue('gibbonPersonID', $gibbonPersonID);
+            },
+        ]);
+
+        return $this->runQuery($query, $criteria);
+    }
+
     public function selectUnitSubmissionDiscussion($flexibleLearningUnitSubmissionID)
     {
         $query = $this

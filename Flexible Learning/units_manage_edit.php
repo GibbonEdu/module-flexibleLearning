@@ -98,22 +98,27 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $row->addLabel('blurb', __('Blurb'));
         $row->addTextArea('blurb')->required();
 
-    $licences = array(
+    $row = $form->addRow();
+        $row->addLabel('gibbonPersonIDCreator', __('Author'));
+        $row->addSelectUsers('gibbonPersonIDCreator')->photo(true, 'small');
+
+    $licenses = array(
         "Copyright" => __("Copyright"),
         "Creative Commons BY" => __("Creative Commons BY"),
         "Creative Commons BY-SA" => __("Creative Commons BY-SA"),
         "Creative Commons BY-SA-NC" => __("Creative Commons BY-SA-NC"),
         "Public Domain" => __("Public Domain")
     );
-    $row = $form->addRow()->addClass('advanced');
-        $row->addLabel('license', __('License'))->description(__('Under what conditions can this work be reused?'));
-        $row->addSelect('license')->fromArray($licences)->placeholder();
 
-        $row = $form->addRow();
-            $row->addLabel('file', __m('Logo'))->description(__m('125px x 125px'));
-            $row->addFileUpload('file')
-                ->accepts('.jpg,.jpeg,.gif,.png')
-                ->setAttachment('logo', $gibbon->session->get('absoluteURL'), $values['logo']);
+    $row = $form->addRow();
+        $row->addLabel('license', __('License'))->description(__('Under what conditions can this work be reused?'));
+        $row->addSelect('license')->fromArray($licenses)->placeholder();
+
+    $row = $form->addRow();
+        $row->addLabel('file', __m('Logo'))->description(__m('125px x 125px'));
+        $row->addFileUpload('file')
+            ->accepts('.jpg,.jpeg,.gif,.png')
+            ->setAttachment('logo', $gibbon->session->get('absoluteURL'), $values['logo']);
 
     $row = $form->addRow();
         $row->addLabel('active', __('Active'));

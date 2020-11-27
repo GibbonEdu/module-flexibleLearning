@@ -6,18 +6,18 @@ This is a Gibbon template file, written in HTML and Twig syntax.
 For info about editing, see: https://twig.symfony.com/doc/2.x/
 -->#}
 
-<a href="{{ viewUnitURL }}&flexibleLearningUnitID={{ flexibleLearningUnitID }}"  class="relative h-full flex justify-around items-center flex-col p-2 pt-3 rounded border border-transparent overflow-hidden mx-1 hover:shadow-lg {{ statusClass|default('bg-gray-100 hover:bg-white hover:border-gray-700 hover:text-gray-700') }}" title="Major: {{ major1 }}<br/>{{ blurb }}" style="background-color: {{ color }} ">
+<a href="{{ viewUnitURL }}&flexibleLearningUnitID={{ flexibleLearningUnitID }}"  class="relative h-full flex justify-around items-center flex-col p-2 py-3 rounded border border-transparent overflow-hidden mx-1 hover:shadow-lg bg-gray-100 hover:bg-white {{ submitted ? 'text-gray-400 hover:border-gray-500 hover:text-gray-500' : 'text-gray-900 hover:border-gray-700 hover:text-black' }}" title="Major: {{ [major1, major2]|filter(f => f != '')|join(' and ') }}<br/>{{ blurb }}" style="background-color: {{ submitted ? 'hsla(0, 0%, 100%, 0.7)' : color }} ">
 
-    {% if prerequisitesMet == "Y" %}
-        <span class="z-10 tag success block absolute right-0 mt-1 mr-1">
-            {{ __('Ok!') }}
+    {% if submitted %}
+        <span class="z-10 tag success block absolute top-0 right-0 mt-1 mr-1">
+            {{ __('Done') }}
         </span>
     {% endif %}
 
-    <div class="w-12 h-12 mx-4 overflow-hidden bg-cover bg-no-repeat bg-center" style="background-image: url({{ logo|default(defaultImage) }});">
+    <div class="w-12 h-12 mx-6 overflow-hidden bg-cover bg-no-repeat bg-center {{ submitted ? 'opacity-25' }}" style="background-image: url({{ logo|default(defaultImage) }});">
     </div>
 
-    <div class="w-20 flex-1 flex justify-center items-center text-xxs text-center text-gray-800 font-bold pt-4 px-1">
+    <div class="w-24 flex-1 flex justify-center items-center text-xs text-center font-bold pt-4 opacity-75">
         {{ name }}
     </div>
 </a>

@@ -24,11 +24,11 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     $criteria = $unitGateway->newQueryCriteria()
         ->searchBy($unitGateway->getSearchableColumns(), $name)
-        ->sortBy('sequenceNumber', 'name')
+        ->sortBy(['sequenceNumber', 'name'])
         ->filterBy('major', $major)
         ->fromPOST();
 
-    $units = $unitGateway->queryAllUnits($criteria);
+    $units = $unitGateway->queryAllUnits($criteria, $gibbon->session->get('gibbonPersonID'));
     $categories = $container->get(CategoryGateway::class)->selectActiveCategories()->fetchAll();
     $majors = $container->get(MajorGateway::class)->selectMajors()->fetchKeyPair();
 

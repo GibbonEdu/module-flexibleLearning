@@ -25,7 +25,7 @@ $description = 'View, create and manage Flexible Learning units.';
 $entryURL    = "units_browse.php";
 $type        = "Additional";
 $category    = 'Learn';
-$version     = '0.2.00';
+$version     = '0.3.00';
 $author      = 'Harry Merrett';
 $url         = '';
 
@@ -79,14 +79,30 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningMajor` (
   PRIMARY KEY (`flexibleLearningMajorID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
+$moduleTables[] = "CREATE TABLE `flexibleLearningUnitSubmission` ( 
+    `flexibleLearningUnitSubmissionID` INT(12) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
+    `flexibleLearningUnitID` INT(10) UNSIGNED ZEROFILL NOT NULL, 
+    `gibbonPersonID` INT(10) UNSIGNED ZEROFILL NOT NULL, 
+    `gibbonSchoolYearID` INT(3) UNSIGNED ZEROFILL NOT NULL, 
+    `status` ENUM('Pending','Complete') NOT NULL DEFAULT 'Complete', 
+    `evidenceType` ENUM('File','Link') NULL DEFAULT 'Link', 
+    `evidenceLocation` TEXT NULL, 
+    `timestampSubmitted` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+    `timestampFeedback` TIMESTAMP NULL, 
+    `gibbonPersonIDFeedback` INT(10) NULL, 
+    PRIMARY KEY (`flexibleLearningUnitSubmissionID`)
+) ENGINE = InnoDB DEFAULT CHARSET=utf8;";
+
 // Add gibbonSettings entries
-// /$gibbonSetting[] = "";
+$gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'expectFeedback', 'Expect Feedback', 'When enabled, students can expect to receive feedback on their submissions.', 'N');";
+$gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'feedbackOnMessage', 'Feedback Message', 'A message to display to participants when they can expect to receive feedback.', 'Submissions to units will be collected and shared with teachers. Students can expect to receive feedback on their work.');";
+$gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'feedbackOffMessage', 'No Feedback Message', 'A message to display to participants when they should not expect to receive feedback.', 'Feedback is optional and teachers will not be notified of new submissions. Students should not expect to receive feedback. They may choose to approach a teacher and request feedback.');";
 
 // Action rows
 $actionRows[] = [
     'name'                      => 'Manage Units_all', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '1',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => 'Manage', // Optional: subgroups for the right hand side module menu
+    'category'                  => 'Admin', // Optional: subgroups for the right hand side module menu
     'description'               => 'Allows a user to manage all units within the system.', // Text description
     'URLList'                   => 'units_manage.php,units_manage_add.php,units_manage_edit.php,units_manage_delete.php', // List of pages included in this action
     'entryURL'                  => 'units_manage.php', // The landing action for the page.
@@ -106,7 +122,7 @@ $actionRows[] = [
 $actionRows[] = [
     'name'                      => 'Manage Units_my', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => 'Manage', // Optional: subgroups for the right hand side module menu
+    'category'                  => 'Admin', // Optional: subgroups for the right hand side module menu
     'description'               => 'Allows a user to manage their own units.', // Text description
     'URLList'                   => 'units_manage.php,units_manage_add.php,units_manage_edit.php,units_manage_delete.php', // List of pages included in this action
     'entryURL'                  => 'units_manage.php', // The landing action for the page.
@@ -126,7 +142,7 @@ $actionRows[] = [
 $actionRows[] = [
     'name'                      => 'Manage Categories', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => 'Manage', // Optional: subgroups for the right hand side module menu
+    'category'                  => 'Admin', // Optional: subgroups for the right hand side module menu
     'description'               => 'Allows a user to manage unit categories.', // Text description
     'URLList'                   => 'categories_manage.php,categories_manage_add.php,categories_manage_edit.php,categories_manage_editOrderAjax.php,categories_manage_delete.php', // List of pages included in this action
     'entryURL'                  => 'categories_manage.php', // The landing action for the page.
@@ -146,7 +162,7 @@ $actionRows[] = [
 $actionRows[] = [
     'name'                      => 'Browse Units', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => 'Units', // Optional: subgroups for the right hand side module menu
+    'category'                  => 'Learning', // Optional: subgroups for the right hand side module menu
     'description'               => 'Browse the selection of Flexible Learning units in a grid.', // Text description
     'URLList'                   => 'units_browse.php,units_browse_details.php', // List of pages included in this action
     'entryURL'                  => 'units_browse.php', // The landing action for the page.
@@ -166,7 +182,7 @@ $actionRows[] = [
 $actionRows[] = [
     'name'                      => 'Manage Majors', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => 'Manage', // Optional: subgroups for the right hand side module menu
+    'category'                  => 'Admin', // Optional: subgroups for the right hand side module menu
     'description'               => 'Allows the user to manage unit majors.', // Text description
     'URLList'                   => 'majors_manage.php,majors_manage_add.php,majors_manage_edit.php,majors_manage_delete.php', // List of pages included in this action
     'entryURL'                  => 'majors_manage.php', // The landing action for the page.
@@ -181,6 +197,46 @@ $actionRows[] = [
     'categoryPermissionStudent' => 'Y', // Should this action be available to user roles in the Student category?
     'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?
     'categoryPermissionOther'   => 'Y', // Should this action be available to user roles in the Other category?
+];
+
+$actionRows[] = [
+    'name'                      => 'Manage Settings', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Admin', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows a privileged user to manage Flexible Learning settings.', // Text description
+    'URLList'                   => 'settings_manage.php', // List of pages included in this action
+    'entryURL'                  => 'settings_manage.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'N', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
+];
+
+$actionRows[] = [
+    'name'                      => 'Work Pending Feedback', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Reports', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows a user to see all work for which feedback has been requested, and is still pending.', // Text description
+    'URLList'                   => 'report_workPendingFeedback.php,units_browse_details_feedback.php', // List of pages included in this action
+    'entryURL'                  => 'report_workPendingFeedback.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'Y', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
 ];
 
 // Hooks

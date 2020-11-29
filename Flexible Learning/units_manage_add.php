@@ -75,7 +75,7 @@ require_once __DIR__ . '/moduleFunctions.php';
         $row->addLabel('blurb', __('Blurb'));
         $row->addTextArea('blurb')->required();
 
-    $licences = array(
+    $licenses = array(
         "Copyright" => __("Copyright"),
         "Creative Commons BY" => __("Creative Commons BY"),
         "Creative Commons BY-SA" => __("Creative Commons BY-SA"),
@@ -84,7 +84,7 @@ require_once __DIR__ . '/moduleFunctions.php';
     );
     $row = $form->addRow()->addClass('advanced');
         $row->addLabel('license', __('License'))->description(__('Under what conditions can this work be reused?'));
-        $row->addSelect('license')->fromArray($licences)->placeholder();
+        $row->addSelect('license')->fromArray($licenses)->placeholder();
 
     $row = $form->addRow();
         $row->addLabel('file', __m('Logo'))->description(__m('125px x 125px'));
@@ -99,10 +99,10 @@ require_once __DIR__ . '/moduleFunctions.php';
     $result = $pdo->executeQuery(array(), $sql);
     $options = array();
     while ($option=$result->fetch()){
-      $options[]=$option['major1'];
-      $options[]=$option['major2'];
-      $options[]=$option['minor1'];
-      $options[]=$option['minor2'];
+        $options[]=$option['major1'];
+        $options[]=$option['major2'];
+        $options[]=$option['minor1'];
+        $options[]=$option['minor2'];
     }
     $options = array_unique($options);
 
@@ -129,7 +129,6 @@ require_once __DIR__ . '/moduleFunctions.php';
         $column->addLabel('outline', __('Unit Outline'));
         $column->addEditor('outline', $guid)->setRows(30)->showMedia();
 
-
     // SMART BLOCKS
     $form->addRow()->addHeading(__m('Smart Blocks'))->append(__m('Smart Blocks aid unit planning by giving teachers help in creating and maintaining new units, splitting material into smaller chunks. As well as predefined fields to fill, Smart Blocks provide a visual view of the content blocks that make up a unit. Blocks may be any kind of content, such as discussion, assessments, group work, outcome etc.'));
 
@@ -154,4 +153,3 @@ require_once __DIR__ . '/moduleFunctions.php';
 
     echo $form->getOutput();
 }
-?>

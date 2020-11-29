@@ -43,7 +43,13 @@ class CategoryGateway extends QueryableGateway
             ->from($this->getTableName())
             ->cols(['flexibleLearningCategory.flexibleLearningCategoryID', 'name', 'description', 'sequenceNumber', 'color', 'active']);
 
-
         return $this->runQuery($query, $criteria);
+    }
+
+    public function selectActiveCategories()
+    {
+        $sql = "SELECT name, color FROM flexibleLearningCategory WHERE active='Y' ORDER BY sequenceNumber";
+
+        return $this->db()->select($sql);
     }
 }

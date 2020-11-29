@@ -23,33 +23,19 @@ use Gibbon\Domain\Traits\TableAware;
 use Gibbon\Domain\QueryCriteria;
 use Gibbon\Domain\QueryableGateway;
 
-class MajorGateway extends QueryableGateway
+class UnitBlockGateway extends QueryableGateway
 {
     use TableAware;
 
-    private static $tableName = 'flexibleLearningMajor';
-    private static $primaryKey = 'flexibleLearningMajorID';
+    private static $tableName = 'flexibleLearningUnitBlock';
+    private static $primaryKey = 'flexibleLearningUnitBlockID';
     private static $searchableColumns = [''];
 
-    /**
-     * @param QueryCriteria $criteria
-     * @return DataSet
-     */
-    public function queryMajors(QueryCriteria $criteria)
+    public function selectBlocksByUnit($flexibleLearningUnitID)
     {
-        $query = $this
-            ->newQuery()
-            ->distinct()
-            ->from($this->getTableName())
-            ->cols(['flexibleLearningMajor.flexibleLearningMajorID', 'name']);
+        $data = ['flexibleLearningUnitID' => $flexibleLearningUnitID];
+        $sql = "SELECT * FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=:flexibleLearningUnitID ORDER BY sequenceNumber";
 
-        return $this->runQuery($query, $criteria);
-    }
-
-    public function selectMajors()
-    {
-        $sql = "SELECT flexibleLearningMajorID as value, name FROM flexibleLearningMajor ORDER BY name";
-
-        return $this->db()->select($sql);
+        return $this->db()->select($sql, $data);
     }
 }

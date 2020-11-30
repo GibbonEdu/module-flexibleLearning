@@ -43,6 +43,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $minor1 = $_POST['minor1'] ?? '' ;
         $minor2 = $_POST['minor2'] ?? '' ;
         $outline = $_POST['outline'] ?? '' ;
+        $gibbonPersonIDCreator = $_POST['gibbonPersonIDCreator'] ?? $gibbon->session->get('gibbonPersonID');
 
         if ($name == '' or $active == '') {
             //Fail 3
@@ -69,7 +70,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
             }
 
             // Write to database
-            $data = array('name' => $name, 'flexibleLearningCategoryID' => $flexibleLearningCategoryID, 'logo' => $attachment, 'blurb' => $blurb, 'license' => $license, 'active' => $active, 'outline' => $outline, 'flexibleLearningMajorID1' => $flexibleLearningMajorID1, 'flexibleLearningMajorID2' => $flexibleLearningMajorID2, 'minor1' => $minor1, 'minor2' => $minor2, 'gibbonPersonIDCreator' => $gibbon->session->get('gibbonPersonID'), 'timestamp' => date('Y-m-d H:i:s'));
+            $data = array('name' => $name, 'flexibleLearningCategoryID' => $flexibleLearningCategoryID, 'logo' => $attachment, 'blurb' => $blurb, 'license' => $license, 'active' => $active, 'outline' => $outline, 'flexibleLearningMajorID1' => $flexibleLearningMajorID1, 'flexibleLearningMajorID2' => $flexibleLearningMajorID2, 'minor1' => $minor1, 'minor2' => $minor2, 'gibbonPersonIDCreator' => $gibbonPersonIDCreator, 'timestamp' => date('Y-m-d H:i:s'));
             $sql = 'INSERT INTO flexibleLearningUnit SET name=:name, flexibleLearningCategoryID=:flexibleLearningCategoryID, logo=:logo, blurb=:blurb, license=:license, active=:active, outline=:outline, flexibleLearningMajorID1=:flexibleLearningMajorID1, flexibleLearningMajorID2=:flexibleLearningMajorID2, minor1=:minor1, minor2=:minor2, gibbonPersonIDCreator=:gibbonPersonIDCreator, timestamp=:timestamp';
             $inserted = $pdo->insert($sql, $data);
 

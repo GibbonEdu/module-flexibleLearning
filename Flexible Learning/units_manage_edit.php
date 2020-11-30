@@ -98,9 +98,14 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $row->addLabel('blurb', __('Blurb'));
         $row->addTextArea('blurb')->required();
 
+    $highestManageAction = getHighestGroupedAction($guid, '/modules/Flexible Learning/units_manage.php', $connection2);
+
     $row = $form->addRow();
         $row->addLabel('gibbonPersonIDCreator', __('Author'));
-        $row->addSelectUsers('gibbonPersonIDCreator')->photo(true, 'small');
+        $row->addSelectUsers('gibbonPersonIDCreator')
+            ->photo(true, 'small')
+            ->required()
+            ->readonly($highestManageAction == 'Manage Units_my');
 
     $licenses = array(
         "Copyright" => __("Copyright"),

@@ -70,7 +70,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
     $units = $highestAction == 'Manage Units_all'
         ? $unitGateway->queryAllUnits($criteria)
-        : $unitGateway->queryAllUnits($criteria, $gibbon->session->get('gibbonPersonID'));
+        : $unitGateway->queryAllUnits($criteria, null, $gibbon->session->get('gibbonPersonID'));
 
     // BULK ACTION FORM
     $form = BulkActionForm::create('bulkAction', $_SESSION[$guid]['absoluteURL'].'/modules/Flexible Learning/units_manageProcessBulk.php');

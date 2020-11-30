@@ -25,7 +25,7 @@ $description = 'View, create and manage Flexible Learning units.';
 $entryURL    = "units_browse.php";
 $type        = "Additional";
 $category    = 'Learn';
-$version     = '0.3.00';
+$version     = '0.3.01';
 $author      = 'Harry Merrett';
 $url         = '';
 
@@ -79,17 +79,17 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningMajor` (
   PRIMARY KEY (`flexibleLearningMajorID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
-$moduleTables[] = "CREATE TABLE `flexibleLearningUnitSubmission` ( 
-    `flexibleLearningUnitSubmissionID` INT(12) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
-    `flexibleLearningUnitID` INT(10) UNSIGNED ZEROFILL NOT NULL, 
-    `gibbonPersonID` INT(10) UNSIGNED ZEROFILL NOT NULL, 
-    `gibbonSchoolYearID` INT(3) UNSIGNED ZEROFILL NOT NULL, 
-    `status` ENUM('Pending','Complete') NOT NULL DEFAULT 'Complete', 
-    `evidenceType` ENUM('File','Link') NULL DEFAULT 'Link', 
-    `evidenceLocation` TEXT NULL, 
-    `timestampSubmitted` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-    `timestampFeedback` TIMESTAMP NULL, 
-    `gibbonPersonIDFeedback` INT(10) NULL, 
+$moduleTables[] = "CREATE TABLE `flexibleLearningUnitSubmission` (
+    `flexibleLearningUnitSubmissionID` INT(12) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+    `flexibleLearningUnitID` INT(10) UNSIGNED ZEROFILL NOT NULL,
+    `gibbonPersonID` INT(10) UNSIGNED ZEROFILL NOT NULL,
+    `gibbonSchoolYearID` INT(3) UNSIGNED ZEROFILL NOT NULL,
+    `status` ENUM('Pending','Complete') NOT NULL DEFAULT 'Complete',
+    `evidenceType` ENUM('File','Link') NULL DEFAULT 'Link',
+    `evidenceLocation` TEXT NULL,
+    `timestampSubmitted` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `timestampFeedback` TIMESTAMP NULL,
+    `gibbonPersonIDFeedback` INT(10) NULL,
     PRIMARY KEY (`flexibleLearningUnitSubmissionID`)
 ) ENGINE = InnoDB DEFAULT CHARSET=utf8;";
 

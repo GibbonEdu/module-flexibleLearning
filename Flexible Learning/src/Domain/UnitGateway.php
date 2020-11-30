@@ -87,11 +87,24 @@ class UnitGateway extends QueryableGateway
 
     public function selectAllUnits()
     {
-        $sql = "SELECT flexibleLearningCategory.name as groupBy, flexibleLearningUnitID as value, flexibleLearningUnit.name 
-            FROM flexibleLearningUnit 
-            JOIN flexibleLearningCategory ON (flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID)  
+        $sql = "SELECT flexibleLearningCategory.name as groupBy, flexibleLearningUnitID as value, flexibleLearningUnit.name
+            FROM flexibleLearningUnit
+            JOIN flexibleLearningCategory ON (flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID)
             ORDER BY flexibleLearningCategory.sequenceNumber, flexibleLearningUnit.name";
 
         return $this->db()->select($sql);
     }
+
+    public function getRandomUnit()
+    {
+        $sql = "SELECT flexibleLearningUnitID
+          FROM flexibleLearningUnit
+          WHERE active='Y'
+          ORDER BY RAND()
+          LIMIT 1
+          ";
+
+        return $this->db()->selectOne($sql);
+    }
+
 }

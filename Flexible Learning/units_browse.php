@@ -31,6 +31,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $units = $unitGateway->queryAllUnits($criteria, $gibbon->session->get('gibbonPersonID'));
     $categories = $container->get(CategoryGateway::class)->selectActiveCategories()->fetchAll();
     $majors = $container->get(MajorGateway::class)->selectMajors()->fetchKeyPair();
+    $randomID = $unitGateway->getRandomUnit();
 
     // FORM
     $form = Form::create('filter', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
@@ -59,7 +60,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     $table = $container->get(DataTable::class)->setRenderer($gridRenderer);
     $table->setTitle(__('Units'));
-    $table->setDescription($templateView->fetchFromTemplate('unitLegend.twig.html', ['categories' => $categories]));
+    $table->setDescription($templateView->fetchFromTemplate('unitLegend.twig.html', ['categories' => $categories, 'randomID' => $randomID]));
 
     $table->addMetaData('gridClass', 'flex items-stretch -mx-1');
     $table->addMetaData('gridItemClass', 'foo');

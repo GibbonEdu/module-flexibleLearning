@@ -86,3 +86,8 @@ INSERT INTO `gibbonPermission` (`gibbonRoleID` ,`gibbonActionID`) VALUES (002, (
 UPDATE `gibbonAction` SET category='Learning' WHERE gibbonAction.name='Browse Units' AND gibbonAction.gibbonModuleID=(SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning');end
 UPDATE `gibbonAction` SET category='Admin' WHERE gibbonAction.name LIKE 'Manage %' AND gibbonAction.gibbonModuleID=(SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning');end
 ";
+
+// v0.3.01
+$count++;
+$sql[$count][0] = "0.3.01";
+$sql[$count][1] = "";

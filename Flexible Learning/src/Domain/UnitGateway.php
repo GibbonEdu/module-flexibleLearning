@@ -40,15 +40,19 @@ class UnitGateway extends QueryableGateway
         $query = $this
             ->newQuery()
             ->from($this->getTableName())
-            ->cols(['flexibleLearningUnit.*', 'flexibleLearningMajor1.name AS major1', 'flexibleLearningMajor2.name AS major2', 'flexibleLearningCategory.color', 'flexibleLearningCategory.name AS category', 'gibbonPerson.preferredName', 'gibbonPerson.surname', 'gibbonPerson.status', "(SELECT SUM(length) FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=flexibleLearningUnit.flexibleLearningUnitID) as length", 'flexibleLearningUnitSubmissionID as submitted'])
+            ->cols(['flexibleLearningUnit.*', 'flexibleLearningMajor1.name AS major1', 'flexibleLearningMajor2.name AS major2', 'flexibleLearningCategory.color', 'flexibleLearningCategory.name AS category', 'gibbonPerson.preferredName', 'gibbonPerson.surname', 'gibbonPerson.status', "(SELECT SUM(length) FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=flexibleLearningUnit.flexibleLearningUnitID) as length"])
             ->innerJoin('flexibleLearningCategory', 'flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID')
             ->innerJoin('gibbonPerson', 'gibbonPerson.gibbonPersonID=flexibleLearningUnit.gibbonPersonIDCreator')
             ->leftJoin('flexibleLearningMajor AS flexibleLearningMajor1', 'flexibleLearningUnit.flexibleLearningMajorID1=flexibleLearningMajor1.flexibleLearningMajorID')
-            ->leftJoin('flexibleLearningMajor AS flexibleLearningMajor2', 'flexibleLearningUnit.flexibleLearningMajorID2=flexibleLearningMajor2.flexibleLearningMajorID')
-            ->leftJoin('flexibleLearningUnitSubmission', 'flexibleLearningUnitSubmission.flexibleLearningUnitID=flexibleLearningUnit.flexibleLearningUnitID AND flexibleLearningUnitSubmission.gibbonPersonID=:gibbonPersonID')
-            ->bindValue('gibbonPersonID', $gibbonPersonID);
+            ->leftJoin('flexibleLearningMajor AS flexibleLearningMajor2', 'flexibleLearningUnit.flexibleLearningMajorID2=flexibleLearningMajor2.flexibleLearningMajorID');
+            
+        if (!empty($gibbonPersonID)) {
+            $query->cols(['flexibleLearningUnitSubmissionID as submitted'])
+                ->leftJoin('flexibleLearningUnitSubmission', 'flexibleLearningUnitSubmission.flexibleLearningUnitID=flexibleLearningUnit.flexibleLearningUnitID AND flexibleLearningUnitSubmission.gibbonPersonID=:gibbonPersonID')
+                ->bindValue('gibbonPersonID', $gibbonPersonID);
+        }
 
-        if (!is_null($gibbonPersonIDCreator)) {
+        if (!empty($gibbonPersonIDCreator)) {
             $query->where('gibbonPersonIDCreator=:gibbonPersonIDCreator')
                 ->bindValue('gibbonPersonIDCreator', $gibbonPersonIDCreator);
         }
@@ -87,9 +91,9 @@ class UnitGateway extends QueryableGateway
 
     public function selectAllUnits()
     {
-        $sql = "SELECT flexibleLearningCategory.name as groupBy, flexibleLearningUnitID as value, flexibleLearningUnit.name
-            FROM flexibleLearningUnit
-            JOIN flexibleLearningCategory ON (flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID)
+        $sql = "SELECT flexibleLearningCategory.name as groupBy, flexibleLearningUnitID as value, flexibleLearningUnit.name 
+            FROM flexibleLearningUnit 
+            JOIN flexibleLearningCategory ON (flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID)  
             ORDER BY flexibleLearningCategory.sequenceNumber, flexibleLearningUnit.name";
 
         return $this->db()->select($sql);

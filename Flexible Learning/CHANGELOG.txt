@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+v0.4.00
+-------
+
 v0.3.01
 -------
 Added "Surprise Me!" button - links to a randomly selected unit

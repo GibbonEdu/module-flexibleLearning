@@ -49,11 +49,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/majors_m
         ->setURL('/modules/Flexible Learning/majors_manage_add.php')
         ->displayLabel();
 
-    $table->modifyRows(function ($major, $row) {
-        if ($major['active'] == 'N') $row->addClass('error');
-        return $row;
-    });
-
     $table->addColumn('name', __('Name'))
         ->sortable(['flexibleLearningMajor.name']);
 

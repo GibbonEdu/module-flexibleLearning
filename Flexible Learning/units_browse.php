@@ -1,10 +1,13 @@
 <?php
 
+use Gibbon\View\View;
 use Gibbon\Forms\Form;
 use Gibbon\Services\Format;
 use Gibbon\Tables\DataTable;
 use Gibbon\Tables\View\GridView;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
+use Gibbon\Module\FlexibleLearning\Domain\MajorGateway;
+use Gibbon\Module\FlexibleLearning\Domain\CategoryGateway;
 
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
@@ -13,57 +16,64 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     // Access denied
     $page->addError(__('You do not have access to this action.'));
 } else {
+    $name = $_GET['name'] ?? '';
+    $major = $_GET['major'] ?? '';
 
-  $name = $_GET['name'] ?? '';
+    $templateView = new View($container->get('twig'));
+    $unitGateway = $container->get(UnitGateway::class);
 
-  $unitGateway = $container->get(UnitGateway::class);
-  $criteria = $unitGateway->newQueryCriteria()
-      ->searchBy($unitGateway->getSearchableColumns(), $name)
-      ->sortBy('sequenceNumber','name')
-      ->filterBy('showInactive', 'Y')
-      ->fromPOST();
+    $criteria = $unitGateway->newQueryCriteria()
+        ->searchBy($unitGateway->getSearchableColumns(), $name)
+        ->sortBy(['sequenceNumber', 'name'])
+        ->filterBy('major', $major)
+        ->fromPOST();
 
-  $units = $unitGateway->queryAllUnits($criteria);
+    $units = $unitGateway->queryAllUnits($criteria, $gibbon->session->get('gibbonPersonID'));
+    $categories = $container->get(CategoryGateway::class)->selectActiveCategories()->fetchAll();
+    $majors = $container->get(MajorGateway::class)->selectMajors()->fetchKeyPair();
+    $randomID = $unitGateway->getRandomUnit();
 
-  // FORM
-  $form = Form::create('filter', $gibbon->session->get('absoluteURL').'/index.php', 'get');
-  $form->setTitle(__('Filter'));
+    // FORM
+    $form = Form::create('filter', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
+    $form->setTitle(__('Filter'));
 
-  $form->setClass('noIntBorder fullWidth');
-  $form->addHiddenValue('q', '/modules/Flexible Learning/units_browse.php');
+    $form->setClass('noIntBorder fullWidth');
+    $form->addHiddenValue('q', '/modules/Flexible Learning/units_browse.php');
 
-  $row = $form->addRow();
-      $row->addLabel('name', __('Name'));
-      $row->addTextField('name')->setValue($criteria->getSearchText());
+    $row = $form->addRow();
+    $row->addLabel('name', __('Name'));
+    $row->addTextField('name')->setValue($criteria->getSearchText());
 
-  $row = $form->addRow();
-      $row->addSearchSubmit($gibbon->session, __('Clear Filters'));
+    $row = $form->addRow();
+    $row->addLabel('major', __('Major'));
+    $row->addSelect('major')->fromArray($majors)->placeholder()->selected($major);
 
-  echo $form->getOutput();
+    $row = $form->addRow();
+    $row->addSearchSubmit($gibbon->session, __('Clear Filters'));
 
-  // TABLE
-  $gridRenderer = $container->get(GridView::class);
-  $table = $container->get(DataTable::class)->setRenderer($gridRenderer);
-  $table=DataTable::create('FlexibleLearning');
-  $table->setRenderer($gridRenderer);
-  $table->setTitle(__('Units'));
-  $table->addMetaData('gridClass', 'rounded-sm border');
-  $table->addMetaData('gridItemClass', 'w-1/3 sm:w-1/4 md:w-1/6 text-center');
+    echo $form->getOutput();
 
+    // GRID TABLE
+    $gridRenderer = new GridView($container->get('twig'));
+    $defaultImage = $gibbon->session->get('absoluteURL').'/themes/'.$gibbon->session->get('gibbonThemeName').'/img/anonymous_125.jpg';
+    $viewUnitURL = "./index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true";
 
-  $table->addColumn('unit')
-  ->addClass('h-full')
-  ->format(function($units) use ($gibbon, $name) {
-      $return = null;
-      $background = ($units['color']) ? "background-color: ".$units['color'] : '';
-      $return .= "<a class='h-full block text-black no-underline' href='".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=".$units['flexibleLearningUnitID']."&name=$name'><div title='".str_replace("'", "&#39;", $units['blurb'])."' class='h-full text-center pb-8' style='".$background."'>";
-      $return .= ($units['logo'] != '') ? "<img class='pt-10 pb-2 h-32' src='".$gibbon->session->get('absoluteURL').'/'.$units['logo']."'/><br/>":"<img class='pt-10 pb-2' style='max-width: 65px' src='".$gibbon->session->get('absoluteURL').'/themes/'.$gibbon->session->get('gibbonThemeName')."/img/anonymous_240_square.jpg'/><br/>";
-      $return .= "<span class='font-bold underline'>".$units['name']."</span><br/>";
-      $return .= "<span class='text-sm italic'>".$units['category']."</span><br/>";
-      $return .= "</div></a>";
+    $table = $container->get(DataTable::class)->setRenderer($gridRenderer);
+    $table->setTitle(__('Units'));
+    $table->setDescription($templateView->fetchFromTemplate('unitLegend.twig.html', ['categories' => $categories, 'randomID' => $randomID]));
 
-      return $return;
-  });
+    $table->addMetaData('gridClass', 'flex items-stretch -mx-1');
+    $table->addMetaData('gridItemClass', 'foo');
+    $table->addMetaData('hidePagination', true);
 
-  echo $table->render($units);
+    $table->addColumn('logo')
+        ->setClass('h-full pb-2')
+        ->format(function ($unit) use (&$templateView, &$defaultImage, &$viewUnitURL) {
+            return $templateView->fetchFromTemplate(
+                'unitCard.twig.html',
+                $unit + ['defaultImage' => $defaultImage, 'viewUnitURL' => $viewUnitURL, 'viewingAsUser' => 'Student']
+            );
+        });
+
+    echo $table->render($units);
 }

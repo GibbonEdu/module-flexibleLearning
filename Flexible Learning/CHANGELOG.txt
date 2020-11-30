@@ -1,5 +1,13 @@
 CHANGELOG
 =========
+v0.3.00
+-------
+Added "Surprise Me!" button - links to a randomly selected unit
+
+v0.3.00
+-------
+Added a setting to toggle feedback
+
 v0.2.00
 -------
 Removed pagination from unit viewer

@@ -16,32 +16,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-//Option second argument gets blocks only for selected units.
-function getBlocksArray($connection2, $flexibleLearningUnitID = null)
-{
-    $return = false;
-    try {
-        if (is_null($flexibleLearningUnitID)) {
-            $data = array();
-            $sql = 'SELECT * FROM flexibleLearningUnitBlock ORDER BY flexibleLearningUnitID';
-        } else {
-            $data = array('flexibleLearningUnitID' => $flexibleLearningUnitID);
-            $sql = 'SELECT * FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=:flexibleLearningUnitID ORDER BY flexibleLearningUnitID';
-        }
-        $result = $connection2->prepare($sql);
-        $result->execute($data);
-    } catch (PDOException $e) {
-    }
-
-    if ($result->rowCount() > 0) {
-        $return = array();
-        while ($row = $result->fetch()) {
-            $return[$row['flexibleLearningUnitBlockID']][0] = $row['flexibleLearningUnitID'];
-            $return[$row['flexibleLearningUnitBlockID']][1] = $row['title'];
-            $return[$row['flexibleLearningUnitBlockID']][2] = $row['length'];
-        }
-    }
-
-    return $return;
-}

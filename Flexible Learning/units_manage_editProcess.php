@@ -42,16 +42,17 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
 
     $data = [
-        'name'          => $_POST['name'] ?? '',
-        'flexibleLearningCategoryID'         => $_POST['flexibleLearningCategoryID'] ?? '',
-        'blurb'         => $_POST['blurb'] ?? '',
-        'license'         => $_POST['license'] ?? '',
-        'flexibleLearningMajorID1' => (!empty($_POST['flexibleLearningMajorID1'])) ? $_POST['flexibleLearningMajorID1'] : null ,
-        'flexibleLearningMajorID2' => (!empty($_POST['flexibleLearningMajorID2'])) ? $_POST['flexibleLearningMajorID2'] : null ,
-        'minor1'         => $_POST['minor1'] ?? '',
-        'minor2'         => $_POST['minor2'] ?? '',
-        'active'        => $_POST['active'] ?? '',
-        'outline'         => $_POST['outline'] ?? '',
+        'name'                       => $_POST['name'] ?? '',
+        'flexibleLearningCategoryID' => $_POST['flexibleLearningCategoryID'] ?? '',
+        'blurb'                      => $_POST['blurb'] ?? '',
+        'license'                    => $_POST['license'] ?? '',
+        'flexibleLearningMajorID1'   => (!empty($_POST['flexibleLearningMajorID1'])) ? $_POST['flexibleLearningMajorID1'] : null,
+        'flexibleLearningMajorID2'   => (!empty($_POST['flexibleLearningMajorID2'])) ? $_POST['flexibleLearningMajorID2'] : null,
+        'minor1'                     => $_POST['minor1'] ?? '',
+        'minor2'                     => $_POST['minor2'] ?? '',
+        'active'                     => $_POST['active'] ?? '',
+        'outline'                    => $_POST['outline'] ?? '',
+        'gibbonPersonIDCreator'      => $_POST['gibbonPersonIDCreator'] ?? '',
     ];
 
     // Validate the required values are present

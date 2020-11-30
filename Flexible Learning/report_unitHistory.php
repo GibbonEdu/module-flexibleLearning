@@ -35,13 +35,13 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
 } else {
     // Proceed!
     $gibbonSchoolYearID = $gibbon->session->get('gibbonSchoolYearID');
-    $gibbonPersonID = $_REQUEST['gibbonPersonID'] ?? '';
     $studentGateway = $container->get(StudentGateway::class);
 
     if ($highestAction == 'Unit History_all') {
         // Can view all students
         $page->breadcrumbs->add(__m('Unit History'));
 
+        $gibbonPersonID = $_REQUEST['gibbonPersonID'] ?? '';
         $participant = $container->get(UserGateway::class)->getByID($gibbonPersonID);
         
     } elseif ($highestAction == 'Unit History_myChildren') {
@@ -52,6 +52,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
             ->selectAnyStudentsByFamilyAdult($gibbonSchoolYearID, $gibbon->session->get('gibbonPersonID'))
             ->fetchAll();
         $children = Format::nameListArray($children, 'Student', false, true);
+        $gibbonPersonID = $_REQUEST['gibbonPersonID'] ?? key($children);
 
         if (!empty($children[$gibbonPersonID])) {
             $participant = $container->get(UserGateway::class)->getByID($gibbonPersonID);

@@ -244,7 +244,7 @@ $actionRows[] = [
     'precedence'                => '1',// If it is a grouped action, the precedence controls which is highest action in group
     'category'                  => 'Reports', // Optional: subgroups for the right hand side module menu
     'description'               => 'Allows a user to see all units undertaken by any participant.', // Text description
-    'URLList'                   => 'report_unitHistory.php', // List of pages included in this action
+    'URLList'                   => 'report_unitHistory.php,hook_studentProfile_unitHistory.php', // List of pages included in this action
     'entryURL'                  => 'report_unitHistory.php', // The landing action for the page.
     'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
     'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
@@ -264,7 +264,7 @@ $actionRows[] = [
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
     'category'                  => 'Learning', // Optional: subgroups for the right hand side module menu
     'description'               => 'Allows a user to see all units undertaken by their own children.', // Text description
-    'URLList'                   => 'report_unitHistory.php', // List of pages included in this action
+    'URLList'                   => 'report_unitHistory.php,hook_studentProfile_unitHistory.php', // List of pages included in this action
     'entryURL'                  => 'report_unitHistory.php', // The landing action for the page.
     'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
     'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
@@ -285,7 +285,7 @@ $actionRows[] = [
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
     'category'                  => 'Learning', // Optional: subgroups for the right hand side module menu
     'description'               => 'Allows a user to see all the units they have studied and are studying.', // Text description
-    'URLList'                   => 'report_unitHistory_my.php', // List of pages included in this action
+    'URLList'                   => 'report_unitHistory_my.php,hook_studentProfile_unitHistory.php', // List of pages included in this action
     'entryURL'                  => 'report_unitHistory_my.php', // The landing action for the page.
     'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
     'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
@@ -303,7 +303,7 @@ $actionRows[] = [
 // Hooks
 $array = [
     'sourceModuleName' => 'Flexible Learning',
-    'sourceModuleAction' => 'Unit History_all',
+    'sourceModuleAction' => 'Unit History_all,Unit History_myChildren,My Unit History',
     'sourceModuleInclude' => 'hook_studentProfile_unitHistory.php',
 ];
 $hooks[] = "INSERT INTO `gibbonHook` (`name`, `type`, `options`, gibbonModuleID) VALUES ('Flexible Learning', 'Student Profile', '".serialize($array)."', (SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning'));";

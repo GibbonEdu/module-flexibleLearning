@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use Gibbon\Module\FlexibleLearning\Tables\UnitHistory;
 
-if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_unitHistory.php') == false) {
+if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/hook_studentProfile_unitHistory.php') == false) {
     // Access denied
     $page->addError(__('You do not have access to this action.'));
 } else {

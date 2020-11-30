@@ -31,6 +31,23 @@ class UnitSubmissionGateway extends QueryableGateway
     private static $primaryKey = 'flexibleLearningUnitSubmissionID';
     private static $searchableColumns = [''];
 
+
+    public function querySubmissionsByPerson(QueryCriteria $criteria, $gibbonPersonID)
+    {
+        $query = $this
+            ->newQuery()
+            ->cols(['flexibleLearningUnit.name AS unit', 'flexibleLearningUnit.flexibleLearningUnitID', 'gibbonPerson.gibbonPersonID', 'gibbonPerson.surname AS surname', 'gibbonPerson.preferredName AS preferredName', 'flexibleLearningUnitSubmission.*',  'gibbonRole.category', 'gibbonSchoolYear.name as schoolYear'])
+            ->from('flexibleLearningUnit')
+            ->innerJoin('flexibleLearningUnitSubmission', 'flexibleLearningUnitSubmission.flexibleLearningUnitID=flexibleLearningUnit.flexibleLearningUnitID')
+            ->innerJoin('gibbonPerson', 'flexibleLearningUnitSubmission.gibbonPersonID=gibbonPerson.gibbonPersonID')
+            ->innerJoin('gibbonRole', 'gibbonPerson.gibbonRoleIDPrimary=gibbonRole.gibbonRoleID')
+            ->innerJoin('gibbonSchoolYear', 'gibbonSchoolYear.gibbonSchoolYearID=flexibleLearningUnitSubmission.gibbonSchoolYearID')
+            ->where('flexibleLearningUnitSubmission.gibbonPersonID=:gibbonPersonID')
+            ->bindValue('gibbonPersonID', $gibbonPersonID);
+
+        return $this->runQuery($query, $criteria);
+    }
+
     /**
      * @param QueryCriteria $criteria
      * @return DataSet

@@ -17,22 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-use Gibbon\Forms\Form;
-use Gibbon\Services\Format;
-use Gibbon\Domain\User\UserGateway;
-use Gibbon\Forms\DatabaseFormFactory;
-use Gibbon\Domain\Students\StudentGateway;
+use Gibbon\Module\FlexibleLearning\Tables\UnitHistory;
 
-
-if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_unitHistory.php') == false) {
+if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_unitHistory_my.php') == false) {
     // Access denied
     $page->addError(__('You do not have access to this action.'));
 } else {
     // Proceed!
     $page->breadcrumbs->add(__m('My Unit History'));
 
-    $gibbonSchoolYearID = $gibbon->session->get('gibbonSchoolYearID');
-    $gibbonPersonID = $gibbon->session->get('gibbonPersonID');
-
-
+    $table = $container->get(UnitHistory::class)->create($gibbon->session->get('gibbonPersonID'));
+    echo $table->getOutput();
 }

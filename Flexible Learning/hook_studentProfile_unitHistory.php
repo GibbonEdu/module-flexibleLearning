@@ -17,11 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-global $gibbon;
+use Gibbon\Module\FlexibleLearning\Tables\UnitHistory;
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_unitHistory.php') == false) {
     // Access denied
     $page->addError(__('You do not have access to this action.'));
 } else {
-    
+    include './modules/Flexible Learning/src/Tables/UnitHistory.php';
+    include './modules/Flexible Learning/src/Domain/UnitSubmissionGateway.php';
+
+    $table = $container->get(UnitHistory::class)->create($gibbonPersonID);
+    echo $table->getOutput();
 }

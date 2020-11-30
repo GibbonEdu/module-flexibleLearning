@@ -22,6 +22,7 @@ use Gibbon\Services\Format;
 use Gibbon\Domain\User\UserGateway;
 use Gibbon\Forms\DatabaseFormFactory;
 use Gibbon\Domain\Students\StudentGateway;
+use Gibbon\Module\FlexibleLearning\Tables\UnitHistory;
 
 $highestAction = getHighestGroupedAction($guid, '/modules/Flexible Learning/report_unitHistory.php', $connection2);
 
@@ -89,5 +90,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
         return;
     }
 
-    
+    $table = $container->get(UnitHistory::class)->create($gibbonPersonID);
+    echo $table->getOutput();
 }

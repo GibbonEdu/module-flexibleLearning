@@ -99,6 +99,7 @@ class UnitGateway extends QueryableGateway
     {
         $sql = "SELECT flexibleLearningUnitID
           FROM flexibleLearningUnit
+          WHERE active='Y'
           ORDER BY RAND()
           LIMIT 1
           ";

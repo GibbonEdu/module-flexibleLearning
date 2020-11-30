@@ -27,6 +27,8 @@ use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 
 $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
+$flexibleLearningUnitSubmissionID = $_POST['flexibleLearningUnitSubmissionID'] ?? '';
+$gibbonDiscussionID = $_POST['gibbonDiscussionID'] ?? '';
 
 $URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID;
 
@@ -39,83 +41,59 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $unitGateway = $container->get(UnitGateway::class);
     $unitSubmissionGateway = $container->get(UnitSubmissionGateway::class);
     $discussionGateway = $container->get(DiscussionGateway::class);  
-    $expectFeedback =  $container->get(SettingGateway::class)->getSettingByScope('Flexible Learning', 'expectFeedback') == 'Y';
-
+    
     $comment = $_POST['comment'] ?? '';
     $data = [
-        'flexibleLearningUnitID' => $flexibleLearningUnitID,
-        'gibbonPersonID'         => $gibbon->session->get('gibbonPersonID'),
-        'gibbonSchoolYearID'     => $gibbon->session->get('gibbonSchoolYearID'),
-        'evidenceType'           => $_POST['evidenceType'] ?? '',
-        'status'                 => $expectFeedback ? 'Pending' : 'Complete',
+        'evidenceType'     => $_POST['evidenceType'] ?? '',
+        'evidenceLocation' => $_POST['evidenceLocation'] ?? '',
     ];
-
+    
     // Validate the required values are present
-    if (empty($data['flexibleLearningUnitID']) || empty($data['gibbonPersonID']) || empty($data['gibbonSchoolYearID']) || empty($data['evidenceType']) || empty($comment)) {
+    if (empty($flexibleLearningUnitID) || empty($flexibleLearningUnitSubmissionID) || empty($gibbonDiscussionID) || empty($comment)) {
         $URL .= '&return=error1';
         header("Location: {$URL}");
         exit;
     }
 
     // Validate the database relationships exist
-    $values = $unitGateway->getByID($flexibleLearningUnitID);
-    if (empty($values)) {
-        $URL .= '&return=error2';
-        header("Location: {$URL}");
-        exit;
-    }
-
-    // Validate the values are unique
-    if (!$unitSubmissionGateway->unique($data, ['gibbonPersonID', 'flexibleLearningUnitID'])) {
-        $URL .= '&return=error7';
-        header("Location: {$URL}");
-        exit;
-    }
-
-    // Check we have a file to upload
-    if ($data['evidenceType'] == 'File' && empty($_FILES['file']['tmp_name']) && empty($_POST['evidenceLocation']) ) {
+    $submission = $unitSubmissionGateway->getByID($flexibleLearningUnitSubmissionID);
+    if (empty($submission) || $submission['gibbonPersonID'] != $gibbon->session->get('gibbonPersonID')) {
         $URL .= '&return=error1';
         header("Location: {$URL}");
         exit;
     }
 
-    //Move attached file, if there is one
-    if ($data['evidenceType'] == 'File') {
-        $fileUploader = new FileUploader($pdo, $gibbon->session);
-        $file = $_FILES['file'] ?? null;
-
-        // Upload the file, return the /uploads relative path
-        $data['evidenceLocation'] = $fileUploader->uploadFromPost($file, $name);
-    } elseif ($data['evidenceType'] == 'Link') {
-        $data['evidenceLocation'] = $_POST['link'] ?? '';
-    }
-
-    // Check that the file upload/link is present
-    if (empty($data['evidenceLocation'])) {
-        $URL .= '&return=error2';
+    $discussion = $discussionGateway->getByID($gibbonDiscussionID);
+    if (empty($discussion) || $discussion['gibbonPersonID'] != $gibbon->session->get('gibbonPersonID')) {
+        $URL .= '&return=error1';
         header("Location: {$URL}");
         exit;
     }
 
-    // Create the record
-    $flexibleLearningUnitSubmissionID = $unitSubmissionGateway->insert($data);
+    // Update the submission
+    $unitSubmissionGateway->update($flexibleLearningUnitSubmissionID, $data);
 
-    // Insert discussion records     
-    $discussionGateway->insert([
-        'foreignTable'       => 'flexibleLearningUnitSubmission',
-        'foreignTableID'     => $flexibleLearningUnitSubmissionID,
-        'gibbonModuleID'     => getModuleIDFromName($connection2, 'Flexible Learning'),
-        'gibbonPersonID'     => $data['gibbonPersonID'],
-        'comment'            => $comment,
-        'type'               => 'Submitted',
-        'tag'                => 'pending',
-        'attachmentType'     => $data['evidenceType'],
-        'attachmentLocation' => $data['evidenceLocation'],
+    // Update the discussion to match
+    $discussionGateway->update($gibbonDiscussionID, [
+        'comment' => $_POST['comment'] ?? '',
     ]);
 
+    // Move attached file, if there is one
+    if ($data['evidenceType'] == 'File' && !empty($_FILES['file']['tmp_name'])) {
+        $fileUploader = new FileUploader($pdo, $gibbon->session);
+        $file = $_FILES['file'] ?? null;
+        $data['evidenceLocation'] = $fileUploader->uploadFromPost($file, $name);
+    }
 
-    $URL .= !$flexibleLearningUnitSubmissionID
-        ? "&return=error2"
+    // Check that the file upload/link is present
+    if (empty($data['evidenceLocation'])) {
+        $URL .= '&return=warning1';
+        header("Location: {$URL}");
+        exit;
+    }
+
+    $URL .= empty($data['evidenceLocation'])
+        ? "&return=warning1"
         : "&return=success0";
 
     header("Location: {$URL}");

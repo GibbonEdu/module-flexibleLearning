@@ -73,7 +73,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     }
 
     // Check we have a file to upload
-    if ($data['evidenceType'] == 'File' && empty($_FILES['file']['tmp_name']) && empty($_POST['evidenceLocation']) ) {
+    if ($data['evidenceType'] == 'File' && empty($_FILES['file']['tmp_name'])) {
         $URL .= '&return=error1';
         header("Location: {$URL}");
         exit;
@@ -107,7 +107,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         'gibbonModuleID'     => getModuleIDFromName($connection2, 'Flexible Learning'),
         'gibbonPersonID'     => $data['gibbonPersonID'],
         'comment'            => $comment,
-        'type'               => 'Submitted',
+        'type'               => 'Evidence',
         'tag'                => 'pending',
         'attachmentType'     => $data['evidenceType'],
         'attachmentLocation' => $data['evidenceLocation'],

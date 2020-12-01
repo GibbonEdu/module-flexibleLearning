@@ -150,7 +150,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
     $form->addHiddenValue('flexibleLearningUnitSubmissionID', $flexibleLearningUnitSubmissionID);
 
-    $form->addRow()->addHeading(__('Submit Feedback'));
+    $form->addRow()->addHeading(__('Share Feedback'));
 
     $col = $form->addRow()->addColumn();
         $col->addContent(Format::alert(__m($expectFeedback ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback ? 'message' : 'warning').'</br>');

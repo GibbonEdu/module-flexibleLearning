@@ -45,7 +45,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $comment = $_POST['comment'] ?? '';
     $data = [
         'evidenceType'     => $_POST['evidenceType'] ?? '',
-        'evidenceLocation' => $_POST['evidenceLocation'] ?? '',
+        'evidenceLocation' => $_POST['evidenceLocation'] ?? $_POST['link'] ?? '',
     ];
     
     // Validate the required values are present
@@ -70,14 +70,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         exit;
     }
 
-    // Update the submission
-    $unitSubmissionGateway->update($flexibleLearningUnitSubmissionID, $data);
-
-    // Update the discussion to match
-    $discussionGateway->update($gibbonDiscussionID, [
-        'comment' => $_POST['comment'] ?? '',
-    ]);
-
     // Move attached file, if there is one
     if ($data['evidenceType'] == 'File' && !empty($_FILES['file']['tmp_name'])) {
         $fileUploader = new FileUploader($pdo, $gibbon->session);
@@ -85,12 +77,16 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         $data['evidenceLocation'] = $fileUploader->uploadFromPost($file, $name);
     }
 
-    // Check that the file upload/link is present
-    if (empty($data['evidenceLocation'])) {
-        $URL .= '&return=warning1';
-        header("Location: {$URL}");
-        exit;
-    }
+    // Update the submission
+    $unitSubmissionGateway->update($flexibleLearningUnitSubmissionID, $data);
+
+    // Update the discussion to match
+    $discussionGateway->update($gibbonDiscussionID, [
+        'comment' => $_POST['comment'] ?? '',
+        'attachmentType' => $data['evidenceType'],
+        'attachmentLocation' => $data['evidenceLocation'],
+        'timestamp' => date('Y-m-d H:i:s'),
+    ]);
 
     $URL .= empty($data['evidenceLocation'])
         ? "&return=warning1"

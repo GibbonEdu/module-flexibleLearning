@@ -276,6 +276,12 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         $link->setValue($submission['evidenceLocation'] ?? '');
     }
 
+    if ($roleCategory == 'Student' && empty($submission)) {
+        $row = $form->addRow();
+        $row->addLabel('inviteParents', __('Email Invitation'))->description(__m('Checking this box will send your parents an email to let them know about your work and invite them to comment on it.'));
+        $row->addCheckbox('inviteParents')->setValue('Y')->description(__m('Invite my parents to comment'));
+    }
+
     $row = $form->addRow();
         $row->addFooter();
         $row->addSubmit();

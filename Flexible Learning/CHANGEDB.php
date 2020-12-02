@@ -115,4 +115,6 @@ INSERT INTO `gibbonPermission` (`gibbonRoleID` ,`gibbonActionID`) VALUES (004, (
 // v0.5.00
 $count++;
 $sql[$count][0] = "0.5.00";
-$sql[$count][1] = "";
+$sql[$count][1] = "
+ALTER TABLE `flexibleLearningUnit` ADD `availableStudent` ENUM('No','Read','Record') NOT NULL DEFAULT 'Record' AFTER `minor2`, ADD `availableStaff` ENUM('No','Read','Record') NOT NULL DEFAULT 'Read' AFTER `availableStudent`, ADD `availableParent` ENUM('No','Read','Record') NOT NULL DEFAULT 'Read' AFTER `availableStaff`, ADD `availableOther` ENUM('No','Read','Record') NOT NULL DEFAULT 'Read' AFTER `availableParent`;end
+";

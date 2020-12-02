@@ -55,6 +55,13 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         return;
     }
 
+    $highestAction = getHighestGroupedAction($guid, '/modules/Flexible Learning/units_manage.php', $connection2);
+    $access = $values['available'.$roleCategory] ?? 'No';
+    if (empty($highestAction) && $access != 'Read' && $access != 'Record') {
+        $page->addError(__m('You do not have access to browse this unit.'));
+        return;
+    }
+
     if (isset($_GET['return'])) {
         returnProcess($guid, $_GET['return'], null, null);
     }
@@ -63,7 +70,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $table = DataTable::createDetails('unitDetails');
     $table->addMetaData('gridClass', 'grid-cols-1 md:grid-cols-3 mb-4');
 
-    if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
+    if ($highestAction == 'Manage Units_all' || ($highestAction == 'Manage Units_my' && $values['gibbonPersonIDCreator'] == $gibbon->session->get('gibbonPersonID'))) {
         $table->addHeaderAction('edit', __('Edit'))
             ->setURL('/modules/Flexible Learning/units_manage_edit.php')
             ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
@@ -162,6 +169,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         }
     }
 
+    // Cancel out here if we only have read access
+    if ($access != 'Record') return;
 
     $expectFeedback = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback') == 'Y';
     $feedbackOnMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOnMessage');

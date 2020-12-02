@@ -46,6 +46,10 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningUnit` (
   `flexibleLearningMajorID2` int(8) unsigned zerofill DEFAULT NULL,
   `minor1` varchar(30) DEFAULT NULL,
   `minor2` varchar(30) DEFAULT NULL,
+  `availableStudent` ENUM('No','Read','Record') NOT NULL DEFAULT 'Record',
+  `availableStaff` ENUM('No','Read','Record') NOT NULL DEFAULT 'Read',
+  `availableParent` ENUM('No','Read','Record') NOT NULL DEFAULT 'Read',
+  `availableOther` ENUM('No','Read','Record') NOT NULL DEFAULT 'Read',
   `gibbonPersonIDCreator` int(10) unsigned zerofill NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`flexibleLearningUnitID`)

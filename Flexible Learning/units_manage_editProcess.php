@@ -21,6 +21,7 @@ require_once '../../gibbon.php';
 
 use Gibbon\Services\Format;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
+use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 
 $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
 
@@ -39,7 +40,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
   } else {
     // Proceed!
     $unitGateway = $container->get(UnitGateway::class);
-
+    $unitBlockGateway = $container->get(UnitBlockGateway::class);
+    $partialFail = false;
 
     $data = [
         'name'                       => $_POST['name'] ?? '',
@@ -52,6 +54,10 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         'minor2'                     => $_POST['minor2'] ?? '',
         'active'                     => $_POST['active'] ?? '',
         'outline'                    => $_POST['outline'] ?? '',
+        'availableStudent'           => $_POST['availableStudent'] ?? 'No',
+        'availableStaff'             => $_POST['availableStaff'] ?? 'No',
+        'availableParent'            => $_POST['availableParent'] ?? 'No',
+        'availableOther'             => $_POST['availableOther'] ?? 'No',
         'gibbonPersonIDCreator'      => $_POST['gibbonPersonIDCreator'] ?? '',
     ];
 
@@ -65,8 +71,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     // Validate the database relationships exist
     if ($highestAction == 'Manage Units_all') {
       $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
-    }
-    else {
+    } else {
       $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
     }
 
@@ -91,8 +96,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
             $partialFail = true;
         }
 
-    }
-    else {
+    } else {
       $data['logo']=$_POST['logo'];
     }
 
@@ -103,76 +107,45 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         exit;
     }
 
-    //Update blocks
+    // Update blocks
     $order = $_POST['order'] ?? [];
+    $blockIDs = [];
     $sequenceNumber = 0;
-    $dataRemove = array();
-    $whereRemove = '';
-    if (count($order) < 0) {
-        //Fail 3
-        $URL .= '&addReturn=error3';
-        header("Location: {$URL}");
-    } else {
-        if (is_array($order)) {
-            foreach ($order as $i) {
-                $title = '';
-                if ($_POST["title$i"] != "Block $i") {
-                    $title = $_POST["title$i"];
-                }
-                $type2 = '';
-                if ($_POST["type$i"] != 'type (e.g. discussion, outcome)') {
-                    $type2 = $_POST["type$i"];
-                }
-                $length = (!empty($_POST["length$i"]) && is_numeric($_POST["length$i"])) ? intval(trim($_POST["length$i"])) : null;
-                $contents = trim($_POST["contents$i"]);
-                $teachersNotes = $_POST["teachersNotes$i"];
-                $flexibleLearningUnitBlockID = $_POST["flexibleLearningUnitBlockID$i"] ?? '' ;
 
-                if ($flexibleLearningUnitBlockID != '') {
-                    try {
-                        $dataBlock = array('flexibleLearningUnitID' => $flexibleLearningUnitID, 'title' => $title, 'type' => $type2, 'length' => $length, 'contents' => $contents, 'teachersNotes' => $teachersNotes, 'sequenceNumber' => $sequenceNumber, 'flexibleLearningUnitBlockID' => $flexibleLearningUnitBlockID);
-                        $sqlBlock = 'UPDATE flexibleLearningUnitBlock SET flexibleLearningUnitID=:flexibleLearningUnitID, title=:title, type=:type, length=:length, contents=:contents, teachersNotes=:teachersNotes, sequenceNumber=:sequenceNumber WHERE flexibleLearningUnitBlockID=:flexibleLearningUnitBlockID';
-                        $resultBlock = $connection2->prepare($sqlBlock);
-                        $resultBlock->execute($dataBlock);
-                    } catch (PDOException $e) {
-                        $partialFail = true;
-                    }
-                    $dataRemove["flexibleLearningUnitBlockID$sequenceNumber"] = $flexibleLearningUnitBlockID;
-                    $whereRemove .= "AND NOT flexibleLearningUnitBlockID=:flexibleLearningUnitBlockID$sequenceNumber ";
-                } else {
-                    try {
-                        $dataBlock = array('flexibleLearningUnitID' => $flexibleLearningUnitID, 'title' => $title, 'type' => $type2, 'length' => $length, 'contents' => $contents, 'teachersNotes' => $teachersNotes, 'sequenceNumber' => $sequenceNumber);
-                        $sqlBlock = 'INSERT INTO flexibleLearningUnitBlock SET flexibleLearningUnitID=:flexibleLearningUnitID, title=:title, type=:type, length=:length, contents=:contents, teachersNotes=:teachersNotes, sequenceNumber=:sequenceNumber';
-                        $resultBlock = $connection2->prepare($sqlBlock);
-                        $resultBlock->execute($dataBlock);
-                    } catch (PDOException $e) {
-                        $partialFail = true;
-                    }
-                    $dataRemove["flexibleLearningUnitBlockID$sequenceNumber"] = $connection2->lastInsertId();
-                    $whereRemove .= "AND NOT flexibleLearningUnitBlockID=:flexibleLearningUnitBlockID$sequenceNumber ";
-                }
+    foreach ($order as $i) {
+        $data = [
+            'flexibleLearningUnitID' => $flexibleLearningUnitID,
+            'title'                  => $_POST["title$i"] ?? '',
+            'type'                   => $_POST["type$i"] ?? '',
+            'length'                 => !empty($_POST["length$i"]) ? intval(trim($_POST["length$i"])) : null,
+            'contents'               => $_POST["contents$i"] ?? '',
+            'teachersNotes'          => $_POST["teachersNotes$i"] ?? '',
+            'sequenceNumber'         => $sequenceNumber,
+        ];
 
-                ++$sequenceNumber;
-            }
+        $flexibleLearningUnitBlockID = $_POST["flexibleLearningUnitBlockID$i"] ?? '';
+
+        if (!empty($flexibleLearningUnitBlockID)) {
+            $partialFail &= !$unitBlockGateway->update($flexibleLearningUnitBlockID, $data);
+        } else {
+            $flexibleLearningUnitBlockID = $unitBlockGateway->insert($data);
+            $partialFail &= !$flexibleLearningUnitBlockID;
         }
+
+        $blockIDs[] = str_pad($flexibleLearningUnitBlockID, 12, '0', STR_PAD_LEFT);
+        $sequenceNumber++;
     }
 
-    //Remove orphaned blocks
-    if ($whereRemove != '(') {
-        try {
-            $dataRemove['flexibleLearningUnitID'] = $flexibleLearningUnitID;
-            $sqlRemove = "DELETE FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=:flexibleLearningUnitID $whereRemove";
-            $resultRemove = $connection2->prepare($sqlRemove);
-            $resultRemove->execute($dataRemove);
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            $partialFail = true;
-        }
+    // Remove orphaned blocks
+    if (!empty($blockIDs)) {
+        $data = ['flexibleLearningUnitID' => $flexibleLearningUnitID, 'blockIDs' => implode(',', $blockIDs)];
+        $sql = "DELETE FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=:flexibleLearningUnitID AND NOT FIND_IN_SET(flexibleLearningUnitBlockID, :blockIDs)";
+        $pdo->statement($sql, $data);
     }
 
-    $URL .= !$flexibleLearningUnitID
-        ? "&return=error2"
-        : "&return=success0&editID=$flexibleLearningUnitID";
+    $URL .= $partialFail
+        ? "&return=warning1"
+        : "&return=success0";
 
     header("Location: {$URL}");
   }

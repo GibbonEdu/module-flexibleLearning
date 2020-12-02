@@ -56,6 +56,23 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     }
 
     // Validate the database relationships exist
+    $values = $unitGateway->getByID($flexibleLearningUnitID);
+    if (empty($values)) {
+        $URL .= '&return=error2';
+        header("Location: {$URL}");
+        exit;
+    }
+    
+    // Check for access to this action
+    $roleCategory = getRoleCategory($gibbon->session->get('gibbonRoleIDCurrent'), $connection2);
+    $access = $values['available'.$roleCategory] ?? 'No';
+    if ($access != 'Record') {
+        $URL .= '&return=error0';
+        header("Location: {$URL}");
+        exit;
+    }
+
+    // Validate the database relationships exist
     $submission = $unitSubmissionGateway->getByID($flexibleLearningUnitSubmissionID);
     if (empty($submission) || $submission['gibbonPersonID'] != $gibbon->session->get('gibbonPersonID')) {
         $URL .= '&return=error1';

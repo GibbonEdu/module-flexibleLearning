@@ -111,3 +111,10 @@ INSERT INTO `gibbonPermission` (`gibbonRoleID` ,`gibbonActionID`) VALUES (001, (
 INSERT INTO `gibbonAction` (`gibbonModuleID`, `name`, `precedence`, `category`, `description`, `URLList`, `entryURL`, `entrySidebar`, `defaultPermissionAdmin`, `defaultPermissionTeacher`, `defaultPermissionStudent`, `defaultPermissionParent`, `defaultPermissionSupport`, `categoryPermissionStaff`, `categoryPermissionStudent`, `categoryPermissionParent`, `categoryPermissionOther`) VALUES ((SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning'), 'Unit History_myChildren', 0, 'Learning', 'Allows a user to see all units undertaken by their own children.', 'report_unitHistory.php,hook_studentProfile_unitHistory.php','report_unitHistory.php', 'Y', 'N', 'N', 'N', 'Y', 'N', 'N', 'N', 'Y', 'N');end
 INSERT INTO `gibbonPermission` (`gibbonRoleID` ,`gibbonActionID`) VALUES (004, (SELECT gibbonActionID FROM gibbonAction JOIN gibbonModule ON (gibbonAction.gibbonModuleID=gibbonModule.gibbonModuleID) WHERE gibbonModule.name='Flexible Learning' AND gibbonAction.name='Unit History_myChildren'));end
 ";
+
+// v0.5.00
+$count++;
+$sql[$count][0] = "0.5.00";
+$sql[$count][1] = "
+ALTER TABLE `flexibleLearningUnit` ADD `availableStudent` ENUM('No','Read','Record') NOT NULL DEFAULT 'Record' AFTER `minor2`, ADD `availableStaff` ENUM('No','Read','Record') NOT NULL DEFAULT 'Read' AFTER `availableStudent`, ADD `availableParent` ENUM('No','Read','Record') NOT NULL DEFAULT 'Read' AFTER `availableStaff`, ADD `availableOther` ENUM('No','Read','Record') NOT NULL DEFAULT 'Read' AFTER `availableParent`;end
+";

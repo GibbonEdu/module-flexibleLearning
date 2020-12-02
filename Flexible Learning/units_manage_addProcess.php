@@ -1,4 +1,7 @@
 <?php
+
+use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
+use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 /*
 Gibbon, Flexible & Open School System
 Copyright (C) 2010, Ross Parker
@@ -26,101 +29,91 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     $URL .= '&return=error0';
     header("Location: {$URL}");
 } else {
-    if (!(isset($_POST))) {
+    if (!isset($_POST)) {
         //Fail 5
         $URL .= '&return=error5';
         header("Location: {$URL}");
-    } else {
-        //Proceed!
-        //Validate Inputs
-        $name = $_POST['name'] ?? '' ;
-        $flexibleLearningCategoryID = $_POST['flexibleLearningCategoryID'] ?? '' ;
-        $blurb = $_POST['blurb'] ?? '' ;
-        $license = $_POST['license'] ?? '';
-        $active = $_POST['active'] ?? '' ;
-        $flexibleLearningMajorID1 = (!empty($_POST['flexibleLearningMajorID1'])) ? $_POST['flexibleLearningMajorID1'] : null ;
-        $flexibleLearningMajorID2 = (!empty($_POST['flexibleLearningMajorID2'])) ? $_POST['flexibleLearningMajorID2'] : null ;
-        $minor1 = $_POST['minor1'] ?? '' ;
-        $minor2 = $_POST['minor2'] ?? '' ;
-        $outline = $_POST['outline'] ?? '' ;
-        $gibbonPersonIDCreator = $_POST['gibbonPersonIDCreator'] ?? $gibbon->session->get('gibbonPersonID');
+        return;
+    } 
 
-        if ($name == '' or $active == '') {
-            //Fail 3
-            $URL .= '&return=error3';
-            header("Location: {$URL}");
-        } else {
-            $partialFail = false;
+    // Proceed!
+    $unitGateway = $container->get(UnitGateway::class);
+    $unitBlockGateway = $container->get(UnitBlockGateway::class);
+    $partialFail = false;
 
-            //Move attached file, if there is one
-            $attachment = null;
-            if (!empty($_FILES['file']['tmp_name'])) {
-                $fileUploader = new Gibbon\FileUploader($pdo, $gibbon->session);
-                $fileUploader->getFileExtensions('Graphics/Design');
+    $data = [
+        'name'                       => $_POST['name'] ?? '',
+        'flexibleLearningCategoryID' => $_POST['flexibleLearningCategoryID'] ?? '',
+        'blurb'                      => $_POST['blurb'] ?? '',
+        'license'                    => $_POST['license'] ?? '',
+        'logo'                       => $_POST['logo'] ?? '',
+        'flexibleLearningMajorID1'   => (!empty($_POST['flexibleLearningMajorID1'])) ? $_POST['flexibleLearningMajorID1'] : null,
+        'flexibleLearningMajorID2'   => (!empty($_POST['flexibleLearningMajorID2'])) ? $_POST['flexibleLearningMajorID2'] : null,
+        'minor1'                     => $_POST['minor1'] ?? '',
+        'minor2'                     => $_POST['minor2'] ?? '',
+        'active'                     => $_POST['active'] ?? '',
+        'outline'                    => $_POST['outline'] ?? '',
+        'availableStudent'           => $_POST['availableStudent'] ?? 'No',
+        'availableStaff'             => $_POST['availableStaff'] ?? 'No',
+        'availableParent'            => $_POST['availableParent'] ?? 'No',
+        'availableOther'             => $_POST['availableOther'] ?? 'No',
+        'gibbonPersonIDCreator'      => $_POST['gibbonPersonIDCreator'] ?? $gibbon->session->get('gibbonPersonID'),
+    ];
 
-                $file = $_FILES['file'] ?? null;
+    // Validate the required values are present
+    if (empty($data['name']) || empty($data['active']) || empty($data['flexibleLearningMajorID1'])) {
+        $URL .= '&return=error3';
+        header("Location: {$URL}");
+        return;
+    } 
 
-                // Upload the file, return the /uploads relative path
-                $attachment = $fileUploader->uploadFromPost($file, $name);
+    //Move attached file, if there is one
+    if (!empty($_FILES['file']['tmp_name'])) {
+        $fileUploader = new Gibbon\FileUploader($pdo, $gibbon->session);
+        $fileUploader->getFileExtensions('Graphics/Design');
 
-                if (empty($attachment)) {
-                    $partialFail = true;
-                }
+        $file = $_FILES['file'] ?? null;
 
-            }
+        // Upload the file, return the /uploads relative path
+        $data['logo'] = $fileUploader->uploadFromPost($file, $name);
 
-            // Write to database
-            $data = array('name' => $name, 'flexibleLearningCategoryID' => $flexibleLearningCategoryID, 'logo' => $attachment, 'blurb' => $blurb, 'license' => $license, 'active' => $active, 'outline' => $outline, 'flexibleLearningMajorID1' => $flexibleLearningMajorID1, 'flexibleLearningMajorID2' => $flexibleLearningMajorID2, 'minor1' => $minor1, 'minor2' => $minor2, 'gibbonPersonIDCreator' => $gibbonPersonIDCreator, 'timestamp' => date('Y-m-d H:i:s'));
-            $sql = 'INSERT INTO flexibleLearningUnit SET name=:name, flexibleLearningCategoryID=:flexibleLearningCategoryID, logo=:logo, blurb=:blurb, license=:license, active=:active, outline=:outline, flexibleLearningMajorID1=:flexibleLearningMajorID1, flexibleLearningMajorID2=:flexibleLearningMajorID2, minor1=:minor1, minor2=:minor2, gibbonPersonIDCreator=:gibbonPersonIDCreator, timestamp=:timestamp';
-            $inserted = $pdo->insert($sql, $data);
-
-            if (empty($inserted)) {
-                $URL .= '&return=error2';
-                header("Location: {$URL}");
-                exit();
-            }
-
-            $AI = str_pad($inserted, 10, '0', STR_PAD_LEFT);
-
-            //ADD BLOCKS
-            $blockCount = ($_POST['blockCount'] - 1);
-            $sequenceNumber = 0;
-            if ($blockCount > 0) {
-                $order = $_POST['order'] ?? array();
-                foreach ($order as $i) {
-                    $title = '';
-                    if ($_POST["title$i"] != "Block $i") {
-                        $title = $_POST["title$i"];
-                    }
-                    $type2 = '';
-                    if ($_POST["type$i"] != 'type (e.g. discussion, outcome)') {
-                        $type2 = $_POST["type$i"];
-                    }
-                    $length = isset($_POST["length$i"]) ? intval(trim($_POST["length$i"])) : null;
-                    $contents = $_POST["contents$i"];
-                    $teachersNotes = $_POST["teachersNotes$i"];
-
-                    if ($title != '' or $contents != '') {
-
-                        $dataBlock = array('flexibleLearningUnitID' => $AI, 'title' => $title, 'type' => $type2, 'length' => $length, 'contents' => $contents, 'teachersNotes' => $teachersNotes, 'sequenceNumber' => $sequenceNumber);
-                        $sqlBlock = 'INSERT INTO flexibleLearningUnitBlock SET flexibleLearningUnitID=:flexibleLearningUnitID, title=:title, type=:type, length=:length, contents=:contents, teachersNotes=:teachersNotes, sequenceNumber=:sequenceNumber';
-
-                        $inserted = $pdo->insert($sqlBlock, $dataBlock);
-                        $partialFail &= !$inserted;
-                        ++$sequenceNumber;
-                    }
-                }
-            }
-
-            if ($partialFail == true) {
-                //Fail 6
-                $URL .= '&return=error6';
-                header("Location: {$URL}");
-            } else {
-                //Success 0
-                $URL = $URL.'&return=success0&editID='.$AI;
-                header("Location: {$URL}");
-            }
+        if (empty($data['logo'])) {
+            $partialFail = true;
         }
     }
+    
+    // Create the record
+    if (!$flexibleLearningUnitID = $unitGateway->insert($data)) {
+        $URL .= '&return=error2';
+        header("Location: {$URL}");
+        exit;
+    }
+
+    // ADD BLOCKS
+    $order = $_POST['order'] ?? [];
+    $sequenceNumber = 0;
+
+    foreach ($order as $i) {
+        $data = [
+            'flexibleLearningUnitID' => $flexibleLearningUnitID,
+            'title'                  => $_POST["title$i"] ?? '',
+            'type'                   => $_POST["type$i"] ?? '',
+            'length'                 => !empty($_POST["length$i"]) ? intval(trim($_POST["length$i"])) : null,
+            'contents'               => $_POST["contents$i"] ?? '',
+            'teachersNotes'          => $_POST["teachersNotes$i"] ?? '',
+            'sequenceNumber'         => $sequenceNumber,
+        ];
+
+        if (empty($data['title']) && empty($data['contents'])) continue;
+
+        $partialFail &= !$unitBlockGateway->insert($data);
+        $sequenceNumber++;
+    }
+
+    $URL .= $partialFail
+        ? '&return=error6'
+        : '&return=success0&editID='.$flexibleLearningUnitID;
+
+    header("Location: {$URL}");
+    
 }

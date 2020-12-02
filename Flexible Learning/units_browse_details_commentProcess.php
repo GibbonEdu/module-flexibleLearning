@@ -22,6 +22,7 @@ require_once '../../gibbon.php';
 use Gibbon\FileUploader;
 use Gibbon\Services\Format;
 use Gibbon\Domain\System\SettingGateway;
+use Gibbon\Domain\Students\StudentGateway;
 use Gibbon\Domain\System\DiscussionGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
@@ -29,15 +30,16 @@ use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
 $flexibleLearningUnitSubmissionID = $_POST['flexibleLearningUnitSubmissionID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details_feedback.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID.'&flexibleLearningUnitSubmissionID='.$flexibleLearningUnitSubmissionID;
+$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID.'&flexibleLearningUnitSubmissionID='.$flexibleLearningUnitSubmissionID;
 
-if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details_feedback.php') == false) {
+if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_unitHistory.php', 'Unit History_myChildren') == false) {
     $URL .= '&return=error0';
     header("Location: {$URL}");
     exit;
 } else {
     // Proceed!
     $unitSubmissionGateway = $container->get(UnitSubmissionGateway::class);
+    $studentGateway = $container->get(StudentGateway::class);
 
     // Validate the required values are present
     $comment = $_POST['comment'] ?? '';
@@ -48,11 +50,22 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         header("Location: {$URL}");
         exit;
     }
-
+    
     // Validate the database relationships exist
     $submission = $unitSubmissionGateway->getByID($flexibleLearningUnitSubmissionID);
     if (empty($submission)) {
         $URL .= '&return=error2';
+        header("Location: {$URL}");
+        exit;
+    }
+
+    // Validate that this parent has access to this student
+    $children = $studentGateway
+        ->selectAnyStudentsByFamilyAdult($gibbon->session->get('gibbonSchoolYearID'), $gibbon->session->get('gibbonPersonID'))
+        ->fetchGroupedUnique();
+
+    if (empty($children[$submission['gibbonPersonID']])) {
+        $URL .= '&return=error0';
         header("Location: {$URL}");
         exit;
     }
@@ -65,11 +78,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         'gibbonModuleID'     => getModuleIDFromName($connection2, 'Flexible Learning'),
         'gibbonPersonID'     => $gibbon->session->get('gibbonPersonID'),
         'comment'            => $comment,
-        'type'               => 'Feedback',
+        'type'               => 'Comment',
         'tag'                => 'dull',
     ]);
-
-    $unitSubmissionGateway->update($flexibleLearningUnitSubmissionID, ['status' => 'Complete']);
 
     $URL .= !$inserted
         ? "&return=error2"

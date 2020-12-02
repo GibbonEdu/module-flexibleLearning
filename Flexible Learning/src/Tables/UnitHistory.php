@@ -68,7 +68,7 @@ class UnitHistory
 
         $table->addColumn('unit', __('Unit'))
             ->format(function($values) {
-                $url = './index.php?q=/modules/Flexible Learning/units_browse_details.php&flexibleLearningUnitID=' . $values['flexibleLearningUnitID'] . '&sidebar=true';
+                $url = './index.php?q=/modules/Flexible Learning/units_browse_details.php&flexibleLearningUnitID=' . $values['flexibleLearningUnitID'] . '&flexibleLearningUnitSubmissionID='.$values['flexibleLearningUnitSubmissionID'].'&sidebar=true';
                 return Format::link($url, $values['unit']);
             });
 
@@ -87,6 +87,16 @@ class UnitHistory
                     : './'.$values['evidenceLocation'];
 
                 return Format::link($url, __('View'), ['target' => '_blank']);
+            });
+
+        // ACTIONS
+        $table->addActionColumn()
+            ->addParam('flexibleLearningUnitSubmissionID')
+            ->addParam('flexibleLearningUnitID')
+            ->addParam('sidebar', true)
+            ->format(function ($values, $actions) {
+                $actions->addAction('view', __('View'))
+                    ->setURL('/modules/Flexible Learning/units_browse_details.php');
             });
 
         return $table;

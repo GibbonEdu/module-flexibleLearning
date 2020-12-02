@@ -24,6 +24,7 @@ use Gibbon\Services\Format;
 use Gibbon\Tables\DataTable;
 use Gibbon\Tables\View\GridView;
 use Gibbon\Domain\System\SettingGateway;
+use Gibbon\Domain\Students\StudentGateway;
 use Gibbon\Domain\System\DiscussionGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
@@ -42,16 +43,27 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     $name = $_GET['name'] ?? '';
     $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
+    $flexibleLearningUnitSubmissionID = $_GET['flexibleLearningUnitSubmissionID'] ?? '';
 
     $roleCategory = getRoleCategory($gibbon->session->get('gibbonRoleIDCurrent'), $connection2);
     $unitGateway = $container->get(UnitGateway::class);
     $unitBlockGateway = $container->get(UnitBlockGateway::class);
     $submissionGateway = $container->get(UnitSubmissionGateway::class);
+    $studentGateway = $container->get(StudentGateway::class);
     $settingGateway = $container->get(SettingGateway::class);
+
+    $highestManageAction = getHighestGroupedAction($guid, '/modules/Flexible Learning/units_manage.php', $connection2);
+    $highestUnitHistoryAction = getHighestGroupedAction($guid, '/modules/Flexible Learning/report_unitHistory.php', $connection2);
 
     $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
     if (empty($values)) {
         $page->addError(__('The specified record cannot be found.'));
+        return;
+    }
+    
+    $access = $values['available'.$roleCategory] ?? 'No';
+    if (empty($highestManageAction) && $access != 'Read' && $access != 'Record') {
+        $page->addError(__m('You do not have access to browse this unit.'));
         return;
     }
 
@@ -63,7 +75,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $table = DataTable::createDetails('unitDetails');
     $table->addMetaData('gridClass', 'grid-cols-1 md:grid-cols-3 mb-4');
 
-    if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
+    if ($highestManageAction == 'Manage Units_all' || ($highestManageAction == 'Manage Units_my' && $values['gibbonPersonIDCreator'] == $gibbon->session->get('gibbonPersonID'))) {
         $table->addHeaderAction('edit', __('Edit'))
             ->setURL('/modules/Flexible Learning/units_manage_edit.php')
             ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
@@ -128,17 +140,60 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     echo $table->render([$values]);
 
     // DISCUSSION
-    $submission = $submissionGateway->selectBy(['gibbonPersonID' => $gibbon->session->get('gibbonPersonID'), 'flexibleLearningUnitID' => $flexibleLearningUnitID])->fetch();
+    if ($highestUnitHistoryAction == 'Unit History_all' && !empty($flexibleLearningUnitSubmissionID)) {
+        // Highest level access, view any discussion
+        $submission = $submissionGateway->getByID($flexibleLearningUnitSubmissionID);
+    } elseif ($highestUnitHistoryAction == 'Unit History_myChildren' && !empty($flexibleLearningUnitSubmissionID)) {
+        // Parents can only view submissions for their children
+        $submission = $submissionGateway->getByID($flexibleLearningUnitSubmissionID);
+        $children = $studentGateway
+            ->selectAnyStudentsByFamilyAdult($gibbon->session->get('gibbonSchoolYearID'), $gibbon->session->get('gibbonPersonID'))
+            ->fetchGroupedUnique();
+
+        if (empty($children[$submission['gibbonPersonID']])) {
+            unset($submission);
+        }
+    } else {
+        // Everyone else can only view their own submissions
+        $submission = $submissionGateway->selectBy(['gibbonPersonID' => $gibbon->session->get('gibbonPersonID'), 'flexibleLearningUnitID' => $flexibleLearningUnitID])->fetch();
+    }
 
     if (!empty($submission)) {
-        echo Format::alert(__m('Nice work! You have submitted evidence for this unit.'), 'success');
-
         $logs = $submissionGateway->selectUnitSubmissionDiscussion($submission['flexibleLearningUnitSubmissionID'])->fetchAll();
         
         echo $page->fetchFromTemplate('ui/discussion.twig.html', [
             'title' => __('Comments'),
             'discussion' => $logs
         ]);
+
+        // Add a comment
+        if ($highestUnitHistoryAction == 'Unit History_myChildren') {
+            $form = Form::create('parentComment', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_commentProcess.php');
+            $form->setClass('blank my-4');
+            $form->addHiddenValue('address', $gibbon->session->get('address'));
+            $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
+            $form->addHiddenValue('flexibleLearningUnitSubmissionID', $submission['flexibleLearningUnitSubmissionID']);
+
+            $commentBox = $form->getFactory()->createColumn()->addClass('flex flex-col');
+            $commentBox->addTextArea('comment')
+                ->placeholder(__m('Leave a comment'))
+                ->setClass('flex w-full')
+                ->setRows(3);
+            $commentBox->addButton(__m('Add Comment'))
+                ->onClick('$(this).prop("disabled", true).wrap("<span class=\"submitted\"></span>");document.getElementById("parentComment").submit()')
+                ->setClass('button rounded-sm right');
+
+            $form->addRow()->addClass('-mt-4')->addContent($page->fetchFromTemplate('ui/discussion.twig.html', [
+                'discussion' => [[
+                    'surname' => $gibbon->session->get('surname'),
+                    'preferredName' => $gibbon->session->get('preferredName'),
+                    'image_240' => $gibbon->session->get('image_240'),
+                    'comment' => $commentBox->getOutput(),
+                ]]
+            ]));
+
+            echo $form->getOutput(); 
+        }
     }
 
     // SMART BLOCKS
@@ -162,6 +217,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         }
     }
 
+    // Cancel out here if we only have read access
+    if ($access != 'Record') return;
 
     $expectFeedback = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback') == 'Y';
     $feedbackOnMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOnMessage');

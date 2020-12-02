@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+v0.5.00
+-------
+Added access permissions per unit
+Add the ability for parents to comment on their child's work
+
 v0.4.00
 -------
 Added Unit History pages under Reports

@@ -100,11 +100,10 @@ require_once __DIR__ . '/moduleFunctions.php';
         $row->addLabel('file', __m('Logo'))->description(__m('125px x 125px'));
         $row->addFileUpload('file')->accepts('.jpg,.jpeg,.gif,.png');
 
-    $row = $form->addRow();
-        $row->addLabel('active', __('Active'));
-        $row->addYesNo('active')->required();
 
     //MAJORS AND MINORS
+    $form->addRow()->addHeading(__m('Majors & Minors'))->append(__m('These help indicate what topics the unit is about.'));
+    
     $sql = "(SELECT minor1, minor2, NULL AS major1, NULL AS major2 FROM flexibleLearningUnit WHERE active='Y') UNION (SELECT name AS major1, name AS major2, NULL as minor1, NULL as minor2 FROM flexibleLearningMajor)";
     $result = $pdo->executeQuery(array(), $sql);
     $options = array();
@@ -130,6 +129,33 @@ require_once __DIR__ . '/moduleFunctions.php';
         $row->addLabel('minor2', __('Minor 2'));
         $row->addTextField('minor2')->autocomplete($options);
 
+    // ACCESS
+    $form->addRow()->addHeading(__m('Access'))->append(__m('Users with permission to manage units can override avaiability preferences.'));
+
+    $access = [
+        'No' => __m('No'),
+        'Read' => __m('Read Only'),
+        'Record' => __m('Read & Record'),
+    ];
+    $row = $form->addRow();
+        $row->addLabel('active', __('Active'));
+        $row->addYesNo('active')->required();
+
+    $row = $form->addRow();
+        $row->addLabel('availableStudent', __m('Available To Students'))->description(__m('Should students be able to browse and record evidence?'));
+        $row->addSelect('availableStudent')->fromArray($access)->required()->selected('Record');
+
+    $row = $form->addRow();
+        $row->addLabel('availableStaff', __m('Available To Staff'))->description(__m('Should staff be able to browse and record evidence?'));
+        $row->addSelect('availableStaff')->fromArray($access)->required()->selected('Read');
+
+    $row = $form->addRow();
+        $row->addLabel('availableParent', __m('Available To Parents'))->description(__m('Should parents be able to browse and record evidence?'));
+        $row->addSelect('availableParent')->fromArray($access)->required()->selected('Read');
+
+    $row = $form->addRow();
+        $row->addLabel('availableOther', __m('Available To Others'))->description(__m('Should other users be able to browse and record evidence?'));
+        $row->addSelect('availableOther')->fromArray($access)->required()->selected('Read');
 
     // UNIT OUTLINE
     $form->addRow()->addHeading(__m('Unit Outline'))->append(__m('The contents of this field are viewable to all users, SO AVOID CONFIDENTIAL OR SENSITIVE DATA!'));

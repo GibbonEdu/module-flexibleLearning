@@ -73,8 +73,6 @@ $criteria = $staffGateway->newQueryCriteria()
     ->filterBy('type', 'Teaching');
 
 $staff = $staffGateway->queryAllStaff($criteria)->toArray();
-$staff = array_slice($staff, 0, 4);
-
 
 // Send email
 $mail = $container->get(Mailer::class);

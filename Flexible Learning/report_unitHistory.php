@@ -34,20 +34,18 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
     $page->addError(__('The highest grouped action cannot be determined.'));
 } else {
     // Proceed!
+    $page->breadcrumbs->add(__m('Unit History'));
+
     $gibbonSchoolYearID = $gibbon->session->get('gibbonSchoolYearID');
     $studentGateway = $container->get(StudentGateway::class);
 
     if ($highestAction == 'Unit History_all') {
         // Can view all students
-        $page->breadcrumbs->add(__m('Unit History'));
-
         $gibbonPersonID = $_REQUEST['gibbonPersonID'] ?? '';
         $participant = $container->get(UserGateway::class)->getByID($gibbonPersonID);
         
     } elseif ($highestAction == 'Unit History_myChildren') {
         // Can view family children
-        $page->breadcrumbs->add(__m('Unit History'));
-
         $children = $studentGateway
             ->selectAnyStudentsByFamilyAdult($gibbonSchoolYearID, $gibbon->session->get('gibbonPersonID'))
             ->fetchAll();

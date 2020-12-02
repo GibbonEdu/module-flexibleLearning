@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+v0.5.00
+-------
+
 v0.4.00
 -------
 Added Unit History pages under Reports

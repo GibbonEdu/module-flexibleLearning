@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+v0.6.00
+-------
+
 v0.5.00
 -------
 Added access permissions per unit

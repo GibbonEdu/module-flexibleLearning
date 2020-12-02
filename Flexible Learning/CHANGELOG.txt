@@ -2,6 +2,9 @@ CHANGELOG
 =========
 v0.6.00
 -------
+Added a CLI script to notify teachers of work pending feedback
+Add the option for students to invite their parents to comment on work
+Updated the Unit History page to link to the feedback form if users have access
 
 v0.5.00
 -------

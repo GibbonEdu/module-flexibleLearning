@@ -25,7 +25,7 @@ $description = 'View, create and manage Flexible Learning units.';
 $entryURL    = "units_browse.php";
 $type        = "Additional";
 $category    = 'Learn';
-$version     = '0.3.01';
+$version     = '0.4.00';
 $author      = 'Harry Merrett';
 $url         = '';
 
@@ -79,17 +79,17 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningMajor` (
   PRIMARY KEY (`flexibleLearningMajorID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
-$moduleTables[] = "CREATE TABLE `flexibleLearningUnitSubmission` (
-    `flexibleLearningUnitSubmissionID` INT(12) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-    `flexibleLearningUnitID` INT(10) UNSIGNED ZEROFILL NOT NULL,
-    `gibbonPersonID` INT(10) UNSIGNED ZEROFILL NOT NULL,
-    `gibbonSchoolYearID` INT(3) UNSIGNED ZEROFILL NOT NULL,
-    `status` ENUM('Pending','Complete') NOT NULL DEFAULT 'Complete',
-    `evidenceType` ENUM('File','Link') NULL DEFAULT 'Link',
-    `evidenceLocation` TEXT NULL,
-    `timestampSubmitted` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `timestampFeedback` TIMESTAMP NULL,
-    `gibbonPersonIDFeedback` INT(10) NULL,
+$moduleTables[] = "CREATE TABLE `flexibleLearningUnitSubmission` ( 
+    `flexibleLearningUnitSubmissionID` INT(12) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
+    `flexibleLearningUnitID` INT(10) UNSIGNED ZEROFILL NOT NULL, 
+    `gibbonPersonID` INT(10) UNSIGNED ZEROFILL NOT NULL, 
+    `gibbonSchoolYearID` INT(3) UNSIGNED ZEROFILL NOT NULL, 
+    `status` ENUM('Pending','Complete') NOT NULL DEFAULT 'Complete', 
+    `evidenceType` ENUM('File','Link') NULL DEFAULT 'Link', 
+    `evidenceLocation` TEXT NULL, 
+    `timestampSubmitted` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+    `timestampFeedback` TIMESTAMP NULL, 
+    `gibbonPersonIDFeedback` INT(10) NULL, 
     PRIMARY KEY (`flexibleLearningUnitSubmissionID`)
 ) ENGINE = InnoDB DEFAULT CHARSET=utf8;";
 
@@ -115,8 +115,8 @@ $actionRows[] = [
     'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
     'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
     'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
-    'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?
-    'categoryPermissionOther'   => 'Y', // Should this action be available to user roles in the Other category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
 ];
 
 $actionRows[] = [
@@ -154,9 +154,9 @@ $actionRows[] = [
     'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
     'defaultPermissionSupport'  => 'Y', // Default permission for built in role Support
     'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
-    'categoryPermissionStudent' => 'Y', // Should this action be available to user roles in the Student category?
-    'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?
-    'categoryPermissionOther'   => 'Y', // Should this action be available to user roles in the Other category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
 ];
 
 $actionRows[] = [
@@ -194,9 +194,9 @@ $actionRows[] = [
     'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
     'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
     'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
-    'categoryPermissionStudent' => 'Y', // Should this action be available to user roles in the Student category?
-    'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?
-    'categoryPermissionOther'   => 'Y', // Should this action be available to user roles in the Other category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
 ];
 
 $actionRows[] = [
@@ -239,5 +239,71 @@ $actionRows[] = [
     'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
 ];
 
+$actionRows[] = [
+    'name'                      => 'Unit History_all', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '1',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Reports', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows a user to see all units undertaken by any participant.', // Text description
+    'URLList'                   => 'report_unitHistory.php,hook_studentProfile_unitHistory.php', // List of pages included in this action
+    'entryURL'                  => 'report_unitHistory.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'Y', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
+];
+
+$actionRows[] = [
+    'name'                      => 'Unit History_myChildren', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Learning', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows a user to see all units undertaken by their own children.', // Text description
+    'URLList'                   => 'report_unitHistory.php,hook_studentProfile_unitHistory.php', // List of pages included in this action
+    'entryURL'                  => 'report_unitHistory.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'N', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'N', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'Y', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'N', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
+];
+
+
+$actionRows[] = [
+    'name'                      => 'My Unit History', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Learning', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows a user to see all the units they have studied and are studying.', // Text description
+    'URLList'                   => 'report_unitHistory_my.php,hook_studentProfile_unitHistory.php', // List of pages included in this action
+    'entryURL'                  => 'report_unitHistory_my.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'N', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'N', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'Y', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'Y', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'Y', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'Y', // Should this action be available to user roles in the Other category?
+];
+
 // Hooks
-//$hooks[] = ''; // Serialised array to create hook and set options. See Hooks documentation online.
+$array = [
+    'sourceModuleName' => 'Flexible Learning',
+    'sourceModuleAction' => 'Unit History_all,Unit History_myChildren,My Unit History',
+    'sourceModuleInclude' => 'hook_studentProfile_unitHistory.php',
+];
+$hooks[] = "INSERT INTO `gibbonHook` (`name`, `type`, `options`, gibbonModuleID) VALUES ('Flexible Learning', 'Student Profile', '".serialize($array)."', (SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning'));";

@@ -1,5 +1,12 @@
 CHANGELOG
 =========
+v0.4.00
+-------
+Added Unit History pages under Reports
+Added Unit History to the student profile
+Added the ability to edit evidence
+Add author selects to the Add and Edit pages
+
 v0.3.01
 -------
 Added "Surprise Me!" button - links to a randomly selected unit

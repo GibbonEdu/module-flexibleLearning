@@ -75,6 +75,16 @@ require_once __DIR__ . '/moduleFunctions.php';
         $row->addLabel('blurb', __('Blurb'));
         $row->addTextArea('blurb')->required();
 
+    $highestManageAction = getHighestGroupedAction($guid, '/modules/Flexible Learning/units_manage.php', $connection2);
+
+    $row = $form->addRow();
+        $row->addLabel('gibbonPersonIDCreator', __('Author'));
+        $row->addSelectUsers('gibbonPersonIDCreator')
+            ->photo(true, 'small')
+            ->required()
+            ->selected($gibbon->session->get('gibbonPersonID'))
+            ->readonly($highestManageAction == 'Manage Units_my');
+
     $licenses = array(
         "Copyright" => __("Copyright"),
         "Creative Commons BY" => __("Creative Commons BY"),

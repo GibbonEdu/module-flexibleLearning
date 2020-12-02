@@ -162,44 +162,62 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         }
     }
 
-    if (!empty($submission)) {
-        return;
-    }
 
     $expectFeedback = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback') == 'Y';
     $feedbackOnMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOnMessage');
     $feedbackOffMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOffMessage');
 
-    // SUBMIT EVIDENCE
-    $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_submitProcess.php');
-    $form->addHiddenValue('address', $gibbon->session->get('address'));
-    $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
+    $submissionLog = $logs[0] ?? [];
+    if (!empty($submission)) {
+        // UPDATE EVIDENCE
+        $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_updateProcess.php');
+        $form->addHiddenValue('address', $gibbon->session->get('address'));
+        $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
+        $form->addHiddenValue('flexibleLearningUnitSubmissionID', $submission['flexibleLearningUnitSubmissionID'] ?? '');
+        $form->addHiddenValue('gibbonDiscussionID', $submissionLog['gibbonDiscussionID'] ?? '');
 
-    $form->addRow()->addHeading(__('Submit your Evidence'));
+        $form->addRow()->addHeading(__m('Record your Journey'));
+        $form->addRow()->addContent(Format::alert(__m('You have already recorded evidence for this unit. You can optionally use the form below to update your submission.'), 'success'));
+    } else {
+        // SUBMIT EVIDENCE
+        $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_submitProcess.php');
+        $form->addHiddenValue('address', $gibbon->session->get('address'));
+        $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
 
-    $row = $form->addRow();
-    $row->addContent(Format::alert(__m($expectFeedback ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback ? 'message' : 'warning'));
-
+        $form->addRow()->addHeading(__m('Record your Journey'));
+        $form->addRow()->addContent(Format::alert(__m($expectFeedback ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback ? 'message' : 'warning'));
+    }
+    
     $row = $form->addRow();
         $row->addLabel('comment', __('Comment'))->description(__m('Leave a brief reflective comment on this unit<br/>and what you learned.'));
-        $row->addTextArea('comment')->setRows(4)->required();
+        $row->addTextArea('comment')->setRows(4)->required()->setValue($submissionLog['comment'] ?? '');
 
     $types = ['Link' => __('Link'), 'File' => __('File')];
     $row = $form->addRow();
         $row->addLabel('evidenceType', __('Type'));
-        $row->addRadio('evidenceType')->fromArray($types)->inline()->required()->checked('Link');
+        $row->addRadio('evidenceType')->fromArray($types)->inline()->required()->checked($submission['evidenceType'] ?? 'Link');
 
     // File
     $form->toggleVisibilityByClass('evidenceFile')->onRadio('evidenceType')->when('File');
     $row = $form->addRow()->addClass('evidenceFile');
-        $row->addLabel('file', __('Submit File'));
-        $row->addFileUpload('file')->accepts($container->get(FileUploader::class)->getFileExtensions())->required();
+        $row->addLabel('file', __('File'));
+        $uploader = $row->addFileUpload('file')
+            ->accepts($container->get(FileUploader::class)->getFileExtensions())
+            ->required();
+
+    if (!empty($submission) && $submission['evidenceType'] == 'File') {
+        $uploader->setAttachment('evidenceLocation', $gibbon->session->get('absoluteURL'), $submission['evidenceLocation'] ?? '');
+    }
 
     // Link
     $form->toggleVisibilityByClass('evidenceLink')->onRadio('evidenceType')->when('Link');
     $row = $form->addRow()->addClass('evidenceLink');
-        $row->addLabel('link', __('Submit Link'));
-        $row->addURL('link')->maxLength(255)->required();
+        $row->addLabel('link', __('Link'));
+        $link = $row->addURL('link')->maxLength(255)->required();
+
+    if (!empty($submission) && $submission['evidenceType'] == 'Link') {
+        $link->setValue($submission['evidenceLocation'] ?? '');
+    }
 
     $row = $form->addRow();
         $row->addFooter();

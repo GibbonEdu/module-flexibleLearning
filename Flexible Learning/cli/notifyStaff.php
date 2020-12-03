@@ -21,6 +21,7 @@ use Gibbon\Services\Format;
 use Gibbon\Contracts\Comms\Mailer;
 use Gibbon\Comms\NotificationSender;
 use Gibbon\Domain\Staff\StaffGateway;
+use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 
 $_POST['address'] = '/modules/Flexible Learning/report_workPendingFeedback.php';
@@ -44,6 +45,12 @@ if (isSchoolOpen($guid, date('Y-m-d'), $connection2, true) == false) {
 
 if ($_SESSION[$guid]['organisationEmail'] == '') {
     echo __('This script cannot be run, as no school email address has been set.');
+    return;
+}
+
+$expectFeedback =  $container->get(SettingGateway::class)->getSettingByScope('Flexible Learning', 'expectFeedback');
+if ($expectFeedback != 'Y') {
+    echo __m('Feedback is not expected at this time, the CLI will not run.');
     return;
 }
 

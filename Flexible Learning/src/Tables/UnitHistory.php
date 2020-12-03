@@ -40,7 +40,7 @@ class UnitHistory
         $this->templateView = $templateView;
     }
 
-    public function create($gibbonPersonID)
+    public function create($gibbonPersonID, $canGiveFeedback = false)
     {
         $criteria = $this->submissionGateway->newQueryCriteria(true)
             ->sortBy(['timestampSubmitted'], 'DESC')
@@ -94,9 +94,15 @@ class UnitHistory
             ->addParam('flexibleLearningUnitSubmissionID')
             ->addParam('flexibleLearningUnitID')
             ->addParam('sidebar', true)
-            ->format(function ($values, $actions) {
-                $actions->addAction('view', __('View'))
-                    ->setURL('/modules/Flexible Learning/units_browse_details.php');
+            ->format(function ($values, $actions) use ($canGiveFeedback) {
+                if ($canGiveFeedback) {
+                    $actions->addAction('edit', __('Edit'))
+                        ->setURL('/modules/Flexible Learning/units_browse_details_feedback.php');
+                } else {
+                    $actions->addAction('view', __('View'))
+                        ->setURL('/modules/Flexible Learning/units_browse_details.php');
+                }
+                
             });
 
         return $table;

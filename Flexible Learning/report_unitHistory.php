@@ -89,6 +89,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
         return;
     }
 
-    $table = $container->get(UnitHistory::class)->create($gibbonPersonID);
+    $table = $container->get(UnitHistory::class)->create($gibbonPersonID, $highestAction == 'Unit History_all');
     echo $table->getOutput();
 }

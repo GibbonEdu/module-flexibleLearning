@@ -2,6 +2,7 @@
 
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
+use Gibbon\Comms\NotificationEvent;
 /*
 Gibbon, Flexible & Open School System
 Copyright (C) 2010, Ross Parker
@@ -34,7 +35,11 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $URL .= '&return=error5';
         header("Location: {$URL}");
         return;
-    } 
+<<<<<<< Updated upstream
+    }
+=======
+    }
+>>>>>>> Stashed changes
 
     // Proceed!
     $unitGateway = $container->get(UnitGateway::class);
@@ -65,7 +70,11 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $URL .= '&return=error3';
         header("Location: {$URL}");
         return;
-    } 
+<<<<<<< Updated upstream
+    }
+=======
+    }
+>>>>>>> Stashed changes
 
     //Move attached file, if there is one
     if (!empty($_FILES['file']['tmp_name'])) {
@@ -75,13 +84,21 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $file = $_FILES['file'] ?? null;
 
         // Upload the file, return the /uploads relative path
+<<<<<<< Updated upstream
         $data['logo'] = $fileUploader->uploadFromPost($file, $name);
+=======
+        $data['logo'] = $fileUploader->uploadFromPost($file, $name, $data['name']);
+>>>>>>> Stashed changes
 
         if (empty($data['logo'])) {
             $partialFail = true;
         }
     }
-    
+<<<<<<< Updated upstream
+
+=======
+
+>>>>>>> Stashed changes
     // Create the record
     if (!$flexibleLearningUnitID = $unitGateway->insert($data)) {
         $URL .= '&return=error2';
@@ -89,6 +106,23 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         exit;
     }
 
+<<<<<<< Updated upstream
+=======
+
+    // Notify when a new unit has been created
+
+    $event = new NotificationEvent('Flexible Learning', 'New Flexible Learning Unit');
+
+    $event->setNotificationText(__('A new Flexible Learning Unit, {name} has been created.', [
+      'name' => $data['name']
+    ]));
+
+    $event->setActionLink("/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=$flexibleLearningUnitID");
+
+    // Send all notifications
+                    $sendReport = $event->sendNotifications($pdo, $gibbon->session);
+
+>>>>>>> Stashed changes
     // ADD BLOCKS
     $order = $_POST['order'] ?? [];
     $sequenceNumber = 0;
@@ -115,5 +149,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         : '&return=success0&editID='.$flexibleLearningUnitID;
 
     header("Location: {$URL}");
-    
+<<<<<<< Updated upstream
+
+=======
+
+>>>>>>> Stashed changes
 }

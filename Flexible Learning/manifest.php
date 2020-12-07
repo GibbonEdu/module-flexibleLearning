@@ -25,7 +25,7 @@ $description = 'View, create and manage Flexible Learning units.';
 $entryURL    = "units_browse.php";
 $type        = "Additional";
 $category    = 'Learn';
-$version     = '0.6.01';
+$version     = '1.0.00';
 $author      = 'Harry Merrett';
 $url         = '';
 

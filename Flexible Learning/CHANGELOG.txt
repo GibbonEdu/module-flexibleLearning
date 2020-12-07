@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v1.0.00
+-------
+First major version!
+
 v0.6.01
 -------
 Added an optional notification to inform when a new unit has been created

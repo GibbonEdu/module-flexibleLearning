@@ -35,11 +35,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $URL .= '&return=error5';
         header("Location: {$URL}");
         return;
-<<<<<<< Updated upstream
     }
-=======
-    }
->>>>>>> Stashed changes
 
     // Proceed!
     $unitGateway = $container->get(UnitGateway::class);
@@ -70,11 +66,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $URL .= '&return=error3';
         header("Location: {$URL}");
         return;
-<<<<<<< Updated upstream
     }
-=======
-    }
->>>>>>> Stashed changes
 
     //Move attached file, if there is one
     if (!empty($_FILES['file']['tmp_name'])) {
@@ -84,30 +76,19 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $file = $_FILES['file'] ?? null;
 
         // Upload the file, return the /uploads relative path
-<<<<<<< Updated upstream
-        $data['logo'] = $fileUploader->uploadFromPost($file, $name);
-=======
-        $data['logo'] = $fileUploader->uploadFromPost($file, $name, $data['name']);
->>>>>>> Stashed changes
+        $data['logo'] = $fileUploader->uploadFromPost($file, $data, $data['name']);
 
         if (empty($data['logo'])) {
             $partialFail = true;
         }
     }
-<<<<<<< Updated upstream
 
-=======
-
->>>>>>> Stashed changes
     // Create the record
     if (!$flexibleLearningUnitID = $unitGateway->insert($data)) {
         $URL .= '&return=error2';
         header("Location: {$URL}");
         exit;
     }
-
-<<<<<<< Updated upstream
-=======
 
     // Notify when a new unit has been created
 
@@ -122,7 +103,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     // Send all notifications
                     $sendReport = $event->sendNotifications($pdo, $gibbon->session);
 
->>>>>>> Stashed changes
     // ADD BLOCKS
     $order = $_POST['order'] ?? [];
     $sequenceNumber = 0;
@@ -149,9 +129,4 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         : '&return=success0&editID='.$flexibleLearningUnitID;
 
     header("Location: {$URL}");
-<<<<<<< Updated upstream
-
-=======
-
->>>>>>> Stashed changes
 }

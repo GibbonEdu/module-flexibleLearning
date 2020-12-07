@@ -125,3 +125,10 @@ $count++;
 $sql[$count][0] = "0.6.00";
 $sql[$count][1] = "
 ";
+
+// v0.6.01
+$count++;
+$sql[$count][0] = "0.6.01";
+$sql[$count][1] = "
+INSERT INTO `gibbonNotificationEvent` (`event`, `moduleName`, `actionName`, `type`, `scopes`, `active`) VALUES ('New Flexible Learning Unit', 'Flexible Learning', 'Manage Units', 'Core', 'All', 'Y');end
+";

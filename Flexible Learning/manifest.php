@@ -25,7 +25,7 @@ $description = 'View, create and manage Flexible Learning units.';
 $entryURL    = "units_browse.php";
 $type        = "Additional";
 $category    = 'Learn';
-$version     = '0.6.00';
+$version     = '0.6.01';
 $author      = 'Harry Merrett';
 $url         = '';
 
@@ -83,17 +83,17 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningMajor` (
   PRIMARY KEY (`flexibleLearningMajorID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
-$moduleTables[] = "CREATE TABLE `flexibleLearningUnitSubmission` ( 
-    `flexibleLearningUnitSubmissionID` INT(12) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
-    `flexibleLearningUnitID` INT(10) UNSIGNED ZEROFILL NOT NULL, 
-    `gibbonPersonID` INT(10) UNSIGNED ZEROFILL NOT NULL, 
-    `gibbonSchoolYearID` INT(3) UNSIGNED ZEROFILL NOT NULL, 
-    `status` ENUM('Pending','Complete') NOT NULL DEFAULT 'Complete', 
-    `evidenceType` ENUM('File','Link') NULL DEFAULT 'Link', 
-    `evidenceLocation` TEXT NULL, 
-    `timestampSubmitted` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-    `timestampFeedback` TIMESTAMP NULL, 
-    `gibbonPersonIDFeedback` INT(10) NULL, 
+$moduleTables[] = "CREATE TABLE `flexibleLearningUnitSubmission` (
+    `flexibleLearningUnitSubmissionID` INT(12) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+    `flexibleLearningUnitID` INT(10) UNSIGNED ZEROFILL NOT NULL,
+    `gibbonPersonID` INT(10) UNSIGNED ZEROFILL NOT NULL,
+    `gibbonSchoolYearID` INT(3) UNSIGNED ZEROFILL NOT NULL,
+    `status` ENUM('Pending','Complete') NOT NULL DEFAULT 'Complete',
+    `evidenceType` ENUM('File','Link') NULL DEFAULT 'Link',
+    `evidenceLocation` TEXT NULL,
+    `timestampSubmitted` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `timestampFeedback` TIMESTAMP NULL,
+    `gibbonPersonIDFeedback` INT(10) NULL,
     PRIMARY KEY (`flexibleLearningUnitSubmissionID`)
 ) ENGINE = InnoDB DEFAULT CHARSET=utf8;";
 
@@ -101,6 +101,7 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningUnitSubmission` (
 $gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'expectFeedback', 'Expect Feedback', 'When enabled, students can expect to receive feedback on their submissions.', 'N');";
 $gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'feedbackOnMessage', 'Feedback Message', 'A message to display to participants when they can expect to receive feedback.', 'Submissions to units will be collected and shared with teachers. Students can expect to receive feedback on their work.');";
 $gibbonSetting[] = "INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'feedbackOffMessage', 'No Feedback Message', 'A message to display to participants when they should not expect to receive feedback.', 'Feedback is optional and teachers will not be notified of new submissions. Students should not expect to receive feedback. They may choose to approach a teacher and request feedback.');";
+$gibbonSetting[] = "INSERT INTO `gibbonNotificationEvent` (`event`, `moduleName`, `actionName`, `type`, `scopes`, `active`) VALUES ('New Flexible Learning Unit', 'Flexible Learning', 'Manage Units', 'Core', 'All', 'Y');";
 
 // Action rows
 $actionRows[] = [

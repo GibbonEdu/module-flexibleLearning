@@ -40,12 +40,12 @@ class UnitGateway extends QueryableGateway
         $query = $this
             ->newQuery()
             ->from($this->getTableName())
-            ->cols(['flexibleLearningUnit.*', 'flexibleLearningMajor1.name AS major1', 'flexibleLearningMajor2.name AS major2', 'flexibleLearningCategory.color', 'flexibleLearningCategory.name AS category', 'gibbonPerson.preferredName', 'gibbonPerson.surname', 'gibbonPerson.status', "(SELECT SUM(length) FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=flexibleLearningUnit.flexibleLearningUnitID) as length"])
+            ->cols(['flexibleLearningUnit.*', 'flexibleLearningMajor1.name AS major1', '(timestamp > CURRENT_DATE - interval 7 day) as new', 'flexibleLearningMajor2.name AS major2', 'flexibleLearningCategory.color', 'flexibleLearningCategory.name AS category', 'gibbonPerson.preferredName', 'gibbonPerson.surname', 'gibbonPerson.status', "(SELECT SUM(length) FROM flexibleLearningUnitBlock WHERE flexibleLearningUnitID=flexibleLearningUnit.flexibleLearningUnitID) as length"])
             ->innerJoin('flexibleLearningCategory', 'flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID')
             ->innerJoin('gibbonPerson', 'gibbonPerson.gibbonPersonID=flexibleLearningUnit.gibbonPersonIDCreator')
             ->leftJoin('flexibleLearningMajor AS flexibleLearningMajor1', 'flexibleLearningUnit.flexibleLearningMajorID1=flexibleLearningMajor1.flexibleLearningMajorID')
             ->leftJoin('flexibleLearningMajor AS flexibleLearningMajor2', 'flexibleLearningUnit.flexibleLearningMajorID2=flexibleLearningMajor2.flexibleLearningMajorID');
-            
+
         if (!empty($gibbonPersonID)) {
             $query->cols(['flexibleLearningUnitSubmissionID as submitted'])
                 ->leftJoin('flexibleLearningUnitSubmission', 'flexibleLearningUnitSubmission.flexibleLearningUnitID=flexibleLearningUnit.flexibleLearningUnitID AND flexibleLearningUnitSubmission.gibbonPersonID=:gibbonPersonID')
@@ -64,15 +64,15 @@ class UnitGateway extends QueryableGateway
                 case 'Student':
                     $query->where("flexibleLearningUnit.availableStudent<>'No'");
                     break;
-    
+
                 case 'Parent':
                     $query->where("flexibleLearningUnit.availableParent<>'No'");
                     break;
-    
+
                 case 'Staff':
                     $query->where("flexibleLearningUnit.availableStaff<>'No'");
                     break;
-    
+
                 case 'Other':
                     $query->where("flexibleLearningUnit.availableOther<>'No'");
                     break;
@@ -113,9 +113,9 @@ class UnitGateway extends QueryableGateway
 
     public function selectAllUnits()
     {
-        $sql = "SELECT flexibleLearningCategory.name as groupBy, flexibleLearningUnitID as value, flexibleLearningUnit.name 
-            FROM flexibleLearningUnit 
-            JOIN flexibleLearningCategory ON (flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID)  
+        $sql = "SELECT flexibleLearningCategory.name as groupBy, flexibleLearningUnitID as value, flexibleLearningUnit.name
+            FROM flexibleLearningUnit
+            JOIN flexibleLearningCategory ON (flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID)
             ORDER BY flexibleLearningCategory.sequenceNumber, flexibleLearningUnit.name";
 
         return $this->db()->select($sql);

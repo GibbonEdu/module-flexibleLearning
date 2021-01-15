@@ -12,6 +12,10 @@ For info about editing, see: https://twig.symfony.com/doc/2.x/
         <span class="z-10 tag success block absolute top-0 right-0 mt-1 mr-1">
             {{ __('Done') }}
         </span>
+    {% elseif new %}
+        <span class="z-10 tag warning block absolute top-0 right-0 mt-1 mr-1">
+            {{ __('New!') }}
+        </span>
     {% endif %}
 
     <div class="w-12 h-12 mx-6 overflow-hidden bg-cover bg-no-repeat bg-center {{ submitted ? 'opacity-25' }}" style="background-image: url({{ logo|default(defaultImage) }});">

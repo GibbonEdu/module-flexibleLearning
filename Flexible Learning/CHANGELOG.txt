@@ -1,6 +1,10 @@
 CHANGELOG
 =========
-v1.0.01
+v1.0.03
+-------
+Fixed student profile hook for existing installations
+
+v1.0.02
 -------
 Added "New!" indicator on units which are less than a week old
 

@@ -51,7 +51,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/categori
         $row->addTextArea('description')->required()->maxLength(255);
 
     $row = $form->addRow();
-        $row->addLabel('color', __('Color'))->description(__m('Click to select a color.'));
+        $row->addLabel('color', __('Colour'))->description(__m('Click to select a colour.'));
         $row->addColor('color')->setValue('#ffffff');
 
     $row = $form->addRow();

@@ -150,3 +150,17 @@ $count++;
 $sql[$count][0] = "1.0.02";
 $sql[$count][1] = "
 ";
+
+$array = [
+    'sourceModuleName' => 'Flexible Learning',
+    'sourceModuleAction' => 'Unit History_all,Unit History_myChildren,My Unit History',
+    'sourceModuleInclude' => 'hook_studentProfile_unitHistory.php',
+];
+
+// v1.0.03
+$count++;
+$sql[$count][0] = "1.0.03";
+$sql[$count][1] = "
+DELETE FROM `gibbonHook` WHERE name='Flexible Learning' AND (type='Student Dashboard' OR type='Student Profile');end
+INSERT INTO `gibbonHook` (`name`, `type`, `options`, gibbonModuleID) VALUES ('Flexible Learning', 'Student Profile', '".serialize($array)."', (SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning'));end
+";

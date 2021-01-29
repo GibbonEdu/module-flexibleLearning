@@ -171,3 +171,10 @@ $sql[$count][0] = "1.0.04";
 $sql[$count][1] = "
 UPDATE `gibbonAction` SET categoryPermissionStudent='Y' WHERE gibbonAction.name='Work Pending Feedback' AND gibbonAction.gibbonModuleID=(SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning');end
 ";
+
+// v1.0.05
+$count++;
+$sql[$count][0] = "1.0.05";
+$sql[$count][1] = "
+UPDATE gibbonDiscussion JOIN flexibleLearningUnitSubmission ON (gibbonDiscussion.foreignTableID=flexibleLearningUnitSubmission.flexibleLearningUnitSubmissionID) SET gibbonDiscussion.gibbonPersonIDTarget=flexibleLearningUnitSubmission.gibbonPersonID WHERE gibbonDiscussion.foreignTable='flexibleLearningUnitSubmission';end
+";

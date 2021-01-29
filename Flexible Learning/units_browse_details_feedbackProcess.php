@@ -60,13 +60,14 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     // Insert discussion records
     $discussionGateway = $container->get(DiscussionGateway::class);          
     $inserted = $discussionGateway->insert([
-        'foreignTable'       => 'flexibleLearningUnitSubmission',
-        'foreignTableID'     => $flexibleLearningUnitSubmissionID,
-        'gibbonModuleID'     => getModuleIDFromName($connection2, 'Flexible Learning'),
-        'gibbonPersonID'     => $gibbon->session->get('gibbonPersonID'),
-        'comment'            => $comment,
-        'type'               => 'Feedback',
-        'tag'                => 'dull',
+        'foreignTable'         => 'flexibleLearningUnitSubmission',
+        'foreignTableID'       => $flexibleLearningUnitSubmissionID,
+        'gibbonModuleID'       => getModuleIDFromName($connection2, 'Flexible Learning'),
+        'gibbonPersonID'       => $gibbon->session->get('gibbonPersonID'),
+        'gibbonPersonIDTarget' => $submission['gibbonPersonID'],
+        'comment'              => $comment,
+        'type'                 => 'Feedback',
+        'tag'                  => 'dull',
     ]);
 
     $unitSubmissionGateway->update($flexibleLearningUnitSubmissionID, ['status' => 'Complete']);

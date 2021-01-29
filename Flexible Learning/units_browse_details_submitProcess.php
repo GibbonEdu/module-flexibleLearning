@@ -115,15 +115,16 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     // Insert discussion records     
     $discussionGateway->insert([
-        'foreignTable'       => 'flexibleLearningUnitSubmission',
-        'foreignTableID'     => $flexibleLearningUnitSubmissionID,
-        'gibbonModuleID'     => getModuleIDFromName($connection2, 'Flexible Learning'),
-        'gibbonPersonID'     => $data['gibbonPersonID'],
-        'comment'            => $comment,
-        'type'               => 'Evidence',
-        'tag'                => 'pending',
-        'attachmentType'     => $data['evidenceType'],
-        'attachmentLocation' => $data['evidenceLocation'],
+        'foreignTable'         => 'flexibleLearningUnitSubmission',
+        'foreignTableID'       => $flexibleLearningUnitSubmissionID,
+        'gibbonModuleID'       => getModuleIDFromName($connection2, 'Flexible Learning'),
+        'gibbonPersonID'       => $data['gibbonPersonID'],
+        'gibbonPersonIDTarget' => $data['gibbonPersonID'],
+        'comment'              => $comment,
+        'type'                 => 'Evidence',
+        'tag'                  => 'pending',
+        'attachmentType'       => $data['evidenceType'],
+        'attachmentLocation'   => $data['evidenceLocation'],
     ]);
 
     // Invite Parents to Comment

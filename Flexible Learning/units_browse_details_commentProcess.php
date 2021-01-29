@@ -73,13 +73,14 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
     // Insert discussion records
     $discussionGateway = $container->get(DiscussionGateway::class);          
     $inserted = $discussionGateway->insert([
-        'foreignTable'       => 'flexibleLearningUnitSubmission',
-        'foreignTableID'     => $flexibleLearningUnitSubmissionID,
-        'gibbonModuleID'     => getModuleIDFromName($connection2, 'Flexible Learning'),
-        'gibbonPersonID'     => $gibbon->session->get('gibbonPersonID'),
-        'comment'            => $comment,
-        'type'               => 'Comment',
-        'tag'                => 'dull',
+        'foreignTable'         => 'flexibleLearningUnitSubmission',
+        'foreignTableID'       => $flexibleLearningUnitSubmissionID,
+        'gibbonModuleID'       => getModuleIDFromName($connection2, 'Flexible Learning'),
+        'gibbonPersonID'       => $gibbon->session->get('gibbonPersonID'),
+        'gibbonPersonIDTarget' => $submission['gibbonPersonID'],
+        'comment'              => $comment,
+        'type'                 => 'Comment',
+        'tag'                  => 'dull',
     ]);
 
     $URL .= !$inserted

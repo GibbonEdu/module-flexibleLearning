@@ -178,3 +178,9 @@ $sql[$count][0] = "1.1.00";
 $sql[$count][1] = "
 UPDATE gibbonDiscussion JOIN flexibleLearningUnitSubmission ON (gibbonDiscussion.foreignTableID=flexibleLearningUnitSubmission.flexibleLearningUnitSubmissionID) SET gibbonDiscussion.gibbonPersonIDTarget=flexibleLearningUnitSubmission.gibbonPersonID WHERE gibbonDiscussion.foreignTable='flexibleLearningUnitSubmission';end
 ";
+
+// v1.1.01
+$count++;
+$sql[$count][0] = "1.1.01";
+$sql[$count][1] = "
+";

@@ -29,11 +29,13 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         ->sortBy(['sequenceNumber', 'name'])
         ->filterBy('major', $major)
         ->fromPOST();
-        
+
     $units = $unitGateway->queryAllUnits($criteria, $gibbon->session->get('gibbonPersonID'), null, !$canManage ? $roleCategory : null);
     $categories = $container->get(CategoryGateway::class)->selectActiveCategories()->fetchAll();
     $majors = $container->get(MajorGateway::class)->selectMajors()->fetchKeyPair();
     $randomID = $unitGateway->getRandomUnit();
+
+    $page->breadcrumbs->add(__m('Browse Units'));
 
     // FORM
     $form = Form::create('filter', $gibbon->session->get('absoluteURL') . '/index.php', 'get');

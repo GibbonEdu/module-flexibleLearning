@@ -35,7 +35,7 @@ class UnitGateway extends QueryableGateway
      * @param QueryCriteria $criteria
      * @return DataSet
      */
-    public function queryAllUnits(QueryCriteria $criteria, $gibbonPersonID = null, $gibbonPersonIDCreator = null, $roleCategory = null)
+    public function queryAllUnits(QueryCriteria $criteria, $gibbonPersonID = null, $gibbonPersonIDCreator = null, $roleCategory = null, $showInactive = false)
     {
         $query = $this
             ->newQuery()
@@ -58,8 +58,6 @@ class UnitGateway extends QueryableGateway
         }
 
         if (!empty($roleCategory)) {
-            $query->where("flexibleLearningUnit.active='Y'");
-
             switch ($roleCategory) {
                 case 'Student':
                     $query->where("flexibleLearningUnit.availableStudent<>'No'");
@@ -77,6 +75,10 @@ class UnitGateway extends QueryableGateway
                     $query->where("flexibleLearningUnit.availableOther<>'No'");
                     break;
             }
+        }
+
+        if (!$showInactive) {
+          $query->where("flexibleLearningUnit.active='Y'");
         }
 
         $criteria->addFilterRules([

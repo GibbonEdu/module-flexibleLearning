@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v1.1.02
+-------
+Inactive units no longer show up on unit grid for those with Manage Units_all
+
 v1.1.01
 -------
 Added breadcrumb trail to landing page

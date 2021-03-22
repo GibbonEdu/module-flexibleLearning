@@ -77,7 +77,7 @@ else {
         ->fromPOST();
 
     $submissions = $unitSubmissionGateway->queryPendingFeedback($criteria, $gibbon->session->get('gibbonSchoolYearID'));
-    
+
     // DATA TABLE
     $table = DataTable::createPaginated('pending', $criteria);
     $table->setTitle(__('View'));
@@ -99,7 +99,7 @@ else {
         });
 
     $table->addColumn('participant', __m('Participant'))
-        ->sortable('gibbonPersonID')
+        ->sortable(['surname','preferredName'])
         ->format(function($values) {
             if ($values['category'] == 'Student') {
                 $url = './index.php?q=/modules/Students/student_view_details.php&gibbonPersonID='.$values['gibbonPersonID'];

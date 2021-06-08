@@ -18,6 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
+use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 
 require_once '../../gibbon.php';
 
@@ -42,6 +43,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
   } else {
       // Proceed!
       $unitGateway = $container->get(UnitGateway::class);
+      $unitBlockGateway = $container->get(UnitBlockGateway::class);
 
       // Validate the database relationships exist
       $values = $highestAction == 'Manage Units_all'
@@ -54,6 +56,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
           exit;
       }
 
+      $unitBlockGateway->deleteWhere(['flexibleLearningUnitID' => $flexibleLearningUnitID]);
       $deleted = $unitGateway->delete($flexibleLearningUnitID);
 
       $URL .= !$deleted

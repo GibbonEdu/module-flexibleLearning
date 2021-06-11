@@ -40,14 +40,14 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
     $values = $highestAction == 'Manage Units_all'
         ? $unitGateway->getUnitByID($flexibleLearningUnitID)
-        : $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
+        : $unitGateway->getUnitByID($flexibleLearningUnitID, $session->get('gibbonPersonID'));
 
       if (empty($values)) {
           $page->addError(__('The specified record cannot be found.'));
           return;
       }
 
-      $form = DeleteForm::createForm($gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_manage_deleteProcess.php');
+      $form = DeleteForm::createForm($session->get('absoluteURL').'/modules/Flexible Learning/units_manage_deleteProcess.php');
       echo $form->getOutput();
     }
 }

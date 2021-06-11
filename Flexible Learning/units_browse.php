@@ -22,7 +22,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $templateView = new View($container->get('twig'));
     $unitGateway = $container->get(UnitGateway::class);
     $canManage = isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_manage.php');
-    $roleCategory = getRoleCategory($gibbon->session->get('gibbonRoleIDCurrent'), $connection2);
+    $roleCategory = getRoleCategory($session->get('gibbonRoleIDCurrent'), $connection2);
 
     $criteria = $unitGateway->newQueryCriteria()
         ->searchBy($unitGateway->getSearchableColumns(), $name)
@@ -30,7 +30,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         ->filterBy('major', $major)
         ->fromPOST();
 
-    $units = $unitGateway->queryAllUnits($criteria, $gibbon->session->get('gibbonPersonID'), null, !$canManage ? $roleCategory : null);
+    $units = $unitGateway->queryAllUnits($criteria, $session->get('gibbonPersonID'), null, !$canManage ? $roleCategory : null);
     $categories = $container->get(CategoryGateway::class)->selectActiveCategories()->fetchAll();
     $majors = $container->get(MajorGateway::class)->selectMajors()->fetchKeyPair();
     $randomID = $unitGateway->getRandomUnit();
@@ -38,7 +38,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $page->breadcrumbs->add(__m('Browse Units'));
 
     // FORM
-    $form = Form::create('filter', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
+    $form = Form::create('filter', $session->get('absoluteURL') . '/index.php', 'get');
     $form->setTitle(__('Filter'));
 
     $form->setClass('noIntBorder fullWidth');
@@ -53,13 +53,13 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $row->addSelect('major')->fromArray($majors)->placeholder()->selected($major);
 
     $row = $form->addRow();
-    $row->addSearchSubmit($gibbon->session, __('Clear Filters'));
+    $row->addSearchSubmit($session, __('Clear Filters'));
 
     echo $form->getOutput();
 
     // GRID TABLE
     $gridRenderer = new GridView($container->get('twig'));
-    $defaultImage = $gibbon->session->get('absoluteURL').'/themes/'.$gibbon->session->get('gibbonThemeName').'/img/anonymous_125.jpg';
+    $defaultImage = $session->get('absoluteURL').'/themes/'.$session->get('gibbonThemeName').'/img/anonymous_125.jpg';
     $viewUnitURL = "./index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true";
 
     $table = $container->get(DataTable::class)->setRenderer($gridRenderer);

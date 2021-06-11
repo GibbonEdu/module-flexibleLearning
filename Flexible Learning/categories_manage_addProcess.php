@@ -22,7 +22,7 @@ use Gibbon\Module\FlexibleLearning\Domain\CategoryGateway;
 
 require_once '../../gibbon.php';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/categories_manage_add.php';
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/categories_manage_add.php';
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/categories_manage_add.php') == false) {
     $URL .= '&return=error0';

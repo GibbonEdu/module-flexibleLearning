@@ -31,7 +31,7 @@ use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 
 $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID;
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID;
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php') == false) {
     $URL .= '&return=error0';
@@ -48,8 +48,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $comment = $_POST['comment'] ?? '';
     $data = [
         'flexibleLearningUnitID' => $flexibleLearningUnitID,
-        'gibbonPersonID'         => $gibbon->session->get('gibbonPersonID'),
-        'gibbonSchoolYearID'     => $gibbon->session->get('gibbonSchoolYearID'),
+        'gibbonPersonID'         => $session->get('gibbonPersonID'),
+        'gibbonSchoolYearID'     => $session->get('gibbonSchoolYearID'),
         'evidenceType'           => $_POST['evidenceType'] ?? '',
         'status'                 => $expectFeedback ? 'Pending' : 'Complete',
     ];
@@ -70,7 +70,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     }
 
     // Check for access to this action
-    $roleCategory = getRoleCategory($gibbon->session->get('gibbonRoleIDCurrent'), $connection2);
+    $roleCategory = getRoleCategory($session->get('gibbonRoleIDCurrent'), $connection2);
     $access = $values['available'.$roleCategory] ?? 'No';
     if ($access != 'Record') {
         $URL .= '&return=error0';
@@ -94,7 +94,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     //Move attached file, if there is one
     if ($data['evidenceType'] == 'File') {
-        $fileUploader = new FileUploader($pdo, $gibbon->session);
+        $fileUploader = new FileUploader($pdo, $session);
         $file = $_FILES['file'] ?? null;
 
         // Upload the file, return the /uploads relative path
@@ -129,8 +129,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     // Invite Parents to Comment
     if ($roleCategory == 'Student') {
-        $student =  $container->get(StudentGateway::class)->selectActiveStudentByPerson($gibbon->session->get('gibbonSchoolYearID'), $gibbon->session->get('gibbonPersonID'))->fetch();
-        $familyAdults = $container->get(FamilyGateway::class)->selectFamilyAdultsByStudent($gibbon->session->get('gibbonPersonID'))->fetchAll();
+        $student =  $container->get(StudentGateway::class)->selectActiveStudentByPerson($session->get('gibbonSchoolYearID'), $session->get('gibbonPersonID'))->fetch();
+        $familyAdults = $container->get(FamilyGateway::class)->selectFamilyAdultsByStudent($session->get('gibbonPersonID'))->fetchAll();
         $familyAdults = array_filter($familyAdults, function ($adult) {
             return $adult['contactEmail'] == 'Y' && $adult['childDataAccess'] == 'Y';
         });

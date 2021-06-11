@@ -27,7 +27,7 @@ require_once '../../gibbon.php';
 $unitGateway = $container->get(UnitGateway::class);
 $randomID = $unitGateway->getRandomUnit();
 
-$URL = ($gibbon->session->get("absoluteURL") . "/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=$randomID");
+$URL = ($session->get("absoluteURL") . "/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=$randomID");
 
 header("Location: {$URL}");
 exit();

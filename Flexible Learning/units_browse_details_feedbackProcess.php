@@ -29,7 +29,7 @@ use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
 $flexibleLearningUnitSubmissionID = $_POST['flexibleLearningUnitSubmissionID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details_feedback.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID.'&flexibleLearningUnitSubmissionID='.$flexibleLearningUnitSubmissionID;
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details_feedback.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID.'&flexibleLearningUnitSubmissionID='.$flexibleLearningUnitSubmissionID;
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details_feedback.php') == false) {
     $URL .= '&return=error0';
@@ -63,7 +63,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         'foreignTable'         => 'flexibleLearningUnitSubmission',
         'foreignTableID'       => $flexibleLearningUnitSubmissionID,
         'gibbonModuleID'       => getModuleIDFromName($connection2, 'Flexible Learning'),
-        'gibbonPersonID'       => $gibbon->session->get('gibbonPersonID'),
+        'gibbonPersonID'       => $session->get('gibbonPersonID'),
         'gibbonPersonIDTarget' => $submission['gibbonPersonID'],
         'comment'              => $comment,
         'type'                 => 'Feedback',

@@ -65,7 +65,7 @@ $criteria = $unitSubmissionGateway->newQueryCriteria()
     ->sortBy('timestampSubmitted')
     ->filterBy('status', 'Pending');
 
-$submissions = $unitSubmissionGateway->queryPendingFeedback($criteria, $gibbon->session->get('gibbonSchoolYearID'))->toArray();
+$submissions = $unitSubmissionGateway->queryPendingFeedback($criteria, $session->get('gibbonSchoolYearID'))->toArray();
 
 if (empty($submissions)) {
     echo __('No recent submissions.');
@@ -112,7 +112,7 @@ $actionText .= $sent
 $actionLink = '/index.php?q=/modules/Flexible Learning/report_workPendingFeedback.php';
 
 $notificationSender = $container->get(NotificationSender::class);
-$notificationSender->addNotification($gibbon->session->get('organisationAdministrator'), $actionText, 'Flexible Learning', $actionLink);
+$notificationSender->addNotification($session->get('organisationAdministrator'), $actionText, 'Flexible Learning', $actionLink);
 $notificationSender->sendNotifications();
 
 

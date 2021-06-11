@@ -36,7 +36,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
     // Proceed!
     $page->breadcrumbs->add(__m('Unit History'));
 
-    $gibbonSchoolYearID = $gibbon->session->get('gibbonSchoolYearID');
+    $gibbonSchoolYearID = $session->get('gibbonSchoolYearID');
     $studentGateway = $container->get(StudentGateway::class);
 
     if ($highestAction == 'Unit History_all') {
@@ -47,7 +47,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
     } elseif ($highestAction == 'Unit History_myChildren') {
         // Can view family children
         $children = $studentGateway
-            ->selectAnyStudentsByFamilyAdult($gibbonSchoolYearID, $gibbon->session->get('gibbonPersonID'))
+            ->selectAnyStudentsByFamilyAdult($gibbonSchoolYearID, $session->get('gibbonPersonID'))
             ->fetchAll();
         $children = Format::nameListArray($children, 'Student', false, true);
         $gibbonPersonID = $_REQUEST['gibbonPersonID'] ?? key($children);
@@ -58,7 +58,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
     }
 
     // FORM
-    $form = Form::create('filter', $gibbon->session->get('absoluteURL').'/index.php', 'get');
+    $form = Form::create('filter', $session->get('absoluteURL').'/index.php', 'get');
     $form->setTitle(__('Filter'));
 
     $form->setFactory(DatabaseFormFactory::create($pdo));
@@ -76,7 +76,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
     }
 
     $row = $form->addRow();
-        $row->addSearchSubmit($gibbon->session, __('Clear Filters'));
+        $row->addSearchSubmit($session, __('Clear Filters'));
 
     echo $form->getOutput();
     

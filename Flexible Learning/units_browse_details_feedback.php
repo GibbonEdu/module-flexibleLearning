@@ -94,7 +94,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         ->addClass('row-span-3 text-right')
         ->format(function ($values) use ($gibbon) {
             if ($values['logo'] == null) {
-                return "<img style='margin: 5px; height: 125px; width: 125px' class='user' src='" . $gibbon->session->get('absoluteURL') . '/themes/' . $gibbon->session->get('gibbonThemeName') . "/img/anonymous_125.jpg'/><br/>";
+                return "<img style='margin: 5px; height: 125px; width: 125px' class='user' src='" . $session->get('absoluteURL') . '/themes/' . $session->get('gibbonThemeName') . "/img/anonymous_125.jpg'/><br/>";
             } else {
                 return "<img style='margin: 5px; height: 125px; width: 125px' class='user' src='" . $values['logo'] . "'/><br/>";
             }
@@ -105,7 +105,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $table->addColumn('author', __('Author'))
         ->format(function ($person) use ($guid, $connection2, $gibbon) {
             if ($person['status'] == 'Full' && isActionAccessible($guid, $connection2, '/modules/Staff/staff_view_details.php')) {
-                return "<a href=" . $gibbon->session->get('absoluteURL') . "/index.php?q=/modules/Staff/staff_view_details.php&gibbonPersonID=" . $person['gibbonPersonIDCreator'] . ">" . Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true) . "</a>";
+                return "<a href=" . $session->get('absoluteURL') . "/index.php?q=/modules/Staff/staff_view_details.php&gibbonPersonID=" . $person['gibbonPersonIDCreator'] . ">" . Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true) . "</a>";
             } else {
                 return Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true);
             }
@@ -144,9 +144,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $feedbackOffMessage = $settingGateway->getSettingByScope('Flexible Learning', 'feedbackOffMessage');
 
     // FEEDBACK
-    $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_feedbackProcess.php');
+    $form = Form::create('submit', $session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_feedbackProcess.php');
     $form->addClass('mt-8');
-    $form->addHiddenValue('address', $gibbon->session->get('address'));
+    $form->addHiddenValue('address', $session->get('address'));
     $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
     $form->addHiddenValue('flexibleLearningUnitSubmissionID', $flexibleLearningUnitSubmissionID);
 

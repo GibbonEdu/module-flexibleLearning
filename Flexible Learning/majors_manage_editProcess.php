@@ -24,7 +24,7 @@ require_once '../../gibbon.php';
 
 $flexibleLearningMajorID = $_POST['flexibleLearningMajorID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/majors_manage_edit.php&flexibleLearningMajorID='.$flexibleLearningMajorID;
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/majors_manage_edit.php&flexibleLearningMajorID='.$flexibleLearningMajorID;
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/majors_manage_edit.php') == false) {
     $URL .= '&return=error0';

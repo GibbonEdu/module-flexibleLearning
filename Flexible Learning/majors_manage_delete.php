@@ -39,6 +39,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/majors_m
         return;
     }
 
-    $form = DeleteForm::createForm($gibbon->session->get('absoluteURL').'/modules/Flexible Learning/majors_manage_deleteProcess.php');
+    $form = DeleteForm::createForm($session->get('absoluteURL').'/modules/Flexible Learning/majors_manage_deleteProcess.php');
     echo $form->getOutput();
 }

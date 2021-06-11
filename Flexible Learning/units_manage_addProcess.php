@@ -23,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 require_once '../../gibbon.php';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_manage_add.php&gibbonDepartmentID='.$_GET['gibbonDepartmentID'].'&name='.$_GET['name'];
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_manage_add.php&gibbonDepartmentID='.$_GET['gibbonDepartmentID'].'&name='.$_GET['name'];
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_manage_add.php') == false) {
     //Fail 0
@@ -58,7 +58,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         'availableStaff'             => $_POST['availableStaff'] ?? 'No',
         'availableParent'            => $_POST['availableParent'] ?? 'No',
         'availableOther'             => $_POST['availableOther'] ?? 'No',
-        'gibbonPersonIDCreator'      => $_POST['gibbonPersonIDCreator'] ?? $gibbon->session->get('gibbonPersonID'),
+        'gibbonPersonIDCreator'      => $_POST['gibbonPersonIDCreator'] ?? $session->get('gibbonPersonID'),
     ];
 
     // Validate the required values are present
@@ -70,7 +70,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
     //Move attached file, if there is one
     if (!empty($_FILES['file']['tmp_name'])) {
-        $fileUploader = new Gibbon\FileUploader($pdo, $gibbon->session);
+        $fileUploader = new Gibbon\FileUploader($pdo, $session);
         $fileUploader->getFileExtensions('Graphics/Design');
 
         $file = $_FILES['file'] ?? null;
@@ -101,7 +101,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     $event->setActionLink("/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=$flexibleLearningUnitID");
 
     // Send all notifications
-                    $sendReport = $event->sendNotifications($pdo, $gibbon->session);
+                    $sendReport = $event->sendNotifications($pdo, $session);
 
     // ADD BLOCKS
     $order = $_POST['order'] ?? [];

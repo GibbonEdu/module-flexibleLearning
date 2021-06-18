@@ -103,7 +103,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $table->addColumn('category', __('Category'));
 
     $table->addColumn('author', __('Author'))
-        ->format(function ($person) use ($guid, $connection2, $gibbon) {
+        ->format(function ($person) use ($guid, $connection2, $session) {
             if ($person['status'] == 'Full' && isActionAccessible($guid, $connection2, '/modules/Staff/staff_view_details.php')) {
                 return "<a href=" . $session->get('absoluteURL') . "/index.php?q=/modules/Staff/staff_view_details.php&gibbonPersonID=" . $person['gibbonPersonIDCreator'] . ">" . Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true) . "</a>";
             } else {

@@ -37,10 +37,10 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/categori
         returnProcess($guid, $_GET['return'], $editLink, null);
     }
 
-    $form = Form::create('category', $gibbon->session->get('absoluteURL').'/modules/'.$gibbon->session->get('module').'/categories_manage_addProcess.php');
+    $form = Form::create('category', $session->get('absoluteURL').'/modules/'.$session->get('module').'/categories_manage_addProcess.php');
     $form->setFactory(DatabaseFormFactory::create($pdo));
 
-    $form->addHiddenValue('address', $gibbon->session->get('address'));
+    $form->addHiddenValue('address', $session->get('address'));
 
     $row = $form->addRow();
         $row->addLabel('name', __('Name'))->description(__('Must be unique.'));

@@ -24,7 +24,7 @@ require_once '../../gibbon.php';
 
 $flexibleLearningCategoryID = $_POST['flexibleLearningCategoryID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/categories_manage_edit.php&flexibleLearningCategoryID='.$flexibleLearningCategoryID;
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/categories_manage_edit.php&flexibleLearningCategoryID='.$flexibleLearningCategoryID;
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/categories_manage_edit.php') == false) {
     $URL .= '&return=error0';

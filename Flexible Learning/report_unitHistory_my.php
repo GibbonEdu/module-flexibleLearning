@@ -26,6 +26,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
     // Proceed!
     $page->breadcrumbs->add(__m('My Unit History'));
 
-    $table = $container->get(UnitHistory::class)->create($gibbon->session->get('gibbonPersonID'));
+    $table = $container->get(UnitHistory::class)->create($session->get('gibbonPersonID'));
     echo $table->getOutput();
 }

@@ -40,7 +40,7 @@ else {
     $units = $container->get(UnitGateway::class)->selectAllUnits();
 
     // FORM
-    $form = Form::create('search', $gibbon->session->get('absoluteURL').'/index.php', 'get');
+    $form = Form::create('search', $session->get('absoluteURL').'/index.php', 'get');
     $form->setFactory(DatabaseFormFactory::create($pdo));
     $form->setTitle(__('Filter'));
     $form->setClass('noIntBorder fullWidth');
@@ -60,7 +60,7 @@ else {
         $row->addCheckbox('myUnits')->setValue('Y')->checked($myUnits);
 
     $row = $form->addRow();
-        $row->addSearchSubmit($gibbon->session, __('Clear Search'));
+        $row->addSearchSubmit($session, __('Clear Search'));
 
     echo $form->getOutput();
 
@@ -72,11 +72,11 @@ else {
         ->sortBy('timestampSubmitted')
         ->filterBy('flexibleLearningUnitID', $flexibleLearningUnitID)
         ->filterBy('gibbonPersonID', $gibbonPersonID)
-        ->filterBy('myUnits', $myUnits == 'Y' ? $gibbon->session->get('gibbonPersonID') : '')
+        ->filterBy('myUnits', $myUnits == 'Y' ? $session->get('gibbonPersonID') : '')
         ->filterBy('status', $_POST['status'] ?? 'pending' )
         ->fromPOST();
 
-    $submissions = $unitSubmissionGateway->queryPendingFeedback($criteria, $gibbon->session->get('gibbonSchoolYearID'));
+    $submissions = $unitSubmissionGateway->queryPendingFeedback($criteria, $session->get('gibbonSchoolYearID'));
 
     // DATA TABLE
     $table = DataTable::createPaginated('pending', $criteria);

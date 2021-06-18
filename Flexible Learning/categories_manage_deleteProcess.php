@@ -23,7 +23,7 @@ require_once '../../gibbon.php';
 
 $flexibleLearningCategoryID = $_POST['flexibleLearningCategoryID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/categories_manage.php';
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/categories_manage.php';
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/categories_manage_delete.php') == false) {
     $URL .= '&return=error0';

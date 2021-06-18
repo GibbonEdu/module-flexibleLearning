@@ -53,7 +53,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         ->fromPOST();
 
     // FORM
-    $form = Form::create('filter', $gibbon->session->get('absoluteURL').'/index.php', 'get');
+    $form = Form::create('filter', $session->get('absoluteURL').'/index.php', 'get');
     $form->setTitle(__('Filter'));
 
     $form->setClass('noIntBorder fullWidth');
@@ -64,13 +64,13 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $row->addTextField('name')->setValue($criteria->getSearchText());
 
     $row = $form->addRow();
-        $row->addSearchSubmit($gibbon->session, __('Clear Filters'));
+        $row->addSearchSubmit($session, __('Clear Filters'));
 
     echo $form->getOutput();
 
     $units = $highestAction == 'Manage Units_all'
         ? $unitGateway->queryAllUnits($criteria, null, null, null, true)
-        : $unitGateway->queryAllUnits($criteria, null, $gibbon->session->get('gibbonPersonID'), null, true);
+        : $unitGateway->queryAllUnits($criteria, null, $session->get('gibbonPersonID'), null, true);
 
     // BULK ACTION FORM
     $form = BulkActionForm::create('bulkAction', $_SESSION[$guid]['absoluteURL'].'/modules/Flexible Learning/units_manageProcessBulk.php');

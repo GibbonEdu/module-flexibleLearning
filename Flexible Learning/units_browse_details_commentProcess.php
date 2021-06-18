@@ -30,7 +30,7 @@ use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
 $flexibleLearningUnitSubmissionID = $_POST['flexibleLearningUnitSubmissionID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID.'&flexibleLearningUnitSubmissionID='.$flexibleLearningUnitSubmissionID;
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID.'&flexibleLearningUnitSubmissionID='.$flexibleLearningUnitSubmissionID;
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_unitHistory.php', 'Unit History_myChildren') == false) {
     $URL .= '&return=error0';
@@ -61,7 +61,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
 
     // Validate that this parent has access to this student
     $children = $studentGateway
-        ->selectAnyStudentsByFamilyAdult($gibbon->session->get('gibbonSchoolYearID'), $gibbon->session->get('gibbonPersonID'))
+        ->selectAnyStudentsByFamilyAdult($session->get('gibbonSchoolYearID'), $session->get('gibbonPersonID'))
         ->fetchGroupedUnique();
 
     if (empty($children[$submission['gibbonPersonID']])) {
@@ -76,7 +76,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
         'foreignTable'         => 'flexibleLearningUnitSubmission',
         'foreignTableID'       => $flexibleLearningUnitSubmissionID,
         'gibbonModuleID'       => getModuleIDFromName($connection2, 'Flexible Learning'),
-        'gibbonPersonID'       => $gibbon->session->get('gibbonPersonID'),
+        'gibbonPersonID'       => $session->get('gibbonPersonID'),
         'gibbonPersonIDTarget' => $submission['gibbonPersonID'],
         'comment'              => $comment,
         'type'                 => 'Comment',

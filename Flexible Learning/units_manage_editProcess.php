@@ -25,7 +25,7 @@ use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 
 $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_manage_edit.php&flexibleLearningUnitID='.$flexibleLearningUnitID;
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_manage_edit.php&flexibleLearningUnitID='.$flexibleLearningUnitID;
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_manage_edit.php') == false) {
     $URL .= '&return=error0';
@@ -72,7 +72,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     if ($highestAction == 'Manage Units_all') {
       $values = $unitGateway->getUnitByID($flexibleLearningUnitID);
     } else {
-      $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
+      $values = $unitGateway->getUnitByID($flexibleLearningUnitID, $session->get('gibbonPersonID'));
     }
 
     if (empty($values)) {
@@ -84,7 +84,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     //Move attached file, if there is one
     $attachment = null;
     if (!empty($_FILES['file']['tmp_name'])) {
-        $fileUploader = new Gibbon\FileUploader($pdo, $gibbon->session);
+        $fileUploader = new Gibbon\FileUploader($pdo, $session);
         $fileUploader->getFileExtensions('Graphics/Design');
 
         $file = $_FILES['file'] ?? null;

@@ -45,7 +45,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
     $flexibleLearningUnitSubmissionID = $_GET['flexibleLearningUnitSubmissionID'] ?? '';
 
-    $roleCategory = getRoleCategory($gibbon->session->get('gibbonRoleIDCurrent'), $connection2);
+    $roleCategory = getRoleCategory($session->get('gibbonRoleIDCurrent'), $connection2);
     $unitGateway = $container->get(UnitGateway::class);
     $unitBlockGateway = $container->get(UnitBlockGateway::class);
     $submissionGateway = $container->get(UnitSubmissionGateway::class);
@@ -75,7 +75,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $table = DataTable::createDetails('unitDetails');
     $table->addMetaData('gridClass', 'grid-cols-1 md:grid-cols-3 mb-4');
 
-    if ($highestManageAction == 'Manage Units_all' || ($highestManageAction == 'Manage Units_my' && $values['gibbonPersonIDCreator'] == $gibbon->session->get('gibbonPersonID'))) {
+    if ($highestManageAction == 'Manage Units_all' || ($highestManageAction == 'Manage Units_my' && $values['gibbonPersonIDCreator'] == $session->get('gibbonPersonID'))) {
         $table->addHeaderAction('edit', __('Edit'))
             ->setURL('/modules/Flexible Learning/units_manage_edit.php')
             ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
@@ -102,7 +102,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         ->addClass('row-span-3 text-right')
         ->format(function ($values) use ($gibbon) {
             if ($values['logo'] == null) {
-                return "<img style='margin: 5px; height: 125px; width: 125px' class='user' src='" . $gibbon->session->get('absoluteURL') . '/themes/' . $gibbon->session->get('gibbonThemeName') . "/img/anonymous_125.jpg'/><br/>";
+                return "<img style='margin: 5px; height: 125px; width: 125px' class='user' src='" . $session->get('absoluteURL') . '/themes/' . $session->get('gibbonThemeName') . "/img/anonymous_125.jpg'/><br/>";
             } else {
                 return "<img style='margin: 5px; height: 125px; width: 125px' class='user' src='" . $values['logo'] . "'/><br/>";
             }
@@ -113,7 +113,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $table->addColumn('author', __('Author'))
         ->format(function ($person) use ($guid, $connection2, $gibbon) {
             if ($person['status'] == 'Full' && isActionAccessible($guid, $connection2, '/modules/Staff/staff_view_details.php')) {
-                return "<a href=" . $gibbon->session->get('absoluteURL') . "/index.php?q=/modules/Staff/staff_view_details.php&gibbonPersonID=" . $person['gibbonPersonIDCreator'] . ">" . Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true) . "</a>";
+                return "<a href=" . $session->get('absoluteURL') . "/index.php?q=/modules/Staff/staff_view_details.php&gibbonPersonID=" . $person['gibbonPersonIDCreator'] . ">" . Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true) . "</a>";
             } else {
                 return Format::name('', $person['preferredName'], $person['surname'], 'Staff', false, true);
             }
@@ -147,7 +147,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         // Parents can only view submissions for their children
         $submission = $submissionGateway->getByID($flexibleLearningUnitSubmissionID);
         $children = $studentGateway
-            ->selectAnyStudentsByFamilyAdult($gibbon->session->get('gibbonSchoolYearID'), $gibbon->session->get('gibbonPersonID'))
+            ->selectAnyStudentsByFamilyAdult($session->get('gibbonSchoolYearID'), $session->get('gibbonPersonID'))
             ->fetchGroupedUnique();
 
         if (empty($children[$submission['gibbonPersonID']])) {
@@ -155,7 +155,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         }
     } else {
         // Everyone else can only view their own submissions
-        $submission = $submissionGateway->selectBy(['gibbonPersonID' => $gibbon->session->get('gibbonPersonID'), 'flexibleLearningUnitID' => $flexibleLearningUnitID])->fetch();
+        $submission = $submissionGateway->selectBy(['gibbonPersonID' => $session->get('gibbonPersonID'), 'flexibleLearningUnitID' => $flexibleLearningUnitID])->fetch();
     }
 
     if (!empty($submission)) {
@@ -168,9 +168,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
         // Add a comment
         if ($highestUnitHistoryAction == 'Unit History_myChildren') {
-            $form = Form::create('parentComment', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_commentProcess.php');
+            $form = Form::create('parentComment', $session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_commentProcess.php');
             $form->setClass('blank my-4');
-            $form->addHiddenValue('address', $gibbon->session->get('address'));
+            $form->addHiddenValue('address', $session->get('address'));
             $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
             $form->addHiddenValue('flexibleLearningUnitSubmissionID', $submission['flexibleLearningUnitSubmissionID']);
 
@@ -185,9 +185,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
             $form->addRow()->addClass('-mt-4')->addContent($page->fetchFromTemplate('ui/discussion.twig.html', [
                 'discussion' => [[
-                    'surname' => $gibbon->session->get('surname'),
-                    'preferredName' => $gibbon->session->get('preferredName'),
-                    'image_240' => $gibbon->session->get('image_240'),
+                    'surname' => $session->get('surname'),
+                    'preferredName' => $session->get('preferredName'),
+                    'image_240' => $session->get('image_240'),
                     'comment' => $commentBox->getOutput(),
                 ]]
             ]));
@@ -209,7 +209,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         foreach ($blocks as $block) {
             echo $templateView->fetchFromTemplate('unitBlock.twig.html', $block + [
                 'roleCategory' => $roleCategory,
-                'gibbonPersonID' => $gibbon->session->get('username') ?? '',
+                'gibbonPersonID' => $session->get('username') ?? '',
                 'blockCount' => $blockCount
             ]);
             $resourceContents .= $block['contents'];
@@ -227,8 +227,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $submissionLog = $logs[0] ?? [];
     if (!empty($submission)) {
         // UPDATE EVIDENCE
-        $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_updateProcess.php');
-        $form->addHiddenValue('address', $gibbon->session->get('address'));
+        $form = Form::create('submit', $session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_updateProcess.php');
+        $form->addHiddenValue('address', $session->get('address'));
         $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
         $form->addHiddenValue('flexibleLearningUnitSubmissionID', $submission['flexibleLearningUnitSubmissionID'] ?? '');
         $form->addHiddenValue('gibbonDiscussionID', $submissionLog['gibbonDiscussionID'] ?? '');
@@ -237,8 +237,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         $form->addRow()->addContent(Format::alert(__m('You have already recorded evidence for this unit. You can optionally use the form below to update your submission.'), 'success'));
     } else {
         // SUBMIT EVIDENCE
-        $form = Form::create('submit', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_submitProcess.php');
-        $form->addHiddenValue('address', $gibbon->session->get('address'));
+        $form = Form::create('submit', $session->get('absoluteURL').'/modules/Flexible Learning/units_browse_details_submitProcess.php');
+        $form->addHiddenValue('address', $session->get('address'));
         $form->addHiddenValue('flexibleLearningUnitID', $flexibleLearningUnitID);
 
         $form->addRow()->addHeading(__m('Record your Journey'));
@@ -263,7 +263,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
             ->required();
 
     if (!empty($submission) && $submission['evidenceType'] == 'File') {
-        $uploader->setAttachment('evidenceLocation', $gibbon->session->get('absoluteURL'), $submission['evidenceLocation'] ?? '');
+        $uploader->setAttachment('evidenceLocation', $session->get('absoluteURL'), $submission['evidenceLocation'] ?? '');
     }
 
     // Link

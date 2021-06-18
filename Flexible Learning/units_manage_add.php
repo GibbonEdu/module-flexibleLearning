@@ -41,7 +41,7 @@ require_once __DIR__ . '/moduleFunctions.php';
     $returns = array();
     $editLink = '';
     if (isset($_GET['editID'])) {
-        $editLink = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_manage_edit.php&flexibleLearningUnitID='.$_GET['editID'].'&gibbonDepartmentID='.$_GET['gibbonDepartmentID'].'&name='.$_GET['name'];
+        $editLink = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_manage_edit.php&flexibleLearningUnitID='.$_GET['editID'].'&gibbonDepartmentID='.$_GET['gibbonDepartmentID'].'&name='.$_GET['name'];
     }
     if (isset($_GET['return'])) {
         returnProcess($guid, $_GET['return'], $editLink, $returns);
@@ -49,14 +49,14 @@ require_once __DIR__ . '/moduleFunctions.php';
 
     if ($gibbonDepartmentID != '' or $name != '') {
         echo "<div class='linkTop'>";
-        echo "<a href='".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_manage.php&gibbonDepartmentID=$gibbonDepartmentID&name=$name&view=$view'>".__($guid, 'Back to Search Results').'</a>';
+        echo "<a href='".$session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_manage.php&gibbonDepartmentID=$gibbonDepartmentID&name=$name&view=$view'>".__($guid, 'Back to Search Results').'</a>';
         echo '</div>';
     }
 
-    $form = Form::create('action', $gibbon->session->get('absoluteURL').'/modules/'.$gibbon->session->get('module')."/units_manage_addProcess.php?gibbonDepartmentID=$gibbonDepartmentID&name=$name&view=$view");
+    $form = Form::create('action', $session->get('absoluteURL').'/modules/'.$session->get('module')."/units_manage_addProcess.php?gibbonDepartmentID=$gibbonDepartmentID&name=$name&view=$view");
     $form->setFactory(FlexibleLearningFormFactory::create($pdo));
 
-    $form->addHiddenValue('address', $gibbon->session->get('address'));
+    $form->addHiddenValue('address', $session->get('address'));
 
 
     // UNIT BASICS
@@ -82,7 +82,7 @@ require_once __DIR__ . '/moduleFunctions.php';
         $row->addSelectUsers('gibbonPersonIDCreator')
             ->photo(true, 'small')
             ->required()
-            ->selected($gibbon->session->get('gibbonPersonID'))
+            ->selected($session->get('gibbonPersonID'))
             ->readonly($highestManageAction == 'Manage Units_my');
 
     $licenses = array(
@@ -174,7 +174,7 @@ require_once __DIR__ . '/moduleFunctions.php';
         ->addClass('advanced addBlock');
 
     $row = $form->addRow()->addClass('advanced');
-        $customBlocks = $row->addFlexibleLearningSmartBlocks('smart', $gibbon->session, $guid)
+        $customBlocks = $row->addFlexibleLearningSmartBlocks('smart', $session, $guid)
             ->addToolInput($blockCreator);
 
     for ($i=0 ; $i<5 ; $i++) {

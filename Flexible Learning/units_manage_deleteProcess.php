@@ -24,7 +24,7 @@ require_once '../../gibbon.php';
 
 $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_manage.php';
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_manage.php';
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_manage_delete.php') == false) {
     $URL .= '&return=error0';
@@ -48,7 +48,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
       // Validate the database relationships exist
       $values = $highestAction == 'Manage Units_all'
         ? $unitGateway->getUnitByID($flexibleLearningUnitID)
-        : $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
+        : $unitGateway->getUnitByID($flexibleLearningUnitID, $session->get('gibbonPersonID'));
 
       if (empty($values)) {
           $URL .= '&return=error2';

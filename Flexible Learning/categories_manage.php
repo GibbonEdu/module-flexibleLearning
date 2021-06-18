@@ -54,7 +54,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/categori
         return $row;
     });
 
-    $table->addDraggableColumn('flexibleLearningCategoryID', $gibbon->session->get('absoluteURL').'/modules/Flexible Learning/categories_manage_editOrderAjax.php');
+    $table->addDraggableColumn('flexibleLearningCategoryID', $session->get('absoluteURL').'/modules/Flexible Learning/categories_manage_editOrderAjax.php');
 
     $table->addColumn('name', __('Name'))
         ->sortable(['flexibleLearningCategory.name']);

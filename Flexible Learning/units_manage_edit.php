@@ -57,7 +57,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
     $values = $highestAction == 'Manage Units_all'
         ? $unitGateway->getUnitByID($flexibleLearningUnitID)
-        : $unitGateway->getUnitByID($flexibleLearningUnitID, $gibbon->session->get('gibbonPersonID'));
+        : $unitGateway->getUnitByID($flexibleLearningUnitID, $session->get('gibbonPersonID'));
 
     if (empty($values)) {
         $page->addError(__('The specified record cannot be found.'));
@@ -66,20 +66,20 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
     if ( $name != '') {
         echo "<div class='linkTop'>";
-        echo "<a href='".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_manage.php&name=$name'>".__($guid, 'Back to Search Results').'</a>';
+        echo "<a href='".$session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_manage.php&name=$name'>".__($guid, 'Back to Search Results').'</a>';
         echo '</div>';
     }
 
     if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
         echo "<div class='linkTop'>";
-        echo "<a href='".$gibbon->session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=$flexibleLearningUnitID&name=$name'>".__($guid, 'View')."<img style='margin: 0 0 -4px 3px' title='".__($guid, 'View')."' src='./themes/".$gibbon->session->get('gibbonThemeName')."/img/plus.png'/></a>";
+        echo "<a href='".$session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=$flexibleLearningUnitID&name=$name'>".__($guid, 'View')."<img style='margin: 0 0 -4px 3px' title='".__($guid, 'View')."' src='./themes/".$session->get('gibbonThemeName')."/img/plus.png'/></a>";
         echo '</div>';
         }
 
-    $form = Form::create('action', $gibbon->session->get('absoluteURL').'/modules/'.$gibbon->session->get('module')."/units_manage_editProcess.php?&name=$name");
+    $form = Form::create('action', $session->get('absoluteURL').'/modules/'.$session->get('module')."/units_manage_editProcess.php?&name=$name");
     $form->setFactory(FlexibleLearningFormFactory::create($pdo));
 
-    $form->addHiddenValue('address', $gibbon->session->get('address'));
+    $form->addHiddenValue('address', $session->get('address'));
     $form->addHiddenValue('flexibleLearningUnitID',$flexibleLearningUnitID);
 
     // UNIT BASICS
@@ -123,7 +123,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $row->addLabel('file', __m('Logo'))->description(__m('125px x 125px'));
         $row->addFileUpload('file')
             ->accepts('.jpg,.jpeg,.gif,.png')
-            ->setAttachment('logo', $gibbon->session->get('absoluteURL'), $values['logo']);
+            ->setAttachment('logo', $session->get('absoluteURL'), $values['logo']);
 
     //MAJORS AND MINORS
     $form->addRow()->addHeading(__m('Majors & Minors'))->append(__m('These help indicate what topics the unit is about.'));
@@ -198,7 +198,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         ->addClass('addBlock');
 
     $row = $form->addRow();
-        $customBlocks = $row->addFlexibleLearningSmartBlocks('smart', $gibbon->session, $guid)
+        $customBlocks = $row->addFlexibleLearningSmartBlocks('smart', $session, $guid)
             ->addToolInput($blockCreator);
 
     $dataBlocks = array('flexibleLearningUnitID' => $flexibleLearningUnitID);

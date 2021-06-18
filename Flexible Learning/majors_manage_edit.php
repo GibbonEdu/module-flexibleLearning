@@ -48,10 +48,10 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/majors_m
         return;
     }
 
-    $form = Form::create('major', $gibbon->session->get('absoluteURL').'/modules/'.$gibbon->session->get('module').'/majors_manage_editProcess.php');
+    $form = Form::create('major', $session->get('absoluteURL').'/modules/'.$session->get('module').'/majors_manage_editProcess.php');
     $form->setFactory(DatabaseFormFactory::create($pdo));
 
-    $form->addHiddenValue('address', $gibbon->session->get('address'));
+    $form->addHiddenValue('address', $session->get('address'));
     $form->addHiddenValue('flexibleLearningMajorID', $flexibleLearningMajorID);
 
     $row = $form->addRow();

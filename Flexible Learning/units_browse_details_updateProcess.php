@@ -30,7 +30,7 @@ $flexibleLearningUnitID = $_POST['flexibleLearningUnitID'] ?? '';
 $flexibleLearningUnitSubmissionID = $_POST['flexibleLearningUnitSubmissionID'] ?? '';
 $gibbonDiscussionID = $_POST['gibbonDiscussionID'] ?? '';
 
-$URL = $gibbon->session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID;
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID='.$flexibleLearningUnitID;
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php') == false) {
     $URL .= '&return=error0';
@@ -64,7 +64,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     }
     
     // Check for access to this action
-    $roleCategory = getRoleCategory($gibbon->session->get('gibbonRoleIDCurrent'), $connection2);
+    $roleCategory = getRoleCategory($session->get('gibbonRoleIDCurrent'), $connection2);
     $access = $values['available'.$roleCategory] ?? 'No';
     if ($access != 'Record') {
         $URL .= '&return=error0';
@@ -74,14 +74,14 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     // Validate the database relationships exist
     $submission = $unitSubmissionGateway->getByID($flexibleLearningUnitSubmissionID);
-    if (empty($submission) || $submission['gibbonPersonID'] != $gibbon->session->get('gibbonPersonID')) {
+    if (empty($submission) || $submission['gibbonPersonID'] != $session->get('gibbonPersonID')) {
         $URL .= '&return=error1';
         header("Location: {$URL}");
         exit;
     }
 
     $discussion = $discussionGateway->getByID($gibbonDiscussionID);
-    if (empty($discussion) || $discussion['gibbonPersonID'] != $gibbon->session->get('gibbonPersonID')) {
+    if (empty($discussion) || $discussion['gibbonPersonID'] != $session->get('gibbonPersonID')) {
         $URL .= '&return=error1';
         header("Location: {$URL}");
         exit;
@@ -89,7 +89,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     // Move attached file, if there is one
     if ($data['evidenceType'] == 'File' && !empty($_FILES['file']['tmp_name'])) {
-        $fileUploader = new FileUploader($pdo, $gibbon->session);
+        $fileUploader = new FileUploader($pdo, $session);
         $file = $_FILES['file'] ?? null;
         $data['evidenceLocation'] = $fileUploader->uploadFromPost($file, $name);
     }

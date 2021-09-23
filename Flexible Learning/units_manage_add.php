@@ -19,6 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 use Gibbon\Forms\Form;
 use Gibbon\Module\FlexibleLearning\Forms\FlexibleLearningFormFactory;
+use Gibbon\Domain\System\SettingGateway;
 
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
@@ -57,6 +58,8 @@ require_once __DIR__ . '/moduleFunctions.php';
     $form->setFactory(FlexibleLearningFormFactory::create($pdo));
 
     $form->addHiddenValue('address', $session->get('address'));
+
+    $settingGateway = $container->get(SettingGateway::class);
 
 
     // UNIT BASICS
@@ -160,7 +163,7 @@ require_once __DIR__ . '/moduleFunctions.php';
     // UNIT OUTLINE
     $form->addRow()->addHeading(__m('Unit Outline'))->append(__m('The contents of this field are viewable to all users, SO AVOID CONFIDENTIAL OR SENSITIVE DATA!'));
 
-    $unitOutline = getSettingByScope($connection2, 'Flexible Learning', 'unitOutlineTemplate');
+    $unitOutline = $settingGateway->getSettingByScope('Flexible Learning', 'unitOutlineTemplate');
     $row = $form->addRow();
         $column = $row->addColumn();
         $column->addLabel('outline', __('Unit Outline'));

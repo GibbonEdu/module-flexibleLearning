@@ -60,7 +60,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         $page->addError(__('The specified record cannot be found.'));
         return;
     }
-    
+
     $access = $values['available'.$roleCategory] ?? 'No';
     if (empty($highestManageAction) && $access != 'Read' && $access != 'Record') {
         $page->addError(__m('You do not have access to browse this unit.'));
@@ -160,7 +160,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
     if (!empty($submission)) {
         $logs = $submissionGateway->selectUnitSubmissionDiscussion($submission['flexibleLearningUnitSubmissionID'])->fetchAll();
-        
+
         echo $page->fetchFromTemplate('ui/discussion.twig.html', [
             'title' => __('Comments'),
             'discussion' => $logs
@@ -192,13 +192,25 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
                 ]]
             ]));
 
-            echo $form->getOutput(); 
+            echo $form->getOutput();
         }
     }
 
     // SMART BLOCKS
     $blocks = $unitBlockGateway->selectBlocksByUnit($flexibleLearningUnitID)->fetchAll();
 
+    if ($values['outline'] != null) {
+      $outlineBlock = [
+        'flexibleLearningUnitBlockID' => 0,
+        'flexibleLearningUnitID' => $flexibleLearningUnitID,
+        'title' => 'Unit Outline',
+        'type' => null,
+        'length' => null,
+        'contents' => $values['outline'],
+        'teachersNotes' => null,
+        'sequenceNumber' => null];
+      array_unshift($blocks, $outlineBlock);
+    };
     if (empty($blocks)) {
         echo Format::alert(__('There are no records to display.'));
     } else {
@@ -244,7 +256,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         $form->addRow()->addHeading(__m('Record your Journey'));
         $form->addRow()->addContent(Format::alert(__m($expectFeedback ? $feedbackOnMessage : $feedbackOffMessage), $expectFeedback ? 'message' : 'warning'));
     }
-    
+
     $row = $form->addRow();
         $row->addLabel('comment', __('Comment'))->description(__m('Leave a brief reflective comment on this unit<br/>and what you learned.'));
         $row->addTextArea('comment')->setRows(4)->required()->setValue($submissionLog['comment'] ?? '');
@@ -286,6 +298,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         $row->addFooter();
         $row->addSubmit();
 
-    echo $form->getOutput();    
-    
+    echo $form->getOutput();
+
 }

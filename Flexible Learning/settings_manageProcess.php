@@ -36,6 +36,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/settings
             'expectFeedback',
             'feedbackOnMessage',
             'feedbackOffMessage',
+            'unitOutlineTemplate',
         ]
     ];
 

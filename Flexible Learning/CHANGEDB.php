@@ -208,3 +208,10 @@ $count++;
 $sql[$count][0] = "1.1.05";
 $sql[$count][1] = "
 ";
+
+// v1.1.05
+$count++;
+$sql[$count][0] = "1.1.06";
+$sql[$count][1] = "
+INSERT INTO `gibbonSetting` (`scope` ,`name` ,`nameDisplay` ,`description` ,`value`) VALUES ('Flexible Learning', 'unitOutlineTemplate', 'Unit Outline Template', 'An HTML template to be used as the default for all new units.', '');end
+";

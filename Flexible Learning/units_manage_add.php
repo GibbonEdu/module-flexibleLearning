@@ -103,7 +103,7 @@ require_once __DIR__ . '/moduleFunctions.php';
 
     //MAJORS AND MINORS
     $form->addRow()->addHeading(__m('Majors & Minors'))->append(__m('These help indicate what topics the unit is about.'));
-    
+
     $sql = "(SELECT minor1, minor2, NULL AS major1, NULL AS major2 FROM flexibleLearningUnit WHERE active='Y') UNION (SELECT name AS major1, name AS major2, NULL as minor1, NULL as minor2 FROM flexibleLearningMajor)";
     $result = $pdo->executeQuery(array(), $sql);
     $options = array();
@@ -160,10 +160,11 @@ require_once __DIR__ . '/moduleFunctions.php';
     // UNIT OUTLINE
     $form->addRow()->addHeading(__m('Unit Outline'))->append(__m('The contents of this field are viewable to all users, SO AVOID CONFIDENTIAL OR SENSITIVE DATA!'));
 
+    $unitOutline = getSettingByScope($connection2, 'Flexible Learning', 'unitOutlineTemplate');
     $row = $form->addRow();
         $column = $row->addColumn();
         $column->addLabel('outline', __('Unit Outline'));
-        $column->addEditor('outline', $guid)->setRows(30)->showMedia();
+        $column->addEditor('outline', $guid)->setRows(30)->showMedia()->setValue($unitOutline);
 
     // SMART BLOCKS
     $form->addRow()->addHeading(__m('Smart Blocks'))->append(__m('Smart Blocks aid unit planning by giving teachers help in creating and maintaining new units, splitting material into smaller chunks. As well as predefined fields to fill, Smart Blocks provide a visual view of the content blocks that make up a unit. Blocks may be any kind of content, such as discussion, assessments, group work, outcome etc.'));

@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+v1.1.06
+-------
+Added setting for default unit outline
+Unit outline now appears as first smart block in a unit if it is not empty
+
 v1.1.05
 -------
 Refactored session variables

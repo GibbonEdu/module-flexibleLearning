@@ -54,6 +54,11 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/settings
         $row->addLabel($setting['name'], __($setting['nameDisplay']))->description(__($setting['description']));
         $row->addTextArea($setting['name'])->required()->setValue($setting['value']);
 
+    $setting = $settingGateway->getSettingByScope('Flexible Learning', 'unitOutlineTemplate', true);
+    $row = $form->addRow();
+        $row->addLabel($setting['name'], __m($setting['nameDisplay']))->description(__m($setting['description']));
+        $row->addTextArea($setting['name'])->setValue($setting['value'])->setRows(8);
+
     $row = $form->addRow();
         $row->addFooter();
         $row->addSubmit();

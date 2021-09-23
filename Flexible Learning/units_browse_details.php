@@ -199,16 +199,16 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     // SMART BLOCKS
     $blocks = $unitBlockGateway->selectBlocksByUnit($flexibleLearningUnitID)->fetchAll();
 
-    if ($values['outline'] != NULL) {
+    if ($values['outline'] != null) {
       $outlineBlock = [
         'flexibleLearningUnitBlockID' => 0,
         'flexibleLearningUnitID' => $flexibleLearningUnitID,
         'title' => 'Unit Outline',
-        'type' => NULL,
-        'length' => NULL,
+        'type' => null,
+        'length' => null,
         'contents' => $values['outline'],
-        'teachersNotes' => NULL,
-        'sequenceNumber' => NULL];
+        'teachersNotes' => null,
+        'sequenceNumber' => null];
       array_unshift($blocks, $outlineBlock);
     };
     if (empty($blocks)) {

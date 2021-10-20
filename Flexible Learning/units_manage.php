@@ -73,7 +73,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         : $unitGateway->queryAllUnits($criteria, null, $session->get('gibbonPersonID'), null, true);
 
     // BULK ACTION FORM
-    $form = BulkActionForm::create('bulkAction', $_SESSION[$guid]['absoluteURL'].'/modules/Flexible Learning/units_manageProcessBulk.php');
+    $form = BulkActionForm::create('bulkAction', $session->get('absoluteURL').'/modules/Flexible Learning/units_manageProcessBulk.php');
 
     $bulkActions = ['Export' => __('Export')];
     $col = $form->createBulkActionColumn($bulkActions);

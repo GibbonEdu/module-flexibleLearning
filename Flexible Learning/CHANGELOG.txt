@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v1.1.07
+-------
+Finished session refactoring
+
 v1.1.06
 -------
 Added setting for default unit outline

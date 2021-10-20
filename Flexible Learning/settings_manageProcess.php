@@ -21,7 +21,7 @@ use Gibbon\Domain\System\SettingGateway;
 
 include '../../gibbon.php';
 
-$URL = $_SESSION[$guid]['absoluteURL'].'/index.php?q=/modules/'.getModuleName($_POST['address']).'/settings_manage.php';
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/'.getModuleName($_POST['address']).'/settings_manage.php';
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/settings_manage.php') == false) {
     $URL .= '&return=error0';
@@ -43,7 +43,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/settings
     foreach ($settingsToUpdate as $scope => $settings) {
         foreach ($settings as $name) {
             $value = $_POST[$name] ?? '';
-            if (empty($value)) continue;
+            if (empty($value) and $name != 'unitOutlineTemplate') continue;
 
             $updated = $settingGateway->updateSettingByScope($scope, $name, $value);
             $partialFail &= !$updated;

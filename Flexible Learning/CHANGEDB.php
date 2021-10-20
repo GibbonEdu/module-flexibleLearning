@@ -215,3 +215,9 @@ $sql[$count][0] = "1.1.06";
 $sql[$count][1] = "
 INSERT INTO `gibbonSetting` (`scope` ,`name` ,`nameDisplay` ,`description` ,`value`) VALUES ('Flexible Learning', 'unitOutlineTemplate', 'Unit Outline Template', 'An HTML template to be used as the default for all new units.', '');end
 ";
+
+// v1.1.07
+$count++;
+$sql[$count][0] = "1.1.07";
+$sql[$count][1] = "
+";

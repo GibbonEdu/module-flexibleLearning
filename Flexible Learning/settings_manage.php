@@ -33,8 +33,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/settings
 
     $settingGateway = $container->get(SettingGateway::class);
 
-    $form = Form::create('settings', $_SESSION[$guid]['absoluteURL'].'/modules/'.$_SESSION[$guid]['module'].'/settings_manageProcess.php');
-    $form->addHiddenValue('address', $_SESSION[$guid]['address']);
+    $form = Form::create('settings', $session->get('absoluteURL').'/modules/'.$session->get('module').'/settings_manageProcess.php');
+    $form->addHiddenValue('address', $session->get('address'));
 
     $setting = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback', true);
     $row = $form->addRow();

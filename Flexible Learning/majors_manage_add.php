@@ -31,7 +31,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/majors_m
 
     $editLink = '';
     if (isset($_GET['editID'])) {
-        $editLink = $_SESSION[$guid]['absoluteURL'].'/index.php?q=/modules/Flexible Learning/majors_manage_edit.php&flexibleLearningMajorID='.$_GET['editID'];
+        $editLink = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/majors_manage_edit.php&flexibleLearningMajorID='.$_GET['editID'];
     }
     if (isset($_GET['return'])) {
         returnProcess($guid, $_GET['return'], $editLink, null);

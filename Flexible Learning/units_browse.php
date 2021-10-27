@@ -18,6 +18,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 } else {
     $name = $_GET['name'] ?? '';
     $major = $_GET['major'] ?? '';
+    $showInactive = $_GET['showInactive'] ?? 'N';
 
     $templateView = new View($container->get('twig'));
     $unitGateway = $container->get(UnitGateway::class);
@@ -28,6 +29,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         ->searchBy($unitGateway->getSearchableColumns(), $name)
         ->sortBy(['sequenceNumber', 'name'])
         ->filterBy('major', $major)
+        ->filterBy('showInactive', $showInactive)
         ->fromPOST();
 
     $units = $unitGateway->queryAllUnits($criteria, $session->get('gibbonPersonID'), null, !$canManage ? $roleCategory : null);

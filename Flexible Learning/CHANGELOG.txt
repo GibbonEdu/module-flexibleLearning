@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v1.1.08
+-------
+Fixed filters in Manage Units
+
 v1.1.07
 -------
 Finished session refactoring

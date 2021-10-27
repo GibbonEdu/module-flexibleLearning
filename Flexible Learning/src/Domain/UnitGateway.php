@@ -82,6 +82,11 @@ class UnitGateway extends QueryableGateway
         }
 
         $criteria->addFilterRules([
+            'active' => function ($query, $active) {
+                return $query
+                    ->where('flexibleLearningUnit.active = :active')
+                    ->bindValue('active', $active);
+            },
             'major' => function ($query, $major) {
                 return $query
                     ->where('(flexibleLearningMajor1.flexibleLearningMajorID = :major OR flexibleLearningMajor2.flexibleLearningMajorID = :major)')

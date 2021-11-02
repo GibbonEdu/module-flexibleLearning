@@ -53,10 +53,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         return;
     }
 
-    if (isset($_GET['return'])) {
-        returnProcess($guid, $_GET['return'], null, null);
-    }
-
     // DETAILS TABLE
     $table = DataTable::createDetails('unitDetails');
     $table->addMetaData('gridClass', 'grid-cols-1 md:grid-cols-3 mb-4');

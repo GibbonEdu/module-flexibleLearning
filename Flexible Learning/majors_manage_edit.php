@@ -32,10 +32,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/majors_m
         ->add(__m('Manage Majors'), 'majors_manage.php')
         ->add(__m('Edit Major'));
 
-    if (isset($_GET['return'])) {
-        returnProcess($guid, $_GET['return'], null, null);
-    }
-
     if (empty($flexibleLearningMajorID)) {
         $page->addError(__('You have not specified one or more required parameters.'));
         return;

@@ -33,9 +33,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/majors_m
     if (isset($_GET['editID'])) {
         $editLink = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/majors_manage_edit.php&flexibleLearningMajorID='.$_GET['editID'];
     }
-    if (isset($_GET['return'])) {
-        returnProcess($guid, $_GET['return'], $editLink, null);
-    }
+    $page->return->setEditLink($editLink);
 
     $form = Form::create('major', $session->get('absoluteURL').'/modules/'.$session->get('module').'/majors_manage_addProcess.php');
     $form->setFactory(DatabaseFormFactory::create($pdo));

@@ -29,10 +29,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/majors_m
     $page->breadcrumbs
         ->add(__m('Manage Majors'));
 
-    if (isset($_GET['return'])) {
-        returnProcess($guid, $_GET['return'], null, null);
-    }
-
     // Query majors
     $majorGateway = $container->get(MajorGateway::class);
 

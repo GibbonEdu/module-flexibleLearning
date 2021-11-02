@@ -18,8 +18,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 use Gibbon\Forms\Form;
-use Gibbon\Module\FlexibleLearning\Forms\FlexibleLearningFormFactory;
 use Gibbon\Domain\System\SettingGateway;
+use Gibbon\Module\FlexibleLearning\Forms\FlexibleLearningFormFactory;
 
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
@@ -39,14 +39,11 @@ require_once __DIR__ . '/moduleFunctions.php';
          ->add(__m('Manage Units'), 'units_manage.php', $urlParams)
          ->add(__m('Add Unit'));
 
-    $returns = array();
     $editLink = '';
     if (isset($_GET['editID'])) {
         $editLink = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_manage_edit.php&flexibleLearningUnitID='.$_GET['editID'].'&gibbonDepartmentID='.$_GET['gibbonDepartmentID'].'&name='.$_GET['name'];
     }
-    if (isset($_GET['return'])) {
-        returnProcess($guid, $_GET['return'], $editLink, $returns);
-    }
+   	$page->return->setEditLink($editLink);
 
     if ($gibbonDepartmentID != '' or $name != '') {
         echo "<div class='linkTop'>";
@@ -60,7 +57,6 @@ require_once __DIR__ . '/moduleFunctions.php';
     $form->addHiddenValue('address', $session->get('address'));
 
     $settingGateway = $container->get(SettingGateway::class);
-
 
     // UNIT BASICS
     $form->addRow()->addHeading(__m('Unit Basics'));
@@ -178,7 +174,7 @@ require_once __DIR__ . '/moduleFunctions.php';
         ->addClass('advanced addBlock');
 
     $row = $form->addRow()->addClass('advanced');
-        $customBlocks = $row->addFlexibleLearningSmartBlocks('smart', $session, $guid)
+        $customBlocks = $row->addFlexibleLearningSmartBlocks('smart', $session, $guid, $settingGateway)
             ->addToolInput($blockCreator);
 
     for ($i=0 ; $i<5 ; $i++) {

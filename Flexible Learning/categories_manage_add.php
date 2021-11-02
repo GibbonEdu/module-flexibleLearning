@@ -33,9 +33,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/categori
     if (isset($_GET['editID'])) {
         $editLink = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/categories_manage_edit.php&flexibleLearningCategoryID='.$_GET['editID'];
     }
-    if (isset($_GET['return'])) {
-        returnProcess($guid, $_GET['return'], $editLink, null);
-    }
+    $page->return->setEditLink($editLink);
 
     $form = Form::create('category', $session->get('absoluteURL').'/modules/'.$session->get('module').'/categories_manage_addProcess.php');
     $form->setFactory(DatabaseFormFactory::create($pdo));

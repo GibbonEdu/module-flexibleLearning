@@ -27,10 +27,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/settings
     //Proceed!
     $page->breadcrumbs->add(__('Settings'));
 
-    if (isset($_GET['return'])) {
-        returnProcess($guid, $_GET['return'], null, null);
-    }
-
     $settingGateway = $container->get(SettingGateway::class);
 
     $form = Form::create('settings', $session->get('absoluteURL').'/modules/'.$session->get('module').'/settings_manageProcess.php');

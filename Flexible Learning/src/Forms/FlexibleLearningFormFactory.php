@@ -21,8 +21,8 @@ namespace Gibbon\Module\FlexibleLearning\Forms;
 
 use Gibbon\Forms\DatabaseFormFactory;
 use Gibbon\Forms\OutputableInterface;
-use Gibbon\Contracts\Database\Connection;
 use Gibbon\Contracts\Services\Session;
+use Gibbon\Domain\System\SettingGateway;
 
 /**
  * FlexibleLearningFormFactory
@@ -36,7 +36,7 @@ class FlexibleLearningFormFactory extends DatabaseFormFactory
      * Create and return an instance of DatabaseFormFactory.
      * @return  object DatabaseFormFactory
      */
-    public static function create(Connection $pdo = null)
+    public static function create($pdo = null)
     {
         return new FlexibleLearningFormFactory($pdo);
     }
@@ -49,9 +49,9 @@ class FlexibleLearningFormFactory extends DatabaseFormFactory
      * @param string $guid
      * @return OutputableInterface
      */
-    public function createFlexibleLearningSmartBlocks($name, $session, $guid) : OutputableInterface
+    public function createFlexibleLearningSmartBlocks($name, $session, $guid, $settingGateway) : OutputableInterface
     {
-        $blockTemplate = $this->createSmartBlockTemplate($guid);
+        $blockTemplate = $this->createSmartBlockTemplate($guid, $settingGateway);
 
         // Create and initialize the Custom Blocks
         $customBlocks = $this->createCustomBlocks($name, $session)
@@ -74,7 +74,7 @@ class FlexibleLearningFormFactory extends DatabaseFormFactory
      * @param string $guid
      * @return OutputableInterface
      */
-    public function createSmartBlockTemplate($guid) : OutputableInterface
+    public function createSmartBlockTemplate($guid, $settingGateway) : OutputableInterface
     {
         $blockTemplate = $this->createTable()->setClass('blank w-full');
             $row = $blockTemplate->addRow();
@@ -89,7 +89,7 @@ class FlexibleLearningFormFactory extends DatabaseFormFactory
                 $row->addTextField('length')->placeholder(__('length (min)'))
                     ->setClass('w-24 focus:bg-white')->prepend('');
 
-            $smartBlockTemplate = getSettingByScope($this->pdo->getConnection(), 'Planner', 'smartBlockTemplate');
+            $smartBlockTemplate = $settingGateway->getSettingByScope('Planner', 'smartBlockTemplate');
             $col = $blockTemplate->addRow()->addClass('showHide w-full')->addColumn();
                 $col->addLabel('contentsLabel', __('Block Contents'))->setClass('mt-3 -mb-2');
                 $col->addTextArea('contents', $guid)->setRows(20)->addData('tinymce')->addData('media', '1')->setValue($smartBlockTemplate);

@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v1.1.09
+-------
+Removed deprecated function calls
+
 v1.1.08
 -------
 Fixed filters in Manage Units

@@ -39,10 +39,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
     $page->breadcrumbs->add(__m('Manage Units'));
 
-    if (isset($_GET['return'])) {
-        returnProcess($guid, $_GET['return'], null, null);
-    }
-
     $name = $_GET['name'] ?? '';
 
     // QUERY

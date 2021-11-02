@@ -29,10 +29,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/categori
     $page->breadcrumbs
         ->add(__m('Manage Categories'));
 
-    if (isset($_GET['return'])) {
-        returnProcess($guid, $_GET['return'], null, null);
-    }
-
     // Query categories
     $categoryGateway = $container->get(categoryGateway::class);
 

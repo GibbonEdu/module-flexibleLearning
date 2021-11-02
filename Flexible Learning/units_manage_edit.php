@@ -18,8 +18,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 use Gibbon\Forms\Form;
-use Gibbon\Module\FlexibleLearning\Forms\FlexibleLearningFormFactory;
+use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
+use Gibbon\Module\FlexibleLearning\Forms\FlexibleLearningFormFactory;
 
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
@@ -45,10 +46,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     $page->breadcrumbs
             ->add(__m('Manage Units'), 'units_manage.php', $urlParams)
             ->add(__m('Edit Unit'));
-
-    if (isset($_GET['return'])) {
-        returnProcess($guid, $_GET['return'], null, null);
-    }
 
     if (empty($flexibleLearningUnitID)) {
         $page->addError(__('You have not specified one or more required parameters.'));
@@ -81,6 +78,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
     $form->addHiddenValue('address', $session->get('address'));
     $form->addHiddenValue('flexibleLearningUnitID',$flexibleLearningUnitID);
+    
+    $settingGateway = $container->get(SettingGateway::class);
 
     // UNIT BASICS
     $form->addRow()->addHeading(__m('Unit Basics'));
@@ -198,7 +197,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         ->addClass('addBlock');
 
     $row = $form->addRow();
-        $customBlocks = $row->addFlexibleLearningSmartBlocks('smart', $session, $guid)
+        $customBlocks = $row->addFlexibleLearningSmartBlocks('smart', $session, $guid, $settingGateway)
             ->addToolInput($blockCreator);
 
     $dataBlocks = array('flexibleLearningUnitID' => $flexibleLearningUnitID);

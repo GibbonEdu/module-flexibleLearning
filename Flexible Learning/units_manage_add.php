@@ -128,6 +128,10 @@ require_once __DIR__ . '/moduleFunctions.php';
         $row->addLabel('minor2', __('Minor 2'));
         $row->addTextField('minor2')->autocomplete($options);
 
+    $row = $form->addRow();
+        $row->addLabel('offline', __('Offline Friendly'))->description(__('Is this an activity or project that can be completed offline? It should not include links and should have minimal material requirements.'));
+        $row->addYesNo('offline')->selected('N');
+
     // ACCESS
     $form->addRow()->addHeading(__m('Access'))->append(__m('Users with permission to manage units can override avaiability preferences.'));
 

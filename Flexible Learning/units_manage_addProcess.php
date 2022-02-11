@@ -53,6 +53,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         'minor1'                     => $_POST['minor1'] ?? '',
         'minor2'                     => $_POST['minor2'] ?? '',
         'active'                     => $_POST['active'] ?? '',
+        'offline'                    => $_POST['offline'] ?? '',
         'outline'                    => $_POST['outline'] ?? '',
         'availableStudent'           => $_POST['availableStudent'] ?? 'No',
         'availableStaff'             => $_POST['availableStaff'] ?? 'No',

@@ -1,0 +1,56 @@
+
+{% for major, units in flexibleLearning.units %}
+
+    <tocentry content="Chapter {{ loop.index }}: {{ major }}" level="0" />
+
+    <div style="position: absolute; top: 19.5mm; left: 10mm; width: 190mm; height: 260mm; background-color: #fafafa">
+    
+        <div style="margin-top: 110mm; text-align: center; color: #444444">
+            Chapter {{ loop.index }}
+            <h2 style="font-size: 42pt; font-family: caveat; font-weight: normal; color: #0473b9;">{{ major }}!</h2>
+        </div>
+
+    </div>
+
+    <pagebreak>
+
+    {% for unit in units %}
+
+    <div class="w-full">
+
+        <div style="background: #fafafa; border: 1px solid #aaaaaa; padding: 4mm 5mm; margin-top: 3mm; margin-bottom: 3mm;">
+            <img src="{{ absolutePath }}/{{ unit.logo }}" style="height: 16mm; float: left; margin-right: 5mm;">
+
+            <h2 style="color: #444444;">
+                <tocentry content="{{ unit.name }}" level="1" />
+                {{ unit.name }}
+                <div style="font-size: 8pt; color: #aaaaaa; font-weight: normal;">
+                    Category: {{ unit.category }}
+                </div>
+            </h2>
+
+            <div style="font-size: 8pt; color: #444444;">{{ unit.blurb }}</div>
+        </div>
+
+        <columns column-count="2" vAlign="" v-align="">
+        {% for block in unit.blocks %}
+
+            <div style="border-bottom: 2px solid #aaaaaa; padding: 1mm 0mm;">
+                <h3 style="margin: 0; padding:0">{{ block.title }}</h3>
+            </div>
+
+            <div style="font-size: 10pt;">
+                
+                    {{ block.contents|raw }}
+                
+            </div>
+
+        {% endfor %}
+        <columns column-count="1">
+
+    </div>
+
+    <pagebreak>
+    {% endfor %}
+
+{% endfor %}

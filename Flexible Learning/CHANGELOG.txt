@@ -1,5 +1,13 @@
 CHANGELOG
 =========
+v1.2.00
+-------
+Added the option to create printable PDF booklets of offline units
+
+v1.1.10
+-------
+Added an Offline Friendly field in Manage Units
+
 v1.1.09
 -------
 Removed deprecated function calls

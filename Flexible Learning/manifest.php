@@ -25,7 +25,7 @@ $description = 'View, create and manage Flexible Learning units.';
 $entryURL    = "units_browse.php";
 $type        = "Additional";
 $category    = 'Learn';
-$version     = '1.1.09';
+$version     = '1.1.10';
 $author      = 'Harry Merrett';
 $url         = '';
 
@@ -36,6 +36,7 @@ $moduleTables[] = "CREATE TABLE `flexibleLearningUnit` (
   `name` varchar(40) NOT NULL,
   `logo` text,
   `active` enum('Y','N') DEFAULT 'Y',
+  `offline` ENUM('N','Y') NOT NULL DEFAULT 'N',
   `grouping` varchar(255) NOT NULL,
   `gibbonYearGroupIDMinimum` int(3) unsigned zerofill DEFAULT NULL,
   `blurb` text NOT NULL,
@@ -212,6 +213,26 @@ $actionRows[] = [
     'description'               => 'Allows a privileged user to manage Flexible Learning settings.', // Text description
     'URLList'                   => 'settings_manage.php', // List of pages included in this action
     'entryURL'                  => 'settings_manage.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'N', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
+];
+
+$actionRows[] = [
+    'name'                      => 'Printable Booklet', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Admin', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Enables creating a printable PDF of offline units.', // Text description
+    'URLList'                   => 'booklet_manage.php', // List of pages included in this action
+    'entryURL'                  => 'booklet_manage.php', // The landing action for the page.
     'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
     'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
     'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin

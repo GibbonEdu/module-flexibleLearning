@@ -87,6 +87,11 @@ class UnitGateway extends QueryableGateway
                     ->where('flexibleLearningUnit.active = :active')
                     ->bindValue('active', $active);
             },
+            'offline' => function ($query, $offline) {
+                return $query
+                    ->where('flexibleLearningUnit.offline = :offline')
+                    ->bindValue('offline', $offline);
+            },
             'major' => function ($query, $major) {
                 return $query
                     ->where('(flexibleLearningMajor1.flexibleLearningMajorID = :major OR flexibleLearningMajor2.flexibleLearningMajorID = :major)')
@@ -138,6 +143,25 @@ class UnitGateway extends QueryableGateway
           ";
 
         return $this->db()->selectOne($sql);
+    }
+
+    public function selectOfflineUnits()
+    {
+        $sql = "SELECT 
+                major1.name as groupBy,
+                flexibleLearningUnit.*,
+                flexibleLearningCategory.name as category,
+                major1.name as major1,
+                major2.name as major2
+            FROM flexibleLearningUnit
+            JOIN flexibleLearningCategory ON (flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID)
+            JOIN flexibleLearningMajor as major1 ON (major1.flexibleLearningMajorID=flexibleLearningUnit.flexibleLearningMajorID1)
+            LEFT JOIN flexibleLearningMajor as major2 ON (major2.flexibleLearningMajorID=flexibleLearningUnit.flexibleLearningMajorID2)
+            WHERE flexibleLearningUnit.active='Y'
+            AND flexibleLearningUnit.offline='Y'
+            ORDER BY major1.name, flexibleLearningCategory.sequenceNumber, flexibleLearningUnit.name";
+
+        return $this->db()->select($sql);
     }
 
 }

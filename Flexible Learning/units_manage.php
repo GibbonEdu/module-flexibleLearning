@@ -93,7 +93,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
     $table->addMetaData('filterOptions', [
         'active:Y'        => __('Active').': '.__('Yes'),
-        'active:N'        => __('Active').': '.__('No')
+        'active:N'        => __('Active').': '.__('No'),
+        'offline:Y'        => __('Offline').': '.__('Yes'),
+        'offline:N'        => __('Offline').': '.__('No')
     ]);
 
     $table->addColumn('name', __('Name'));

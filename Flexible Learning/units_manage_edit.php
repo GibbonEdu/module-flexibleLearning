@@ -61,23 +61,38 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         return;
     }
 
-    if ( $name != '') {
-        echo "<div class='linkTop'>";
-        echo "<a href='".$session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_manage.php&name=$name'>".__($guid, 'Back to Search Results').'</a>';
-        echo '</div>';
-    }
-
-    if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
-        echo "<div class='linkTop'>";
-        echo "<a href='".$session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=$flexibleLearningUnitID&name=$name'>".__($guid, 'View')."<img style='margin: 0 0 -4px 3px' title='".__($guid, 'View')."' src='./themes/".$session->get('gibbonThemeName')."/img/plus.png'/></a>";
-        echo '</div>';
-        }
-
+   
     $form = Form::create('action', $session->get('absoluteURL').'/modules/'.$session->get('module')."/units_manage_editProcess.php?&name=$name");
     $form->setFactory(FlexibleLearningFormFactory::create($pdo));
 
     $form->addHiddenValue('address', $session->get('address'));
     $form->addHiddenValue('flexibleLearningUnitID',$flexibleLearningUnitID);
+
+    if (!empty($name)) {
+        $form->addHeaderAction('back', __('Back to Search Results'))
+            ->setURL('/modules/Flexible Learning/units_manage.php')
+            ->addParam('name', $name)
+            ->setIcon('search')
+            ->displayLabel()
+            ->append(' | ');
+    }
+
+    if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
+        $form->addHeaderAction('view', __('View'))
+            ->setURL("/modules/Flexible Learning/units_browse_details.php")
+            ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
+            ->addParam('name', $name)
+            ->addParam('sidebar', 'true')
+            ->displayLabel()
+            ->append(' | ');
+    }
+
+    $form->addHeaderAction('export', __('Download'))
+        ->setURL("/modules/Flexible Learning/units_manage_exportProcess.php")
+        ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
+        ->setIcon('delivery2')
+        ->displayLabel()
+        ->directLink();
     
     $settingGateway = $container->get(SettingGateway::class);
 

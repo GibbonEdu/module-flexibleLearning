@@ -17,39 +17,32 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+use Gibbon\Services\Format;
 use Gibbon\Module\FlexibleLearning\Booklet;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 
-include '../../gibbon.php';
+$_POST['address'] = '/modules/Flexible Learning/units_browse_details.php';
 
-$URL = $session->get('absoluteURL').'/index.php?q=/modules/'.getModuleName($_POST['address']).'/booklet_manage.php';
+require_once '../../gibbon.php';
 
-if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/booklet_manage.php') == false) {
+$flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
+
+$URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&flexibleLearningUnitID='.$flexibleLearningUnitID;
+
+if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php') == false) {
     $URL .= '&return=error0';
     header("Location: {$URL}");
+    exit;
 } else {
-    // Proceed!
-    $partialFail = false;
-
-    $flexibleLearningUnitIDList = $_POST['flexibleLearningUnitID'] ?? [];
-    if (empty($flexibleLearningUnitIDList)) {
-        $URL .= '&return=error1';
-        header("Location: {$URL}");
-    }
-
+  
     $booklet = $container->get(Booklet::class);
-    $booklet->setName($_POST['bookletName'] ?? 'Offline Activity Booklet');
 
-    $offlineUnits = $container->get(UnitGateway::class)->selectUnitsByID($flexibleLearningUnitIDList)->fetchGrouped();
-
-    foreach ($offlineUnits as $grpIndex => $units) {
-        foreach ($units as $unitIndex => $unit) {
-            $booklet->addUnit($unit, $grpIndex);
-        }
-    }
+    $unit = $container->get(UnitGateway::class)->getByID($flexibleLearningUnitID);
+    $booklet->addUnit($unit);
 
     $path = $booklet->createTempFile();
+    $filename = preg_replace('/[^a-zA-Z0-9_-]/', '', $unit['name']).'.pdf';
 
     $booklet->render($path);
-    $booklet->export($path, 'FlexibleLearningBooklet.pdf');
+    $booklet->export($path, $filename);
 }

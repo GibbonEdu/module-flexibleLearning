@@ -76,8 +76,16 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
             ->setURL('/modules/Flexible Learning/units_manage_edit.php')
             ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
             ->addParam('name', $name)
-            ->displayLabel();
+            ->displayLabel()
+            ->append(' | ');
     }
+
+    $table->addHeaderAction('export', __('Download'))
+        ->setURL("/modules/Flexible Learning/units_manage_exportProcess.php")
+        ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
+        ->setIcon('delivery2')
+        ->displayLabel()
+        ->directLink();
 
     $table->addColumn('name', '')->addClass('text-lg font-bold');
     $table->addColumn('time', __m('Time'))

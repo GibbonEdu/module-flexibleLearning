@@ -98,7 +98,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         $file = $_FILES['file'] ?? null;
 
         // Upload the file, return the /uploads relative path
-        $data['evidenceLocation'] = $fileUploader->uploadFromPost($file, $name);
+        $data['evidenceLocation'] = $fileUploader->uploadFromPost($file, $values['name']);
     } elseif ($data['evidenceType'] == 'Link') {
         $data['evidenceLocation'] = $_POST['link'] ?? '';
     }

@@ -30,12 +30,31 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/booklet_
     $page->breadcrumbs->add(__m('Printable Booklet'));
 
     $unitGateway = $container->get(UnitGateway::class);
-    $offlineUnits = $unitGateway->selectBy(['active' => 'Y', 'offline' => 'Y'], ['flexibleLearningUnitID'])->fetchAll();
 
     $form = Form::create('booklet', $session->get('absoluteURL').'/modules/'.$session->get('module').'/booklet_manageProcess.php');
     $form->addHiddenValue('address', $session->get('address'));
 
-    $form->addRow()->addContent(Format::alert(__m('There are {count} active offline-friendly unit(s) that will be included in the booklet.', ['count' => count($offlineUnits)]), 'message'));
+
+    $offlineUnits = $unitGateway->selectOfflineUnits()->fetchGrouped();
+    $ids = [];
+    foreach ($offlineUnits as $group => $units) {
+        $offlineUnits[$group] = [];
+        
+        foreach ($units as $index => $unit) {
+            $offlineUnits[$group][$unit['flexibleLearningUnitID']] = $unit['name'];
+            $ids[] = $unit['flexibleLearningUnitID'];
+        }
+    }
+
+    $form->addRow()->addContent(Format::alert(__m('There are {count} active offline-friendly unit(s) that can be included in the booklet. Select the units to include below.', ['count' => count($ids)]), 'message'));
+
+    $row = $form->addRow();
+        $row->addLabel('bookletName', __m('Booklet Name'));
+        $row->addTextField('bookletName')->setValue('Offline Activity Booklet');
+    
+    $row = $form->addRow();
+        $row->addLabel('flexibleLearningUnitID', __m('Units to Include'));
+        $row->addCheckbox('flexibleLearningUnitID')->fromArray($offlineUnits)->addCheckAllNone()->checked($ids);
     
     $row = $form->addRow();
         $row->addFooter();
@@ -44,20 +63,20 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/booklet_
     echo $form->getOutput();
 
 
-    $settingGateway = $container->get(SettingGateway::class);
+    // $settingGateway = $container->get(SettingGateway::class);
 
-    $form = Form::create('settings', $session->get('absoluteURL').'/modules/'.$session->get('module').'/booklet_manageSettingsProcess.php');
-    $form->addHiddenValue('address', $session->get('address'));
-    $form->setTitle(__m('Printable Booklet Settings'));
+    // $form = Form::create('settings', $session->get('absoluteURL').'/modules/'.$session->get('module').'/booklet_manageSettingsProcess.php');
+    // $form->addHiddenValue('address', $session->get('address'));
+    // $form->setTitle(__m('Printable Booklet Settings'));
 
-    // $setting = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback', true);
+    // // $setting = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback', true);
+    // // $row = $form->addRow();
+    // //     $row->addLabel($setting['name'], __($setting['nameDisplay']))->description(__($setting['description']));
+    // //     $row->addYesNo($setting['name'])->required()->selected($setting['value']);
+
     // $row = $form->addRow();
-    //     $row->addLabel($setting['name'], __($setting['nameDisplay']))->description(__($setting['description']));
-    //     $row->addYesNo($setting['name'])->required()->selected($setting['value']);
+    //     $row->addFooter();
+    //     $row->addSubmit();
 
-    $row = $form->addRow();
-        $row->addFooter();
-        $row->addSubmit();
-
-    echo $form->getOutput();
+    // echo $form->getOutput();
 }

@@ -164,4 +164,24 @@ class UnitGateway extends QueryableGateway
         return $this->db()->select($sql);
     }
 
+    public function selectUnitsByID($flexibleLearningUnitIDList)
+    {
+        $data = ['flexibleLearningUnitIDList' => is_array($flexibleLearningUnitIDList)? implode(',', $flexibleLearningUnitIDList) : $flexibleLearningUnitIDList];
+        $sql = "SELECT 
+                major1.name as groupBy,
+                flexibleLearningUnit.*,
+                flexibleLearningCategory.name as category,
+                major1.name as major1,
+                major2.name as major2
+            FROM flexibleLearningUnit
+            JOIN flexibleLearningCategory ON (flexibleLearningCategory.flexibleLearningCategoryID=flexibleLearningUnit.flexibleLearningCategoryID)
+            JOIN flexibleLearningMajor as major1 ON (major1.flexibleLearningMajorID=flexibleLearningUnit.flexibleLearningMajorID1)
+            LEFT JOIN flexibleLearningMajor as major2 ON (major2.flexibleLearningMajorID=flexibleLearningUnit.flexibleLearningMajorID2)
+            WHERE flexibleLearningUnit.active='Y'
+            AND FIND_IN_SET(flexibleLearningUnitID, :flexibleLearningUnitIDList)
+            ORDER BY major1.name, flexibleLearningCategory.sequenceNumber, flexibleLearningUnit.name";
+
+        return $this->db()->select($sql, $data);
+    }
+
 }

@@ -91,7 +91,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $file = $_FILES['file'] ?? null;
 
         // Upload the file, return the /uploads relative path
-        $data['logo'] = $fileUploader->uploadFromPost($file, $data, $data['name']);
+        $data['logo'] = $fileUploader->uploadFromPost($file, $data['name']);
 
         if (empty($data['logo'])) {
             $partialFail = true;

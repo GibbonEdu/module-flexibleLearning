@@ -1,6 +1,7 @@
 
 {% for major, units in flexibleLearning.units %}
 
+    {% if major is not empty %}
     <tocentry content="Chapter {{ loop.index }}: {{ major }}" level="0" />
 
     <div style="position: absolute; top: 19.5mm; left: 10mm; width: 190mm; height: 260mm; background-color: #fafafa">
@@ -13,6 +14,8 @@
     </div>
 
     <pagebreak>
+
+    {% endif %}
 
     {% for unit in units %}
 
@@ -50,7 +53,10 @@
 
     </div>
 
+    {% if not loop.last %}
     <pagebreak>
+    {% endif %}
+    
     {% endfor %}
 
 {% endfor %}

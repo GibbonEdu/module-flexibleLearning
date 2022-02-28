@@ -55,6 +55,10 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/booklet_
     $row = $form->addRow();
         $row->addLabel('flexibleLearningUnitID', __m('Units to Include'));
         $row->addCheckbox('flexibleLearningUnitID')->fromArray($offlineUnits)->addCheckAllNone()->checked($ids);
+
+    $row = $form->addRow();
+        $row->addLabel('chapterPages', __m('Include chapter pages?'));
+        $row->addYesNo('chapterPages')->selected('N');
     
     $row = $form->addRow();
         $row->addFooter();

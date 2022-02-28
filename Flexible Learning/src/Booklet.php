@@ -34,7 +34,7 @@ class Booklet implements ContainerAwareInterface
     protected $unitBlockGateway;
     protected $units = [];
     protected $unitCount = 0;
-    protected $bookletName;
+    protected $config = [];
 
     public function __construct(UnitBlockGateway $unitBlockGateway)
     {
@@ -46,14 +46,18 @@ class Booklet implements ContainerAwareInterface
         $this->unitBlockGateway = $unitBlockGateway;
     }
 
-    public function setName($bookletName)
+    public function addData($key, $value)
     {
-        $this->bookletName = $bookletName;
+        $this->config[$key] = $value;
     }
 
     public function addUnit($unit, $group = '')
     {
         $blocks = $this->unitBlockGateway->selectBlocksByUnit($unit['flexibleLearningUnitID'])->fetchAll();
+        foreach ($blocks as $index => $block) {
+            $blocks[$index]['contents'] = $this->processBlockContents($block['contents']);
+        }
+
         $this->units[$group][] = $unit + ['blocks' => $blocks];
         $this->unitCount++;
     }
@@ -84,7 +88,7 @@ class Booklet implements ContainerAwareInterface
         ]);
 
         $makeBooklet = $this->unitCount > 1;
-        $bookletName = $makeBooklet ? $this->bookletName : 'Flexible Learning';
+        $this->config['bookletName'] = $makeBooklet ? $this->config['bookletName'] : 'Flexible Learning';
 
         // Add sections to the template
         if ($makeBooklet) {
@@ -96,7 +100,7 @@ class Booklet implements ContainerAwareInterface
 
         $template->addHeader('booklet/header.twig.html');
         $template->addFooter('booklet/footer.twig.html');
-        $template->addData(['bookletName' => $bookletName]);
+        $template->addData($this->config);
 
         // Setup the report data to pass to the renderer
         $reportData = new ReportData([]);
@@ -127,5 +131,20 @@ class Booklet implements ContainerAwareInterface
     {
         $file = tmpfile();
         return stream_get_meta_data($file)['uri'];
+    }
+
+    private function processBlockContents($contents)
+    {
+        $contents = str_replace([
+            '<table',
+            '</table>',
+        ], [
+            '<columnbreak><columns column-count="1"><table style="font-size: 9pt;"',
+            '</table><columns column-count="2" vAlign="" v-align="">',
+        ], $contents);
+
+        $contents = preg_replace('/(?:<p><\/p>)?\s*\n*(?:<p[^>]*>)?\s*\n*<iframe[^>]*src="([^"]*)"[^>]*>[^<]*<\/iframe>\s*\n*(?:<\/p>)?/i', '<div class="video-link"><a href="$1">$1</a></div><br/>', $contents);
+
+        return $contents;
     }
 }

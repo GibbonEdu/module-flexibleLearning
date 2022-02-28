@@ -1,7 +1,7 @@
 
 {% for major, units in flexibleLearning.units %}
 
-    {% if major is not empty %}
+    {% if chapterPages == 'Y' and major is not empty %}
     <tocentry content="Chapter {{ loop.index }}: {{ major }}" level="0" />
 
     <div style="position: absolute; top: 19.5mm; left: 10mm; width: 190mm; height: 260mm; background-color: #fafafa">
@@ -25,7 +25,7 @@
             <img src="{{ absolutePath }}/{{ unit.logo }}" style="height: 16mm; float: left; margin-right: 5mm;">
 
             <h2 style="color: #444444;">
-                <tocentry content="{{ unit.name }}" level="1" />
+                <tocentry content="{{ unit.name }}" level="{{ chapterPages == 'Y' ? '1' : '0' }}" />
                 {{ unit.name }}
                 <div style="font-size: 8pt; color: #aaaaaa; font-weight: normal;">
                     Category: {{ unit.category }}

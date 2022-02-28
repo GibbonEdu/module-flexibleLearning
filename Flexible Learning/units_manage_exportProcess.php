@@ -26,6 +26,7 @@ $_POST['address'] = '/modules/Flexible Learning/units_browse_details.php';
 require_once '../../gibbon.php';
 
 $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
+$flexibleLearningUnitID = preg_replace('/[^0-9]/', '', $flexibleLearningUnitID);
 
 $URL = $session->get('absoluteURL').'/index.php?q=/modules/Flexible Learning/units_browse_details.php&flexibleLearningUnitID='.$flexibleLearningUnitID;
 
@@ -34,10 +35,15 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     header("Location: {$URL}");
     exit;
 } else {
-  
-    $booklet = $container->get(Booklet::class);
 
     $unit = $container->get(UnitGateway::class)->getByID($flexibleLearningUnitID);
+    if (empty($flexibleLearningUnitID) || empty($unit)) {
+        $URL .= '&return=error1';
+        header("Location: {$URL}");
+        exit;
+    }
+  
+    $booklet = $container->get(Booklet::class);
     $booklet->addUnit($unit);
 
     $path = $booklet->createTempFile();

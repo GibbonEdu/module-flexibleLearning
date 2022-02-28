@@ -164,11 +164,14 @@ class UnitGateway extends QueryableGateway
         return $this->db()->select($sql);
     }
 
-    public function selectUnitsByID($flexibleLearningUnitIDList)
+    public function selectUnitsByID($flexibleLearningUnitIDList, $orderByMajor = false)
     {
         $data = ['flexibleLearningUnitIDList' => is_array($flexibleLearningUnitIDList)? implode(',', $flexibleLearningUnitIDList) : $flexibleLearningUnitIDList];
-        $sql = "SELECT 
-                major1.name as groupBy,
+        $sql = "SELECT ";
+
+        $sql .= $orderByMajor ? "major1.name as groupBy, " : "'' as groupBy, ";
+        
+        $sql .= " 
                 flexibleLearningUnit.*,
                 flexibleLearningCategory.name as category,
                 major1.name as major1,
@@ -178,8 +181,13 @@ class UnitGateway extends QueryableGateway
             JOIN flexibleLearningMajor as major1 ON (major1.flexibleLearningMajorID=flexibleLearningUnit.flexibleLearningMajorID1)
             LEFT JOIN flexibleLearningMajor as major2 ON (major2.flexibleLearningMajorID=flexibleLearningUnit.flexibleLearningMajorID2)
             WHERE flexibleLearningUnit.active='Y'
-            AND FIND_IN_SET(flexibleLearningUnitID, :flexibleLearningUnitIDList)
-            ORDER BY major1.name, flexibleLearningCategory.sequenceNumber, flexibleLearningUnit.name";
+            AND FIND_IN_SET(flexibleLearningUnitID, :flexibleLearningUnitIDList) ";
+
+        if ($orderByMajor) {
+            $sql .= " ORDER BY major1.name, flexibleLearningUnit.name";
+        } else {
+            $sql .= " ORDER BY flexibleLearningUnit.name";
+        }
 
         return $this->db()->select($sql, $data);
     }

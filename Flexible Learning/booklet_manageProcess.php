@@ -32,15 +32,19 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/booklet_
     $partialFail = false;
 
     $flexibleLearningUnitIDList = $_POST['flexibleLearningUnitID'] ?? [];
+    $bookletName = $_POST['bookletName'] ?? 'Offline Activity Booklet';
+    $chapterPages = $_POST['chapterPages'] ?? 'N';
+
     if (empty($flexibleLearningUnitIDList)) {
         $URL .= '&return=error1';
         header("Location: {$URL}");
     }
 
     $booklet = $container->get(Booklet::class);
-    $booklet->setName($_POST['bookletName'] ?? 'Offline Activity Booklet');
+    $booklet->addData('bookletName', $bookletName);
+    $booklet->addData('chapterPages', $chapterPages);
 
-    $offlineUnits = $container->get(UnitGateway::class)->selectUnitsByID($flexibleLearningUnitIDList)->fetchGrouped();
+    $offlineUnits = $container->get(UnitGateway::class)->selectUnitsByID($flexibleLearningUnitIDList, $chapterPages == 'Y')->fetchGrouped();
 
     foreach ($offlineUnits as $grpIndex => $units) {
         foreach ($units as $unitIndex => $unit) {

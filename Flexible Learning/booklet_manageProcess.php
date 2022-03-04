@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Module\FlexibleLearning\Booklet;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 
@@ -30,10 +31,10 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/booklet_
 } else {
     // Proceed!
     $partialFail = false;
-
+    
     $flexibleLearningUnitIDList = $_POST['flexibleLearningUnitID'] ?? [];
-    $bookletName = $_POST['bookletName'] ?? 'Offline Activity Booklet';
-    $chapterPages = $_POST['chapterPages'] ?? 'N';
+    $settingGateway = $container->get(SettingGateway::class);
+    $chapterPages = $settingGateway->getSettingByScope('Flexible Learning', 'bookletChapters');
 
     if (empty($flexibleLearningUnitIDList)) {
         $URL .= '&return=error1';
@@ -41,7 +42,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/booklet_
     }
 
     $booklet = $container->get(Booklet::class);
-    $booklet->addData('bookletName', $bookletName);
+    $booklet->addData('bookletName', $settingGateway->getSettingByScope('Flexible Learning', 'bookletName'));
+    $booklet->addData('bookletIntroduction', $settingGateway->getSettingByScope('Flexible Learning', 'bookletIntroduction'));
+    $booklet->addData('insideMargins', $settingGateway->getSettingByScope('Flexible Learning', 'bookletMargins'));
     $booklet->addData('chapterPages', $chapterPages);
 
     $offlineUnits = $container->get(UnitGateway::class)->selectUnitsByID($flexibleLearningUnitIDList, $chapterPages == 'Y')->fetchGrouped();

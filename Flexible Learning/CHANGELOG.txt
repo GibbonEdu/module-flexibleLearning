@@ -1,5 +1,13 @@
 CHANGELOG
 =========
+v1.2.02
+-------
+Added margin settings for the printable booklet
+
+v1.2.01
+-------
+Added settings for the printable booklet
+
 v1.2.00
 -------
 Added the option to create printable PDF booklets of offline units

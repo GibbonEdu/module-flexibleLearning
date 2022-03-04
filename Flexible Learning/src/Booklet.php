@@ -26,6 +26,8 @@ use Gibbon\Module\Reports\Renderer\MpdfRenderer;
 use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 use League\Container\ContainerAwareTrait;
 use League\Container\ContainerAwareInterface;
+use Gibbon\Services\Format;
+use Gibbon\Module\Reports\Renderer\ReportRendererInterface;
 
 class Booklet implements ContainerAwareInterface
 {
@@ -53,12 +55,21 @@ class Booklet implements ContainerAwareInterface
 
     public function addUnit($unit, $group = '')
     {
+        $time = 0;
         $blocks = $this->unitBlockGateway->selectBlocksByUnit($unit['flexibleLearningUnitID'])->fetchAll();
         foreach ($blocks as $index => $block) {
             $blocks[$index]['contents'] = $this->processBlockContents($block['contents']);
+            // $time += intval($block['length']);
         }
 
-        $this->units[$group][] = $unit + ['blocks' => $blocks];
+        // $minutes = intval($time);
+        // $time = !empty($time) ? __n('{count} min', '{count} mins', $minutes) : '';
+        // if ($minutes > 60) {
+        //     $hours = round($minutes / 60, 1);
+        //     $time = __n('{count} hr', '{count} '.__m('hrs'), ceil($minutes / 60), ['count' => $hours]);
+        // }
+
+        $this->units[$group][] = $unit + ['blocks' => $blocks, 'time' => $time];
         $this->unitCount++;
     }
 
@@ -89,17 +100,28 @@ class Booklet implements ContainerAwareInterface
 
         $makeBooklet = $this->unitCount > 1;
         $this->config['bookletName'] = $makeBooklet ? $this->config['bookletName'] : 'Flexible Learning';
+        $this->config['marginLeft'] = $this->config['insideMargins'] ?? 10;
+        $this->config['marginRight'] = 10;
 
         // Add sections to the template
         if ($makeBooklet) {
             $template->addSection('booklet/cover.twig.html');
+            $template->addSection('booklet/intro.twig.html');
         }
         
         $template->addSection('booklet/unit.twig.html')
                  ->addDataSource('flexibleLearning', 'flexibleLearning');
 
-        $template->addHeader('booklet/header.twig.html');
-        $template->addFooter('booklet/footer.twig.html');
+        $template->addHeader('booklet/header.twig.html', 0);
+        // $template->addHeader('booklet/blank.twig.html', 1);
+        // $template->addHeader('booklet/header.twig.html', 2);
+
+        $template->addFooter('booklet/footer.twig.html', 0);
+
+        if ($makeBooklet) {
+            $template->addSection('booklet/back.twig.html');
+        }
+
         $template->addData($this->config);
 
         // Setup the report data to pass to the renderer
@@ -109,8 +131,7 @@ class Booklet implements ContainerAwareInterface
 
         // Setup the renderer
         $renderer = $this->getContainer()->get(MpdfRenderer::class);
-        $renderer->setMode(0);
-        // $renderer->setMode(ReportRendererInterface::OUTPUT_CONTINUOUS | ReportRendererInterface::OUTPUT_TWO_SIDED);
+        $renderer->setMode(ReportRendererInterface::OUTPUT_MIRROR);
 
         // Render to a temp file (for now)
         $renderer->render($template, $reports, $path);

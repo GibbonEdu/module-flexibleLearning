@@ -28,7 +28,10 @@
                 <tocentry content="{{ unit.name }}" level="{{ chapterPages == 'Y' ? '1' : '0' }}" />
                 {{ unit.name }}
                 <div style="font-size: 8pt; color: #aaaaaa; font-weight: normal;">
-                    Category: {{ unit.category }}
+                    Category: {{ unit.category }}<br/>
+                    {% if unit.time %}
+                    Time: {{ unit.time }}
+                    {% endif %}
                 </div>
             </h2>
 

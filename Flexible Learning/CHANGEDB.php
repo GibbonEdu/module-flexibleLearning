@@ -248,3 +248,19 @@ $sql[$count][1] = "
 INSERT INTO `gibbonAction` (`gibbonModuleID`, `name`, `precedence`, `category`, `description`, `URLList`, `entryURL`, `entrySidebar`, `defaultPermissionAdmin`, `defaultPermissionTeacher`, `defaultPermissionStudent`, `defaultPermissionParent`, `defaultPermissionSupport`, `categoryPermissionStaff`, `categoryPermissionStudent`, `categoryPermissionParent`, `categoryPermissionOther`) VALUES ((SELECT gibbonModuleID FROM gibbonModule WHERE name='Flexible Learning'), 'Printable Booklet', 0, 'Admin', 'Enables creating a printable PDF of offline units.', 'booklet_manage.php','booklet_manage.php', 'Y', 'Y', 'N', 'N', 'N', 'N', 'Y', 'N', 'N', 'N');end
 INSERT INTO `gibbonPermission` (`gibbonRoleID` ,`gibbonActionID`) VALUES (001, (SELECT gibbonActionID FROM gibbonAction JOIN gibbonModule ON (gibbonAction.gibbonModuleID=gibbonModule.gibbonModuleID) WHERE gibbonModule.name='Flexible Learning' AND gibbonAction.name='Printable Booklet'));end
 ";
+
+// v1.2.01
+$count++;
+$sql[$count][0] = "1.2.01";
+$sql[$count][1] = "
+INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'bookletName', 'Booklet Name', 'The name of the booklet on the front cover', 'Offline Activity Booklet');end
+INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'bookletIntroduction', 'Introduction', 'This text will be displayed on the second page of the booklet', '');end
+INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'bookletChapters', 'Include chapter pages?', '', 'N');end
+";
+
+// v1.2.02
+$count++;
+$sql[$count][0] = "1.2.02";
+$sql[$count][1] = "
+INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('Flexible Learning', 'bookletMargins', 'Inside margins', 'For booklet printing, when side or saddle stitched', '20');end
+";

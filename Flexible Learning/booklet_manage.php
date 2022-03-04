@@ -49,16 +49,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/booklet_
     $form->addRow()->addContent(Format::alert(__m('There are {count} active offline-friendly unit(s) that can be included in the booklet. Select the units to include below.', ['count' => count($ids)]), 'message'));
 
     $row = $form->addRow();
-        $row->addLabel('bookletName', __m('Booklet Name'));
-        $row->addTextField('bookletName')->setValue('Offline Activity Booklet');
-    
-    $row = $form->addRow();
         $row->addLabel('flexibleLearningUnitID', __m('Units to Include'));
         $row->addCheckbox('flexibleLearningUnitID')->fromArray($offlineUnits)->addCheckAllNone()->checked($ids);
-
-    $row = $form->addRow();
-        $row->addLabel('chapterPages', __m('Include chapter pages?'));
-        $row->addYesNo('chapterPages')->selected('N');
     
     $row = $form->addRow();
         $row->addFooter();
@@ -67,20 +59,35 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/booklet_
     echo $form->getOutput();
 
 
-    // $settingGateway = $container->get(SettingGateway::class);
+    $settingGateway = $container->get(SettingGateway::class);
 
-    // $form = Form::create('settings', $session->get('absoluteURL').'/modules/'.$session->get('module').'/booklet_manageSettingsProcess.php');
-    // $form->addHiddenValue('address', $session->get('address'));
-    // $form->setTitle(__m('Printable Booklet Settings'));
+    $form = Form::create('settings', $session->get('absoluteURL').'/modules/'.$session->get('module').'/booklet_manageSettingsProcess.php');
+    $form->addHiddenValue('address', $session->get('address'));
+    $form->setTitle(__m('Printable Booklet Settings'));
 
-    // // $setting = $settingGateway->getSettingByScope('Flexible Learning', 'expectFeedback', true);
-    // // $row = $form->addRow();
-    // //     $row->addLabel($setting['name'], __($setting['nameDisplay']))->description(__($setting['description']));
-    // //     $row->addYesNo($setting['name'])->required()->selected($setting['value']);
+    $setting = $settingGateway->getSettingByScope('Flexible Learning', 'bookletName', true);
+    $row = $form->addRow();
+        $row->addLabel($setting['name'], __($setting['nameDisplay']))->description(__($setting['description']));
+        $row->addTextField($setting['name'])->setValue($setting['value']);
 
-    // $row = $form->addRow();
-    //     $row->addFooter();
-    //     $row->addSubmit();
+    $setting = $settingGateway->getSettingByScope('Flexible Learning', 'bookletIntroduction', true);
+    $col = $form->addRow()->addColumn();
+        $col->addLabel($setting['name'], __($setting['nameDisplay']))->description(__($setting['description']));
+        $col->addEditor($setting['name'], $guid)->setRows(10)->setValue($setting['value']);
 
-    // echo $form->getOutput();
+    $setting = $settingGateway->getSettingByScope('Flexible Learning', 'bookletChapters', true);
+    $row = $form->addRow();
+        $row->addLabel($setting['name'], __($setting['nameDisplay']))->description(__($setting['description']));
+        $row->addYesNo($setting['name'])->selected($setting['value']);
+
+    $setting = $settingGateway->getSettingByScope('Flexible Learning', 'bookletMargins', true);
+    $row = $form->addRow();
+        $row->addLabel($setting['name'], __($setting['nameDisplay']))->description(__($setting['description']));
+        $row->addNumber($setting['name'])->setValue($setting['value']);
+
+    $row = $form->addRow();
+        $row->addFooter();
+        $row->addSubmit();
+
+    echo $form->getOutput();
 }

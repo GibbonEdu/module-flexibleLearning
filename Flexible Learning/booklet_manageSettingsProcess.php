@@ -33,7 +33,10 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/booklet_
     $settingGateway = $container->get(SettingGateway::class);
     $settingsToUpdate = [
         'Flexible Learning' => [
-            ''
+            'bookletName',
+            'bookletIntroduction',
+            'bookletChapters',
+            'bookletMargins',
         ]
     ];
 

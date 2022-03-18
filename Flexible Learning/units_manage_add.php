@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+use Gibbon\Http\Url;
 use Gibbon\Forms\Form;
 use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Module\FlexibleLearning\Forms\FlexibleLearningFormFactory;
@@ -46,9 +47,7 @@ require_once __DIR__ . '/moduleFunctions.php';
    	$page->return->setEditLink($editLink);
 
     if ($gibbonDepartmentID != '' or $name != '') {
-        echo "<div class='linkTop'>";
-        echo "<a href='".$session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_manage.php&gibbonDepartmentID=$gibbonDepartmentID&name=$name&view=$view'>".__($guid, 'Back to Search Results').'</a>';
-        echo '</div>';
+        $page->navigator->addSearchResultsAction(Url::fromModuleRoute('Flexible Learning', 'units_manage.php')->withQueryParams($urlParams));
     }
 
     $form = Form::create('action', $session->get('absoluteURL').'/modules/'.$session->get('module')."/units_manage_addProcess.php?gibbonDepartmentID=$gibbonDepartmentID&name=$name&view=$view");

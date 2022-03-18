@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+use Gibbon\Http\Url;
 use Gibbon\Forms\Form;
 use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
@@ -61,29 +62,29 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         return;
     }
 
-   
     $form = Form::create('action', $session->get('absoluteURL').'/modules/'.$session->get('module')."/units_manage_editProcess.php?&name=$name");
     $form->setFactory(FlexibleLearningFormFactory::create($pdo));
 
     $form->addHiddenValue('address', $session->get('address'));
     $form->addHiddenValue('flexibleLearningUnitID',$flexibleLearningUnitID);
 
-    if (!empty($name)) {
+    if ($gibbonDepartmentID != '' or $difficulty != '' or $name != '' or $gibbonYearGroupIDMinimum != '') {
         $form->addHeaderAction('back', __('Back to Search Results'))
             ->setURL('/modules/Flexible Learning/units_manage.php')
-            ->addParam('name', $name)
             ->setIcon('search')
             ->displayLabel()
+            ->addParams($urlParams)
             ->append(' | ');
     }
-
     if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
+        $showInactive = ($values['active'] == 'N') ? 'Y' : 'N';
         $form->addHeaderAction('view', __('View'))
-            ->setURL("/modules/Flexible Learning/units_browse_details.php")
-            ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
-            ->addParam('name', $name)
-            ->addParam('sidebar', 'true')
+            ->setURL('/modules/Flexible Learning/units_browse_details.php')
+            ->setIcon('plus')
             ->displayLabel()
+            ->addParams($urlParams)
+            ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
+            ->addParam('sidebar', 'y')
             ->append(' | ');
     }
 
@@ -93,7 +94,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         ->setIcon('delivery2')
         ->displayLabel()
         ->directLink();
-    
+
     $settingGateway = $container->get(SettingGateway::class);
 
     // UNIT BASICS

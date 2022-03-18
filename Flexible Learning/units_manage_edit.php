@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+use Gibbon\Http\Url;
 use Gibbon\Forms\Form;
 use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
@@ -61,24 +62,33 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         return;
     }
 
-    if ( $name != '') {
-        echo "<div class='linkTop'>";
-        echo "<a href='".$session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_manage.php&name=$name'>".__($guid, 'Back to Search Results').'</a>';
-        echo '</div>';
-    }
-
-    if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
-        echo "<div class='linkTop'>";
-        echo "<a href='".$session->get('absoluteURL')."/index.php?q=/modules/Flexible Learning/units_browse_details.php&sidebar=true&flexibleLearningUnitID=$flexibleLearningUnitID&name=$name'>".__($guid, 'View')."<img style='margin: 0 0 -4px 3px' title='".__($guid, 'View')."' src='./themes/".$session->get('gibbonThemeName')."/img/plus.png'/></a>";
-        echo '</div>';
-        }
-
     $form = Form::create('action', $session->get('absoluteURL').'/modules/'.$session->get('module')."/units_manage_editProcess.php?&name=$name");
     $form->setFactory(FlexibleLearningFormFactory::create($pdo));
 
     $form->addHiddenValue('address', $session->get('address'));
     $form->addHiddenValue('flexibleLearningUnitID',$flexibleLearningUnitID);
-    
+
+    $back = false ;
+    if ($gibbonDepartmentID != '' or $difficulty != '' or $name != '' or $gibbonYearGroupIDMinimum != '') {
+        $back = true ;
+        $form->addHeaderAction('back', __('Back to Search Results'))
+            ->setURL('/modules/Flexible Learning/units_manage.php')
+            ->setIcon('search')
+            ->displayLabel()
+            ->addParams($urlParams);
+    }
+    if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
+        $showInactive = ($values['active'] == 'N') ? 'Y' : 'N';
+        $form->addHeaderAction('view', __('View'))
+            ->setURL('/modules/Flexible Learning/units_browse_details.php')
+            ->setIcon('plus')
+            ->displayLabel()
+            ->addParams($urlParams)
+            ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
+            ->addParam('sidebar', 'y')
+            ->prepend(($back) ? ' | ' : '');
+    }
+
     $settingGateway = $container->get(SettingGateway::class);
 
     // UNIT BASICS

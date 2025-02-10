@@ -1,24 +1,23 @@
 CHANGELOG
 =========
-v1.2.02
+
+v1.3.00
 -------
-Added margin settings for the printable booklet
+Added the option to create printable PDF booklets of offline units
+Added an Offline Friendly field in Manage Units
 
 v1.2.01
 -------
-Added settings for the printable booklet
+Fixed CSS bug introduced in last version
 
 v1.2.00
 -------
-Added the option to create printable PDF booklets of offline units
-
-v1.1.10
--------
-Added an Offline Friendly field in Manage Units
+Transferred ownership from Ross Parker to Gibbon Foundation
 
 v1.1.10
 -------
 Refactoring of linkTop divs
+Fixed JS bug introduced in ownership transfer
 
 v1.1.09
 -------

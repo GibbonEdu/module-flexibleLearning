@@ -76,8 +76,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
             ->setURL('/modules/Flexible Learning/units_manage_edit.php')
             ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
             ->addParam('name', $name)
-            ->displayLabel()
-            ->append(' | ');
+            ->displayLabel();
     }
 
     $table->addHeaderAction('export', __('Download'))
@@ -183,9 +182,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
                 ->placeholder(__m('Leave a comment'))
                 ->setClass('flex w-full')
                 ->setRows(3);
-            $commentBox->addButton(__m('Add Comment'))
-                ->onClick('$(this).prop("disabled", true).wrap("<span class=\"submitted\"></span>");document.getElementById("parentComment").submit()')
-                ->setClass('button rounded-sm right');
+            $commentBox->addSubmit(__m('Add Comment'))->setColor('gray')
+                ->onClick('document.getElementById("parentComment").submit()')
+                ->setClass('text-right');
 
             $form->addRow()->addClass('-mt-4')->addContent($page->fetchFromTemplate('ui/discussion.twig.html', [
                 'discussion' => [[

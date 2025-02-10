@@ -73,8 +73,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
             ->setURL('/modules/Flexible Learning/units_manage.php')
             ->setIcon('search')
             ->displayLabel()
-            ->addParams($urlParams)
-            ->append(' | ');
+            ->addParams($urlParams);
     }
     if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_browse_details.php')) {
         $showInactive = ($values['active'] == 'N') ? 'Y' : 'N';
@@ -84,8 +83,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
             ->displayLabel()
             ->addParams($urlParams)
             ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
-            ->addParam('sidebar', 'y')
-            ->append(' | ');
+            ->addParam('sidebar', 'y');
     }
 
     $form->addHeaderAction('export', __('Download'))

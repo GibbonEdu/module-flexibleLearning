@@ -39,6 +39,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/categori
         'active'        => $_POST['active'] ?? '',
     ];
 
+    // Filter valid colour values
+    $data['color'] = preg_replace('/[^a-fA-F0-9\#]/', '', mb_substr($data['color'], 0, 7));
+
     // Validate the required values are present
     if (empty($data['name']) || empty($data['description']) || empty($data['color']) || empty($data['active'])) {
         $URL .= '&return=error1';

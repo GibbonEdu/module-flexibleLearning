@@ -67,8 +67,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         $table->addHeaderAction('edit', __('Edit'))
             ->setURL('/modules/Flexible Learning/units_manage_edit.php')
             ->addParam('flexibleLearningUnitID', $flexibleLearningUnitID)
-            ->displayLabel()
-            ->prepend(' | ');
+            ->displayLabel();
     }
 
     $table->addColumn('name', '')->addClass('text-lg font-bold');

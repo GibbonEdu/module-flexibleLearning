@@ -62,7 +62,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/report_u
     $form->setTitle(__('Filter'));
 
     $form->setFactory(DatabaseFormFactory::create($pdo));
-    $form->setClass('noIntBorder fullWidth');
+    $form->setClass('noIntBorder w-full');
     $form->addHiddenValue('q', '/modules/Flexible Learning/report_unitHistory.php');
 
     if ($highestAction == 'Unit History_all') {

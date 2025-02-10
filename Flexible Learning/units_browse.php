@@ -43,7 +43,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $form = Form::create('filter', $session->get('absoluteURL') . '/index.php', 'get');
     $form->setTitle(__('Filter'));
 
-    $form->setClass('noIntBorder fullWidth');
+    $form->setClass('noIntBorder w-full');
     $form->addHiddenValue('q', '/modules/Flexible Learning/units_browse.php');
 
     $row = $form->addRow();

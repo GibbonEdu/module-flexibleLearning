@@ -35,6 +35,7 @@ use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 class UnitHistory 
 {
     protected $submissionGateway;
+    protected $templateView;
 
     public function __construct(UnitSubmissionGateway $submissionGateway, View $templateView)
     {

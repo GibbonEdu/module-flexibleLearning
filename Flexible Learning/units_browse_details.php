@@ -25,6 +25,7 @@ use Gibbon\FileUploader;
 use Gibbon\Services\Format;
 use Gibbon\Tables\DataTable;
 use Gibbon\Tables\View\GridView;
+use Gibbon\Domain\User\RoleGateway;
 use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Domain\Students\StudentGateway;
 use Gibbon\Domain\System\DiscussionGateway;
@@ -46,8 +47,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $name = $_GET['name'] ?? '';
     $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
     $flexibleLearningUnitSubmissionID = $_GET['flexibleLearningUnitSubmissionID'] ?? '';
-
-    $roleCategory = getRoleCategory($session->get('gibbonRoleIDCurrent'), $connection2);
+    $roleGateway = $container->get(RoleGateway::class);
+    $roleCategory = $roleGateway->getRoleCategory($session->get('gibbonRoleIDCurrent'));
+    
     $unitGateway = $container->get(UnitGateway::class);
     $unitBlockGateway = $container->get(UnitBlockGateway::class);
     $submissionGateway = $container->get(UnitSubmissionGateway::class);

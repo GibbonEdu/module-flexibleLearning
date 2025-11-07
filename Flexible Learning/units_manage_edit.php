@@ -41,6 +41,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
     $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'];
     $name = $_GET['name'] ?? '';
+    $gibbonDepartmentID = $_GET['gibbonDepartmentID'] ?? '';
+    $difficulty = $_GET['difficulty'] ?? '';
+    $gibbonYearGroupIDMinimum = $_GET['gibbonYearGroupIDMinimum'] ?? '';    
 
     //Proceed!
     $urlParams = compact('name');

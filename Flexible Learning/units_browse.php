@@ -5,6 +5,7 @@ use Gibbon\Forms\Form;
 use Gibbon\Services\Format;
 use Gibbon\Tables\DataTable;
 use Gibbon\Tables\View\GridView;
+use Gibbon\Domain\User\RoleGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\MajorGateway;
 use Gibbon\Module\FlexibleLearning\Domain\CategoryGateway;
@@ -23,8 +24,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $templateView = new View($container->get('twig'));
     $unitGateway = $container->get(UnitGateway::class);
     $canManage = isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_manage.php');
-    $roleCategory = getRoleCategory($session->get('gibbonRoleIDCurrent'), $connection2);
-
+    $roleGateway = $container->get(RoleGateway::class);
+    $roleCategory = $roleGateway->getRoleCategory($session->get('gibbonRoleIDCurrent'));
+    
     $criteria = $unitGateway->newQueryCriteria()
         ->searchBy($unitGateway->getSearchableColumns(), $name)
         ->sortBy(['sequenceNumber', 'name'])

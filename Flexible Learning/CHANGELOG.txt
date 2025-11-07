@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+v1.3.01
+-------
+Removed deprecated function calls and undefined variable errors
+
 v1.3.00
 -------
 Added the option to create printable PDF booklets of offline units

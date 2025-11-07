@@ -24,6 +24,7 @@ require_once '../../gibbon.php';
 use Gibbon\FileUploader;
 use Gibbon\Services\Format;
 use Gibbon\Contracts\Comms\Mailer;
+use Gibbon\Domain\User\RoleGateway;
 use Gibbon\Domain\User\FamilyGateway;
 use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Domain\Students\StudentGateway;
@@ -72,7 +73,9 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     }
 
     // Check for access to this action
-    $roleCategory = getRoleCategory($session->get('gibbonRoleIDCurrent'), $connection2);
+    $roleGateway = $container->get(RoleGateway::class);
+    $roleCategory = $roleGateway->getRoleCategory($session->get('gibbonRoleIDCurrent'));
+    
     $access = $values['available'.$roleCategory] ?? 'No';
     if ($access != 'Record') {
         $URL .= '&return=error0';

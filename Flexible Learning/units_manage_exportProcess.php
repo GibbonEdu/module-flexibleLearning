@@ -21,8 +21,6 @@ use Gibbon\Services\Format;
 use Gibbon\Module\FlexibleLearning\Booklet;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 
-$_POST['address'] = '/modules/Flexible Learning/units_browse_details.php';
-
 require_once '../../gibbon.php';
 
 $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';

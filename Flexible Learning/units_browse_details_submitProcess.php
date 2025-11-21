@@ -73,9 +73,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     }
 
     // Check for access to this action
-    $roleGateway = $container->get(RoleGateway::class);
-    $roleCategory = $roleGateway->getRoleCategory($session->get('gibbonRoleIDCurrent'));
-    
+    $roleCategory = $session->get('gibbonRoleIDCurrentCategory');
     $access = $values['available'.$roleCategory] ?? 'No';
     if ($access != 'Record') {
         $URL .= '&return=error0';

@@ -22,8 +22,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 use Gibbon\Services\Format;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 
-$_POST['address'] = '/modules/Flexible Learning/units_browse.php';
-
 require_once '../../gibbon.php';
 
 $unitGateway = $container->get(UnitGateway::class);

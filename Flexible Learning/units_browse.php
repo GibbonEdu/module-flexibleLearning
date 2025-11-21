@@ -24,9 +24,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $templateView = new View($container->get('twig'));
     $unitGateway = $container->get(UnitGateway::class);
     $canManage = isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_manage.php');
-    $roleGateway = $container->get(RoleGateway::class);
-    $roleCategory = $roleGateway->getRoleCategory($session->get('gibbonRoleIDCurrent'));
-    
+    $roleCategory = $session->get('gibbonRoleIDCurrentCategory');
+
     $criteria = $unitGateway->newQueryCriteria()
         ->searchBy($unitGateway->getSearchableColumns(), $name)
         ->sortBy(['sequenceNumber', 'name'])

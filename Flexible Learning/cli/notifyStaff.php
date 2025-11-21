@@ -26,13 +26,10 @@ use Gibbon\Domain\Staff\StaffGateway;
 use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
 
-$_POST['address'] = '/modules/Flexible Learning/report_workPendingFeedback.php';
-
 require __DIR__.'/../../../gibbon.php';
 
 // Setup some of the globals
 getSystemSettings($guid, $connection2);
-setCurrentSchoolYear($guid, $connection2);
 Format::setupFromSession($container->get('session'));
 
 if (!isCommandLineInterface()) {

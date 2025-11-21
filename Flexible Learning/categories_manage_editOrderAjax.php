@@ -21,8 +21,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 use Gibbon\Module\FlexibleLearning\Domain\CategoryGateway;
 
-$_POST['address'] = '/modules/Flexible Learning/categories_manage.php';
-
 require_once '../../gibbon.php';
 
 if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/categories_manage_editOrderAjax.php') == false) {

@@ -47,9 +47,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     $name = $_GET['name'] ?? '';
     $flexibleLearningUnitID = $_GET['flexibleLearningUnitID'] ?? '';
     $flexibleLearningUnitSubmissionID = $_GET['flexibleLearningUnitSubmissionID'] ?? '';
-    $roleGateway = $container->get(RoleGateway::class);
-    $roleCategory = $roleGateway->getRoleCategory($session->get('gibbonRoleIDCurrent'));
-    
+
+    $roleCategory = $session->get('gibbonRoleIDCurrentCategory');
     $unitGateway = $container->get(UnitGateway::class);
     $unitBlockGateway = $container->get(UnitBlockGateway::class);
     $submissionGateway = $container->get(UnitSubmissionGateway::class);

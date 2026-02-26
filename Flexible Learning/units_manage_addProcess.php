@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+use Gibbon\Domain\System\FileGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 use Gibbon\Comms\NotificationEvent;
@@ -72,6 +73,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     }
 
     //Move attached file, if there is one
+    $fileMetaData = null;
     if (!empty($_FILES['file']['tmp_name'])) {
         $fileUploader = new Gibbon\FileUploader($pdo, $session);
         $fileUploader->getFileExtensions('Graphics/Design');
@@ -83,6 +85,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
         if (empty($data['logo'])) {
             $partialFail = true;
+        } else {
+            $fileMetaData = $fileUploader->getFileMetaData($data['logo']);
         }
     }
 
@@ -91,6 +95,15 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $URL .= '&return=error2';
         header("Location: {$URL}");
         exit;
+    }
+
+    // Record file tracking
+    if (!empty($fileMetaData) && !empty($flexibleLearningUnitID)) {
+        $gibbonFileID = $container->get(FileGateway::class)->recordFileUpload($fileMetaData, 'flexibleLearningUnit', $flexibleLearningUnitID, 'logo');
+
+        if (empty($gibbonFileID)) {
+            $partialFail = true;
+        }
     }
 
     // Notify when a new unit has been created

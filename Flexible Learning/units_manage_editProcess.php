@@ -21,7 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 require_once '../../gibbon.php';
 
-use Gibbon\Services\Format;
+use Gibbon\Domain\System\FileGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 
@@ -85,7 +85,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     }
 
     //Move attached file, if there is one
-    $attachment = null;
+    $fileMetaData = null;
     if (!empty($_FILES['file']['tmp_name'])) {
         $fileUploader = new Gibbon\FileUploader($pdo, $session);
         $fileUploader->getFileExtensions('Graphics/Design');
@@ -97,6 +97,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
         if (empty($data['logo'])) {
             $partialFail = true;
+        } else {
+            $fileMetaData = $fileUploader->getFileMetaData($data['logo']);
         }
 
     } else {
@@ -108,6 +110,15 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         $URL .= '&return=error2';
         header("Location: {$URL}");
         exit;
+    }
+
+    // Record file tracking
+    if (!empty($fileMetaData) && !empty($flexibleLearningUnitID)) {
+        $gibbonFileID = $container->get(FileGateway::class)->recordFileUpload($fileMetaData, 'flexibleLearningUnit', $flexibleLearningUnitID, 'logo');
+
+        if (empty($gibbonFileID)) {
+            $partialFail = true;
+        }
     }
 
     // Update blocks

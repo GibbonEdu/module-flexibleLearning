@@ -21,7 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 require_once '../../gibbon.php';
 
-use Gibbon\Domain\System\FileGateway;
+use Gibbon\Contracts\Filesystem\FileHandler;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 
@@ -102,7 +102,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         }
 
     } else {
-      $data['logo']=$_POST['logo'];
+      $data['logo'] = $_POST['logo'];
     }
 
     // Create the record
@@ -114,13 +114,18 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
     // Record file tracking
     if (!empty($fileMetaData) && !empty($flexibleLearningUnitID)) {
-        $gibbonFileID = $container->get(FileGateway::class)->recordFileUpload($fileMetaData, 'flexibleLearningUnit', $flexibleLearningUnitID, 'logo');
+        $gibbonFileID = $container->get(FileHandler::class)->recordFileUpload($fileMetaData, 'flexibleLearningUnit', $flexibleLearningUnitID, 'logo');
 
         if (empty($gibbonFileID)) {
             $partialFail = true;
         }
     }
 
+    // Handle file deletion when user removes logo
+    if (empty($data['logo']) && !empty($values['logo'])) {
+        $deleted = $container->get(FileHandler::class)->deleteFile('flexibleLearningUnit', $flexibleLearningUnitID, 'logo');
+    }
+    
     // Update blocks
     $order = $_POST['order'] ?? [];
     $blockIDs = [];

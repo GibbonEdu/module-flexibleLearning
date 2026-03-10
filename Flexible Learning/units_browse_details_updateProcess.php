@@ -22,9 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 require_once '../../gibbon.php';
 
 use Gibbon\FileUploader;
-use Gibbon\Services\Format;
-use Gibbon\Domain\User\RoleGateway;
-use Gibbon\Domain\System\SettingGateway;
+use Gibbon\Contracts\Filesystem\FileHandler;
 use Gibbon\Domain\System\DiscussionGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitSubmissionGateway;
@@ -90,15 +88,29 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         exit;
     }
 
+    $fileMetaData = null;
     // Move attached file, if there is one
     if ($data['evidenceType'] == 'File' && !empty($_FILES['file']['tmp_name'])) {
         $fileUploader = new FileUploader($pdo, $session);
         $file = $_FILES['file'] ?? null;
         $data['evidenceLocation'] = $fileUploader->uploadFromPost($file, $name);
+
+        if (!empty($data['evidenceLocation'])) {
+            $fileMetaData = $fileUploader->getFileMetaData($data['evidenceLocation']);
+        }
     }
 
     // Update the submission
     $unitSubmissionGateway->update($flexibleLearningUnitSubmissionID, $data);
+
+    // Record file tracking
+    if (!empty($fileMetaData) && !empty($flexibleLearningUnitSubmissionID)) {
+        $gibbonFileID = $container->get(FileHandler::class)->recordFileUpload($fileMetaData, 'flexibleLearningUnitSubmission', $flexibleLearningUnitSubmissionID, 'evidenceLocation');
+        
+        if (empty($gibbonFileID)) {
+            $partialFail = true;
+        }
+    }
 
     // Update the discussion to match
     $discussionGateway->update($gibbonDiscussionID, [
@@ -107,6 +119,11 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         'attachmentLocation' => $data['evidenceLocation'],
         'timestamp' => date('Y-m-d H:i:s'),
     ]);
+
+     // Record file tracking
+    if (!empty($fileMetaData) && !empty($gibbonDiscussionID)) {
+        $gibbonFileID = $container->get(FileHandler::class)->recordFileUpload($fileMetaData, 'gibbonDiscussion', $gibbonDiscussionID, 'attachmentLocation');
+    }
 
     $URL .= empty($data['evidenceLocation'])
         ? "&return=warning1"

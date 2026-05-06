@@ -21,7 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 require_once '../../gibbon.php';
 
-use Gibbon\Services\Format;
+use Gibbon\Contracts\Filesystem\FileHandler;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 
@@ -85,7 +85,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
     }
 
     //Move attached file, if there is one
-    $attachment = null;
+    $fileMetaData = null;
     if (!empty($_FILES['file']['tmp_name'])) {
         $fileUploader = new Gibbon\FileUploader($pdo, $session);
         $fileUploader->getFileExtensions('Graphics/Design');
@@ -97,10 +97,12 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
         if (empty($data['logo'])) {
             $partialFail = true;
+        } else {
+            $fileMetaData = $fileUploader->getFileMetaData($data['logo']);
         }
 
     } else {
-      $data['logo']=$_POST['logo'];
+      $data['logo'] = $_POST['logo'];
     }
 
     // Create the record
@@ -110,6 +112,20 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
         exit;
     }
 
+    // Record file tracking
+    if (!empty($fileMetaData) && !empty($flexibleLearningUnitID)) {
+        $gibbonFileID = $container->get(FileHandler::class)->recordFileUpload($fileMetaData, 'flexibleLearningUnit', $flexibleLearningUnitID, 'logo');
+
+        if (empty($gibbonFileID)) {
+            $partialFail = true;
+        }
+    }
+
+    // Handle file deletion when user removes logo
+    if (empty($data['logo']) && !empty($values['logo'])) {
+        $deleted = $container->get(FileHandler::class)->deleteFile('flexibleLearningUnit', $flexibleLearningUnitID, 'logo');
+    }
+    
     // Update blocks
     $order = $_POST['order'] ?? [];
     $blockIDs = [];

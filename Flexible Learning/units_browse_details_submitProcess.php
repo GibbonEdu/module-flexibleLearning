@@ -24,7 +24,7 @@ require_once '../../gibbon.php';
 use Gibbon\FileUploader;
 use Gibbon\Services\Format;
 use Gibbon\Contracts\Comms\Mailer;
-use Gibbon\Domain\User\RoleGateway;
+use Gibbon\Contracts\Filesystem\FileHandler;
 use Gibbon\Domain\User\FamilyGateway;
 use Gibbon\Domain\System\SettingGateway;
 use Gibbon\Domain\Students\StudentGateway;
@@ -95,6 +95,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         exit;
     }
 
+    $fileMetaData = null;
     //Move attached file, if there is one
     if ($data['evidenceType'] == 'File') {
         $fileUploader = new FileUploader($pdo, $session);
@@ -102,6 +103,10 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
 
         // Upload the file, return the /uploads relative path
         $data['evidenceLocation'] = $fileUploader->uploadFromPost($file, $values['name']);
+
+        if (!empty($data['evidenceLocation'])) {
+            $fileMetaData = $fileUploader->getFileMetaData($data['evidenceLocation']);
+        }
     } elseif ($data['evidenceType'] == 'Link') {
         $data['evidenceLocation'] = $_POST['link'] ?? '';
     }
@@ -116,8 +121,17 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
     // Create the record
     $flexibleLearningUnitSubmissionID = $unitSubmissionGateway->insert($data);
 
+    // Record file tracking
+    if (!empty($fileMetaData) && !empty($flexibleLearningUnitSubmissionID) && $data['evidenceType'] == 'File') {
+        $gibbonFileID = $container->get(FileHandler::class)->recordFileUpload($fileMetaData, 'flexibleLearningUnitSubmission', $flexibleLearningUnitSubmissionID, 'evidenceLocation');
+        
+        if (empty($gibbonFileID)) {
+            $partialFail = true;
+        }
+    }
+
     // Insert discussion records     
-    $discussionGateway->insert([
+    $gibbonDiscussionID = $discussionGateway->insert([
         'foreignTable'         => 'flexibleLearningUnitSubmission',
         'foreignTableID'       => $flexibleLearningUnitSubmissionID,
         'gibbonModuleID'       => getModuleIDFromName($connection2, 'Flexible Learning'),
@@ -129,6 +143,15 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
         'attachmentType'       => $data['evidenceType'],
         'attachmentLocation'   => $data['evidenceLocation'],
     ]);
+
+    // Record file tracking
+    if (!empty($fileMetaData) && !empty($gibbonDiscussionID)) {
+         $gibbonFileID = $container->get(FileHandler::class)->recordFileUpload($fileMetaData, 'gibbonDiscussion', $gibbonDiscussionID, 'attachmentLocation');
+        
+        if (empty($gibbonFileID)) {
+            $partialFail = true;
+        }
+    }
 
     // Invite Parents to Comment
     if ($roleCategory == 'Student') {

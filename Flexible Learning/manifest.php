@@ -27,7 +27,7 @@ $description = 'View, create and manage Flexible Learning units.';
 $entryURL    = "units_browse.php";
 $type        = "Additional";
 $category    = 'Learn';
-$version     = '1.3.01';
+$version     = '1.4.00';
 $author      = "Gibbon Foundation";
 $url         = "https://gibbonedu.org";
 

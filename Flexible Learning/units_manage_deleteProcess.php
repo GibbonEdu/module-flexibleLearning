@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+use Gibbon\Contracts\Filesystem\FileHandler;
 use Gibbon\Module\FlexibleLearning\Domain\UnitGateway;
 use Gibbon\Module\FlexibleLearning\Domain\UnitBlockGateway;
 
@@ -60,6 +61,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_ma
 
       $unitBlockGateway->deleteWhere(['flexibleLearningUnitID' => $flexibleLearningUnitID]);
       $deleted = $unitGateway->delete($flexibleLearningUnitID);
+
+      $fileDeleted = $container->get(FileHandler::class)->deleteFile('flexibleLearningUnit', $flexibleLearningUnitID, 'logo');
 
       $URL .= !$deleted
           ? '&return=error2'

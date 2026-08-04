@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+v1.3.02
+-------
+Removed a syntax error in Manage Categories page
 
 v1.3.01
 -------

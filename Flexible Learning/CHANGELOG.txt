@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v1.3.03
+-------
+Improved checking in browse unit details page
+
 v1.3.02
 -------
 Removed a syntax error in Manage Categories page

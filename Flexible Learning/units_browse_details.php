@@ -156,7 +156,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Flexible Learning/units_br
             ->selectAnyStudentsByFamilyAdult($session->get('gibbonSchoolYearID'), $session->get('gibbonPersonID'))
             ->fetchGroupedUnique();
 
-        if (empty($children[$submission['gibbonPersonID']])) {
+        if (empty($submission) || empty($children[$submission['gibbonPersonID']])) {
             unset($submission);
         }
     } else {
